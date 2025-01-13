@@ -36,7 +36,7 @@ export default function Page() {
             labelPlacement="outside"
             placeholder="Enter your password"
           />
-          <Button type="submit" color="primary" aria-disabled={isPending}>
+          <Button isLoading={isPending} disableRipple type="submit" color="primary" aria-disabled={isPending}>
             Sign in
           </Button>
           {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>}

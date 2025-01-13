@@ -13,7 +13,7 @@ export default async function Page(props: {
   const search = searchParams?.search || "";
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 mb-20">
       <div className="w-2/4 mx-auto mt-5">
         <Search />
       </div>
