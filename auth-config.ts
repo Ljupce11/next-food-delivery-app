@@ -6,29 +6,11 @@ export const authConfig = {
     signIn: "/login",
   },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnDashboard = nextUrl.pathname.startsWith("/");
-      if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      }
-      if (isLoggedIn) {
-        return Response.redirect(new URL("/", nextUrl));
-      }
-      return true;
-    },
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.role = token.role; // Example custom data
-      return session;
-    },
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
+      if (typeof token.sub === "string") {
+        session.user.id = token.sub;
       }
-      return token;
+      return session;
     },
   },
   providers: [Credentials({})],
