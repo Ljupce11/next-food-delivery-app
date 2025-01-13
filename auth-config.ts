@@ -18,6 +18,18 @@ export const authConfig = {
       }
       return true;
     },
+    async session({ session, token }) {
+      session.user.id = token.id;
+      session.user.role = token.role; // Example custom data
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
+      return token;
+    },
   },
   providers: [Credentials({})],
 } satisfies NextAuthConfig;

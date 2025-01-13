@@ -2,6 +2,7 @@
 
 import { AuthError } from "next-auth";
 import { signIn, signOut } from "../../../auth";
+import { fetchRestaurants } from "./data";
 
 export async function authenticate(prevState: string | undefined, formData: FormData) {
   try {
@@ -20,6 +21,9 @@ export async function authenticate(prevState: string | undefined, formData: Form
 }
 
 export async function signOutAction() {
-  "use server";
   await signOut();
+}
+
+export async function searchRestaurants(query: string) {
+  return await fetchRestaurants(query);
 }

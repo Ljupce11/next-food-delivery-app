@@ -1,10 +1,13 @@
 import { sql } from "@vercel/postgres";
 import type { Restaurant } from "./definitions";
 
-export async function fetchRestaurants() {
+export async function fetchRestaurants(search: string) {
   try {
     // await new Promise((resolve) => setTimeout(resolve, 3000));
-    const restaurants = await sql<Restaurant>`SELECT * FROM restaurants`;
+    const restaurants = await sql<Restaurant>`
+  SELECT * FROM restaurants
+  WHERE LOWER(name) LIKE LOWER(${`%${search}%`})
+`;
     return restaurants.rows;
   } catch (error) {
     console.error("Failed to fetch restaurants:", error);

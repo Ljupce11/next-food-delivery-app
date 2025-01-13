@@ -1,26 +1,113 @@
 "use client";
 
+import { startsWith } from "@/app/lib/utils";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+
+import { searchRestaurants } from "../../lib/actions";
 import { ClockIcon, SearchIcon } from "../icons";
 
 export const previousSearches = [
-  { label: "Burger king", key: "burger-king" },
-  { label: "Bastard burgers", key: "bastard-burgers" },
-  { label: "Mcdonalds", key: "mcdonalds" },
-  { label: "Dominos", key: "dominos" },
+  { name: "Burger king", key: "burger-king" },
+  { name: "Bastard burgers", key: "bastard-burgers" },
+  { name: "Mcdonalds", key: "mcdonalds" },
+  { name: "Dominos", key: "dominos" },
 ];
 
+export type FieldState = {
+  selectedKey: React.Key | null;
+  inputValue: string;
+  items: typeof previousSearches;
+};
+
 export default function Search() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [fieldState, setFieldState] = useState<FieldState>({
+    selectedKey: "",
+    inputValue: searchParams.get("search")?.toString() || "",
+    items: previousSearches,
+  });
+
+  useEffect(() => {
+    if (searchParams.get("search")) {
+      setFieldState((prevState) => ({
+        ...prevState,
+        items: previousSearches.filter((item) => startsWith(item.name, prevState.inputValue)),
+      }));
+    }
+  }, [searchParams]);
+
+  const onSelectionChange = useDebouncedCallback((key: React.Key | null) => {
+    const updatedFieldState = { ...fieldState };
+    const selectedItem = updatedFieldState.items.find((option) => option.key === key);
+    const params = new URLSearchParams(searchParams);
+    if (updatedFieldState.inputValue) {
+      params.set("search", updatedFieldState.inputValue);
+    } else if (selectedItem) {
+      params.set("search", selectedItem.name);
+    } else {
+      params.delete("search");
+    }
+    replace(`${pathname}?${params.toString()}`);
+    if (selectedItem) {
+      setFieldState((_prevState) => {
+        return {
+          selectedKey: key,
+          inputValue: selectedItem?.name || "",
+          items: previousSearches.filter((item) => startsWith(item.name, selectedItem?.name || "")),
+        };
+      });
+    }
+  }, 300);
+
+  const onInputChange = async (value: string) => {
+    setFieldState((prevState) => ({
+      ...prevState,
+      inputValue: value,
+    }));
+    fetchRestaurantsOnInputChange(value);
+  };
+
+  const fetchRestaurantsOnInputChange = useDebouncedCallback(async (value: string) => {
+    if (value) {
+      setIsLoading(true);
+      const restaurants = await searchRestaurants(value);
+      setIsLoading(false);
+      const autoCompleteData = restaurants.map((restaurant) => {
+        return { name: restaurant.name, key: restaurant.id };
+      });
+      setFieldState((prevState) => ({
+        ...prevState,
+        items: autoCompleteData,
+      }));
+    } else {
+      setFieldState((prevState) => ({
+        ...prevState,
+        items: previousSearches,
+      }));
+    }
+  }, 300);
+
   return (
     <Autocomplete
-      isClearable
       size="lg"
       radius="lg"
       variant="flat"
+      isLoading={isLoading}
       fullWidth={true}
       aria-label="Search"
       placeholder="Search restaurants..."
-      defaultItems={previousSearches}
+      inputValue={fieldState.inputValue}
+      items={fieldState.items}
+      // @ts-ignore
+      selectedKey={fieldState.selectedKey}
+      onInputChange={onInputChange}
+      onSelectionChange={onSelectionChange}
       startContent={
         <SearchIcon className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0" />
       }
@@ -30,7 +117,7 @@ export default function Search() {
           <div className="flex gap-2 items-center">
             <ClockIcon />
             <div className="flex flex-col">
-              <span className="text-small">{previousSearch.label}</span>
+              <span className="text-small">{previousSearch.name}</span>
             </div>
           </div>
         </AutocompleteItem>
