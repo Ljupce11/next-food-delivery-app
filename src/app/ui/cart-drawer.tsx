@@ -196,7 +196,14 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
               >
                 <Fragment>
                   <div className="flex w-full items-center pt-5 gap-6">
-                    <Image isBlurred alt="Event image" className="aspect-square w-full" height={100} src={image} />
+                    <Image
+                      isBlurred
+                      src={image}
+                      width={100}
+                      height={100}
+                      alt="Event image"
+                      className="aspect-square object-cover"
+                    />
                     <div className="flex flex-col">
                       <h1 className="text-lg font-semibold">{restaurantName}</h1>
                       <p className="text-sm text-default-500">{restaurantAddress}</p>
@@ -226,7 +233,12 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
                         <CardBody>
                           <div className="flex justify-between items-center gap-3">
                             <div className="flex items-center gap-2">
-                              <Image className="aspect-square w-full" height={50} src={cartItem.image} />
+                              <Image
+                                width={50}
+                                height={50}
+                                src={cartItem.image}
+                                className="aspect-square object-cover"
+                              />
                               <div className="flex flex-col text-xs text-default-500">
                                 <p>{cartItem.name}</p>
                                 <p>Extra: {cartItem.extra}</p>
