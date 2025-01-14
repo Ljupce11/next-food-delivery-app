@@ -14,7 +14,7 @@ export default async function Page(props: {
 
   return (
     <div className="flex flex-col gap-8 mb-20">
-      <div className="w-2/4 mx-auto mt-5">
+      <div className="w-full px-8 lg:w-2/4 lg:px-0 mx-auto mt-5">
         <Search />
       </div>
       <h1 className="text-center text-2xl font-semibold">Restaurants</h1>

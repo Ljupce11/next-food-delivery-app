@@ -5,8 +5,8 @@ import { LoginIcon } from "../ui/icons";
 
 export default function Page() {
   return (
-    <div className="flex h-screen p-4 overflow-hidden">
-      <div className="w-6/12 flex flex-col items-center justify-center gap-5">
+    <div className="flex justify-end flex-col-reverse gap-4 lg:flex-row h-screen p-4 overflow-hidden">
+      <div className="lg:w-6/12 flex flex-col items-center justify-center gap-5">
         <div className="border-1 border-gray-300 dark:border-gray-700 p-3 rounded-full">
           <LoginIcon />
         </div>
@@ -14,7 +14,7 @@ export default function Page() {
           <h1 className="font-semibold text-2xl">Create a new account</h1>
           <p className="text-sm">Enter your details to sign up</p>
         </div>
-        <form className="w-6/12 flex flex-col gap-4">
+        <form className="w-full lg:w-6/12 flex flex-col gap-4">
           <Input
             label="First name"
             type="text"
@@ -48,7 +48,7 @@ export default function Page() {
           </Button>
         </form>
       </div>
-      <div className="w-6/12 rounded-2xl border-1 overflow-hidden">
+      <div className="h-40 lg:w-6/12 rounded-2xl border-1 overflow-hidden">
         <Image
           priority
           src="/login.webp"

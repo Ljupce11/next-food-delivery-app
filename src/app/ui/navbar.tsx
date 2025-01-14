@@ -50,7 +50,9 @@ export default function Navbar({ user }: { user?: User }) {
       <NavbarBrand>
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image src={Logo} className="h-8 w-8" alt="Flowbite Logo" />
-          <p className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Food delivery</p>
+          <p className="self-center text-2xl font-semibold whitespace-nowrap hidden sm:flex dark:text-white">
+            Food delivery
+          </p>
         </Link>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -128,7 +130,7 @@ export default function Navbar({ user }: { user?: User }) {
           </Fragment>
         ) : (
           <Fragment>
-            <NavbarItem className="hidden lg:flex">
+            <NavbarItem>
               <Link href="/login">Login</Link>
             </NavbarItem>
             <NavbarItem>
