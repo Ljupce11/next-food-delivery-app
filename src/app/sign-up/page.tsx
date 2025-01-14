@@ -44,7 +44,7 @@ export default function Page() {
             placeholder="Enter your password"
           />
           <Button type="submit" color="primary">
-            Sign in
+            Sign up
           </Button>
         </form>
       </div>

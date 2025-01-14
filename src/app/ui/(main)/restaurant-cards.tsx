@@ -33,12 +33,14 @@ export default function RestaurantCards({ restaurants }: Props) {
               width={"100%"}
             />
             <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-              <div className="flex justify-between items-center w-full">
+              <div className="flex justify-between items-center w-full gap-2">
                 <p className="text-tiny text-white font-bold bg-black/20 rounded-2xl py-2 px-3">{name}</p>
                 <div className="flex items-center text-white bg-black/20 rounded-2xl py-2 px-3 gap-1">
-                  <DeliveryIcon />
-                  <p className="text-small">59kr</p>
-                  <p>|</p>
+                  <div className="flex items-center md:hidden xl:flex">
+                    <DeliveryIcon />
+                    <p className="text-small">59kr</p>
+                    <p>|</p>
+                  </div>
                   <RatingIcon />
                   <p className="text-small">4.5</p>
                 </div>
