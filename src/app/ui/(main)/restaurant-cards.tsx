@@ -36,7 +36,7 @@ export default function RestaurantCards({ restaurants }: Props) {
               <div className="flex justify-between items-center w-full gap-2">
                 <p className="text-tiny text-white font-bold bg-black/20 rounded-2xl py-2 px-3">{name}</p>
                 <div className="flex items-center text-white bg-black/20 rounded-2xl py-2 px-3 gap-1">
-                  <div className="flex items-center md:hidden xl:flex">
+                  <div className="flex items-center gap-1 md:hidden xl:flex">
                     <DeliveryIcon />
                     <p className="text-small">59kr</p>
                     <p>|</p>
