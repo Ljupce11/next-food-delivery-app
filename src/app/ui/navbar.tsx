@@ -12,6 +12,7 @@ import {
   NavbarContent,
   NavbarItem,
   Navbar as NextNavbar,
+  useDisclosure,
 } from "@nextui-org/react";
 import type { User } from "next-auth";
 import Image from "next/image";
@@ -20,6 +21,7 @@ import { Fragment, type Key } from "react";
 
 import Logo from "../../../public/logo.png";
 import { signOutAction } from "../lib/actions";
+import CartDrawer from "./cart-drawer";
 import {
   CartIcon,
   FavoritesIcon,
@@ -31,6 +33,8 @@ import {
 } from "./icons";
 
 export default function Navbar({ user }: { user?: User }) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const onDropdownActionHandler = (key: Key) => {
     switch (key) {
       case "logout":
@@ -58,9 +62,10 @@ export default function Navbar({ user }: { user?: User }) {
         {user ? (
           <Fragment>
             <NavbarItem>
-              <Button isIconOnly aria-label="Cart" variant="light">
+              <Button disableRipple isIconOnly aria-label="Cart" variant="light" onPress={onOpen}>
                 <CartIcon />
               </Button>
+              <CartDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
             </NavbarItem>
             <Dropdown backdrop="blur" placement="bottom-end">
               <DropdownTrigger>
