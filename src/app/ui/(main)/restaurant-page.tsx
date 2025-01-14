@@ -2,6 +2,7 @@
 
 import type { Restaurant } from "@/app/lib/definitions";
 import { Card, CardBody, CardFooter, Divider, Image, Tab, Tabs } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 
 type Props = {
   restaurant: Restaurant;
@@ -48,6 +49,18 @@ const images = [
 
 export default function RestaurantPage({ restaurant }: Props) {
   const { name, address, cuisine, rating } = restaurant;
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col justify-around w-full px-8 py-5 gap-3 lg:flex-row">
       <div className="w-full lg:w-1/6 overflow-x-hidden">
@@ -105,12 +118,7 @@ export default function RestaurantPage({ restaurant }: Props) {
         </div>
         <Divider className="my-5" />
         <div className="overflow-auto">
-          <Tabs
-            className="mx-auto"
-            isVertical={!(window.innerWidth < 1024)}
-            aria-label="Dynamic tabs"
-            items={categories}
-          >
+          <Tabs className="mx-auto" isVertical={!(screenWidth < 1024)} aria-label="Dynamic tabs" items={categories}>
             {({ id, label }) => <Tab key={id} title={label} />}
           </Tabs>
         </div>
@@ -118,31 +126,27 @@ export default function RestaurantPage({ restaurant }: Props) {
 
       <div className="w-full lg:w-3/4">
         <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {Array.from({ length: 20 }).map((_, index) => (
-            /* eslint-disable no-console */
-            <Card
-              disableRipple
-              key={self.crypto.randomUUID()}
-              isPressable
-              shadow="sm"
-              onPress={() => console.log("item pressed")}
-            >
-              <CardBody className="overflow-visible p-0">
-                <Image
-                  alt={"image"}
-                  className="w-full object-cover h-[140px]"
-                  radius="lg"
-                  shadow="sm"
-                  src={images[index % images.length]}
-                  width="100%"
-                />
-              </CardBody>
-              <CardFooter className="text-small justify-between">
-                <b>{"Raspberry"}</b>
-                <p className="text-default-500">{"19kr"}</p>
-              </CardFooter>
-            </Card>
-          ))}
+          {Array.from({ length: 20 }).map((_, index) => {
+            const id = index + 1;
+            return (
+              <Card disableRipple key={id} isPressable shadow="sm" onPress={() => console.log("item pressed")}>
+                <CardBody className="overflow-visible p-0">
+                  <Image
+                    alt={"image"}
+                    className="w-full object-cover h-[140px]"
+                    radius="lg"
+                    shadow="sm"
+                    src={images[index % images.length]}
+                    width="100%"
+                  />
+                </CardBody>
+                <CardFooter className="text-small justify-between">
+                  <b>{"Raspberry"}</b>
+                  <p className="text-default-500">{"19kr"}</p>
+                </CardFooter>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
