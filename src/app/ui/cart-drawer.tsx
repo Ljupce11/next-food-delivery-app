@@ -15,7 +15,7 @@ import {
   Tab,
   Tabs,
 } from "@nextui-org/react";
-import { Fragment, useState } from "react";
+import { Fragment, type Key, useState } from "react";
 
 const MOTION_PROPS = {
   variants: {
@@ -111,7 +111,7 @@ const DELIVERY = 50;
 
 export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: () => void }) {
   const [cartData, setCartData] = useState(DATA);
-  const [selectedRestaurant, setSelectedRestaurant] = useState(DATA.length > 0 ? DATA[0].restaurantName : "");
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Key>(DATA.length > 0 ? DATA[0].restaurantName : "");
 
   const addRemoveItem = (itemId: number, action: "add" | "remove") => {
     const updatedCart = [...cartData].map((restaurant) => {
@@ -165,6 +165,7 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
             aria-label="Dynamic tabs"
             items={cartData}
             size="sm"
+            // @ts-expect-error
             selectedKey={selectedRestaurant}
             onSelectionChange={(e) => setSelectedRestaurant(e)}
           >
