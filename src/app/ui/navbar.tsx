@@ -131,7 +131,7 @@ export default function Navbar({ user }: { user?: User }) {
         ) : (
           <Fragment>
             <NavbarItem>
-              <Link href="/login">Login</Link>
+              <Link href="/login">Sign In</Link>
             </NavbarItem>
             <NavbarItem>
               <Link className="bg-blue-100 rounded-xl px-3 py-2 text-blue-700" href="/sign-up">

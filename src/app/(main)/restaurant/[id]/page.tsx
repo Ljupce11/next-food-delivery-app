@@ -1,13 +1,10 @@
 import { fetchRestaurant } from "@/app/lib/data";
+import RestaurantPage from "@/app/ui/(main)/restaurant-page";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const restaurant = await fetchRestaurant(id);
-  // console.log(restaurant);
+  console.log(restaurant);
 
-  return (
-    <div>
-      <h1 className="text-center text-2xl font-semibold">{restaurant.name}</h1>
-    </div>
-  );
+  return <RestaurantPage restaurant={restaurant} />;
 }

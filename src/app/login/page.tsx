@@ -12,12 +12,12 @@ export default function Page() {
   return (
     <div className="flex justify-end flex-col-reverse gap-4 lg:flex-row h-screen p-4 overflow-hidden">
       <div className="lg:w-6/12 flex flex-col items-center justify-center gap-5">
-        <div className="border-1 border-gray-300 dark:border-gray-700 p-3 rounded-full">
+        <div className="border-1 border-gray-300 dark:border-gray-700 p-3 rounded-full shadow-lg">
           <LoginIcon />
         </div>
         <div className="flex flex-col items-center gap-2">
-          <h1 className="font-semibold text-2xl">Login to your account</h1>
-          <p className="text-sm">Enter your details to login</p>
+          <h1 className="font-semibold text-2xl">Sign in to your account</h1>
+          <p className="text-sm">Enter your details to sign in</p>
         </div>
         <form action={formAction} className="w-full lg:w-6/12 flex flex-col gap-4">
           <Input
