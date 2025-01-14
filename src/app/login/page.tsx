@@ -42,7 +42,7 @@ export default function Page() {
           {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>}
         </form>
       </div>
-      <div className="h-40 lg:w-6/12 rounded-2xl border-1 overflow-hidden">
+      <div className="h-40 lg:h-full lg:w-6/12 rounded-2xl border-1 overflow-hidden">
         <Image
           priority
           src="/login.webp"
