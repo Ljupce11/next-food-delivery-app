@@ -4,4 +4,12 @@ export type Restaurant = {
   address: string;
   cuisine: string;
   rating: string;
+  image: string;
+};
+
+export type MenuItem = {
+  id: string;
+  restaurant_id: string;
+  name: string;
+  price: number;
 };

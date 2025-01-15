@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import type { Restaurant } from "./definitions";
+import type { MenuItem, Restaurant } from "./definitions";
 
 export async function fetchRestaurants(search: string) {
   try {
@@ -22,5 +22,15 @@ export async function fetchRestaurant(id: string) {
   } catch (error) {
     console.error("Failed to fetch restaurant:", error);
     throw new Error("Failed to fetch restaurant.");
+  }
+}
+
+export async function fetchMenuItems(id: string) {
+  try {
+    const menuItems = await sql<MenuItem>`SELECT * FROM menus WHERE restaurant_id=${id}`;
+    return menuItems.rows;
+  } catch (error) {
+    console.error("Failed to fetch menus:", error);
+    throw new Error("Failed to fetch menus.");
   }
 }
