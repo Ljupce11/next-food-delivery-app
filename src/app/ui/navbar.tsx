@@ -48,7 +48,7 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
   };
 
   return (
-    <NextNavbar shouldHideOnScroll>
+    <NextNavbar isBordered shouldHideOnScroll>
       <NavbarBrand>
         <Link prefetch href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image src={Logo} className="h-8 w-8" alt="Flowbite Logo" />
