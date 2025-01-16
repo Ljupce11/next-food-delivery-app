@@ -35,7 +35,7 @@ import {
 } from "./icons";
 
 export default function Navbar({ user, cartData }: { user?: User; cartData?: CartData[] }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
   const onDropdownActionHandler = (key: Key) => {
     switch (key) {
@@ -78,7 +78,13 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
                   <CartIcon />
                 </Badge>
               </Button>
-              <CartDrawer user={user} cartData={cartData} isOpen={isOpen} onOpenChange={onOpenChange} />
+              <CartDrawer
+                user={user}
+                cartData={cartData}
+                isOpen={isOpen}
+                onClose={onClose}
+                onOpenChange={onOpenChange}
+              />
             </NavbarItem>
             <Dropdown backdrop="blur" placement="bottom-end">
               <DropdownTrigger>

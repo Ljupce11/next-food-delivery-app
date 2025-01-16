@@ -38,12 +38,15 @@ const MOTION_PROPS = {
 
 const DELIVERY = 50;
 
-export default function CartDrawer({
-  isOpen,
-  user,
-  cartData: existingCartData,
-  onOpenChange,
-}: { isOpen: boolean; user: User; cartData?: CartData[]; onOpenChange: () => void }) {
+type Props = {
+  isOpen: boolean;
+  user: User;
+  cartData?: CartData[];
+  onClose: () => void;
+  onOpenChange: () => void;
+};
+
+export default function CartDrawer({ isOpen, user, cartData: existingCartData, onClose, onOpenChange }: Props) {
   const [cartData, setCartData] = useState(existingCartData);
   const [selectedRestaurantKey, setSelectedRestaurantKey] = useState<Key>("");
   const [isLoading, setIsLoading] = useState<{ id: string | null; state: boolean }>({ id: null, state: false });
@@ -99,6 +102,9 @@ export default function CartDrawer({
     try {
       await updateCartDataFromDrawer(user.id || "", updatedCart);
       setIsLoading({ id: itemId, state: false });
+      if (updatedCart.length === 0) {
+        onClose();
+      }
     } catch (error) {
       setIsLoading({ id: itemId, state: false });
       console.error("FAILED to update cart:", error);
