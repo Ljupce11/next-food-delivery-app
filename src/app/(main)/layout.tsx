@@ -1,5 +1,6 @@
 import { auth } from "../../../auth";
 import { fetchUserData } from "../lib/data";
+import type { AdvancedUser } from "../lib/definitions";
 import Navbar from "../ui/navbar";
 
 export default async function MainLayout({
@@ -8,12 +9,11 @@ export default async function MainLayout({
   children: React.ReactNode;
 }>) {
   const authData = await auth();
-  const userData = await fetchUserData(authData?.user?.id || "");
-  // console.log("userData", userData);
+  const userData: AdvancedUser | undefined = await fetchUserData(authData?.user?.id || null);
 
   return (
     <div className={"flex flex-col"}>
-      <Navbar cartData={userData.cart} user={authData?.user} />
+      <Navbar cartData={userData?.cart} user={userData} />
       {children}
     </div>
   );

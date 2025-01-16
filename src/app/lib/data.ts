@@ -35,7 +35,7 @@ export async function fetchMenuItems(id: string) {
   }
 }
 
-export async function fetchUserData(id: string) {
+export async function fetchUserData(id: string | null) {
   try {
     const userData = await sql<AdvancedUser>`SELECT id, name, email, phone, address, cart FROM users WHERE id=${id}`;
     return userData.rows[0];
