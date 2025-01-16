@@ -34,7 +34,7 @@ import {
   UserAvatarFallbackIcon,
 } from "./icons";
 
-export default function Navbar({ user, cartData }: { user?: User; cartData: CartData[] }) {
+export default function Navbar({ user, cartData }: { user?: User; cartData?: CartData[] }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const onDropdownActionHandler = (key: Key) => {
@@ -71,9 +71,9 @@ export default function Navbar({ user, cartData }: { user?: User; cartData: Cart
                   size="sm"
                   shape="circle"
                   color="primary"
-                  content={cartData.length}
+                  content={cartData?.length}
                   style={{ fontSize: "0.6rem" }}
-                  isInvisible={cartData.length === 0}
+                  isInvisible={cartData?.length === 0}
                 >
                   <CartIcon />
                 </Badge>

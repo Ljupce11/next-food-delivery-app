@@ -43,10 +43,10 @@ export default function CartDrawer({
   user,
   cartData: existingCartData,
   onOpenChange,
-}: { isOpen: boolean; user: User; cartData: CartData[]; onOpenChange: () => void }) {
+}: { isOpen: boolean; user: User; cartData?: CartData[]; onOpenChange: () => void }) {
   const [cartData, setCartData] = useState(existingCartData);
   const [selectedRestaurantKey, setSelectedRestaurantKey] = useState<Key>("");
-  const selectedRestaurant = cartData.find((restaurant) => restaurant.restaurantId === selectedRestaurantKey);
+  const selectedRestaurant = cartData?.find((restaurant) => restaurant.restaurantId === selectedRestaurantKey);
 
   useEffect(() => {
     if (existingCartData) {
@@ -58,6 +58,7 @@ export default function CartDrawer({
   }, [existingCartData, selectedRestaurantKey]);
 
   const addRemoveItem = (itemId: string, action: "add" | "remove") => {
+    if (!cartData || !selectedRestaurant) return;
     const updatedCart = [...cartData].map((restaurant) => {
       if (restaurant.restaurantId === selectedRestaurant?.restaurantId) {
         return {
@@ -81,6 +82,7 @@ export default function CartDrawer({
   };
 
   const deleteItem = (itemId: string) => {
+    if (!cartData || !selectedRestaurant) return;
     const updatedCard = [...cartData].map((restaurant) => {
       if (restaurant.restaurantId === selectedRestaurant?.restaurantId) {
         return {
@@ -104,7 +106,7 @@ export default function CartDrawer({
   }, 300);
 
   const subTotal = cartData
-    .find((restaurant) => restaurant.restaurantId === selectedRestaurant?.restaurantId)
+    ?.find((restaurant) => restaurant.restaurantId === selectedRestaurant?.restaurantId)
     ?.items.reduce((acc, current) => {
       return acc + Number(current.price);
     }, 0);
@@ -123,7 +125,7 @@ export default function CartDrawer({
             selectedKey={selectedRestaurantKey}
             onSelectionChange={(e) => setSelectedRestaurantKey(e)}
           >
-            {cartData.map(({ restaurantId, restaurantName, restaurantAddress, image, items }) => (
+            {cartData?.map(({ restaurantId, restaurantName, restaurantAddress, image, items }) => (
               <Tab
                 key={restaurantId}
                 title={
