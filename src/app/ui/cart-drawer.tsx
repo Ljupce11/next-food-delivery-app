@@ -198,7 +198,13 @@ export default function CartDrawer({
                       <CardBody>
                         <div className="flex justify-between items-center gap-3">
                           <div className="flex items-center gap-2">
-                            <Image width={50} height={50} src={cartItem.image} className="aspect-square object-cover" />
+                            <Image
+                              removeWrapper
+                              width={50}
+                              height={50}
+                              src={cartItem.image}
+                              className="aspect-square object-cover"
+                            />
                             <div className="flex flex-col text-xs text-default-500">
                               <p>{cartItem.name}</p>
                               <p>Extra: {cartItem.extra}</p>
