@@ -46,6 +46,7 @@ export default function CartDrawer({
 }: { isOpen: boolean; user: User; cartData?: CartData[]; onOpenChange: () => void }) {
   const [cartData, setCartData] = useState(existingCartData);
   const [selectedRestaurantKey, setSelectedRestaurantKey] = useState<Key>("");
+  const [isLoading, setIsLoading] = useState<{ id: string | null; state: boolean }>({ id: null, state: false });
   const selectedRestaurant = cartData?.find((restaurant) => restaurant.restaurantId === selectedRestaurantKey);
 
   useEffect(() => {
@@ -81,19 +82,28 @@ export default function CartDrawer({
     updateCartDataWithDebounce(updatedCart);
   };
 
-  const deleteItem = (itemId: string) => {
+  const deleteItem = async (itemId: string) => {
     if (!cartData || !selectedRestaurant) return;
-    const updatedCard = [...cartData].map((restaurant) => {
-      if (restaurant.restaurantId === selectedRestaurant?.restaurantId) {
-        return {
-          ...restaurant,
-          items: restaurant.items.filter((item) => item.id !== itemId),
-        };
+    let updatedCart: CartData[] = JSON.parse(JSON.stringify(cartData));
+    const matchedRestaurant = updatedCart.find(
+      (restaurant) => restaurant.restaurantId === selectedRestaurant?.restaurantId,
+    );
+    if (matchedRestaurant) {
+      if (matchedRestaurant.items.length > 1) {
+        matchedRestaurant.items = matchedRestaurant.items.filter((item) => item.id !== itemId);
+      } else {
+        updatedCart = updatedCart.filter((restaurant) => restaurant.restaurantId !== selectedRestaurant?.restaurantId);
       }
-      return restaurant;
-    });
-    setCartData(updatedCard);
-    updateCartDataWithDebounce(updatedCard);
+    }
+    setIsLoading({ id: itemId, state: true });
+    try {
+      await updateCartDataFromDrawer(user.id || "", updatedCart);
+      setIsLoading({ id: itemId, state: false });
+    } catch (error) {
+      setIsLoading({ id: itemId, state: false });
+      console.error("FAILED to update cart:", error);
+      throw new Error("FAILED to update cart.");
+    }
   };
 
   const updateCartDataWithDebounce = useDebouncedCallback(async (updatedCart: CartData[]) => {
@@ -232,12 +242,13 @@ export default function CartDrawer({
                               </Button>
                             </ButtonGroup>
                             <Button
+                              isIconOnly
                               disableRipple
                               size="sm"
-                              isIconOnly
                               variant="flat"
                               color="danger"
                               onPress={() => deleteItem(cartItem.id)}
+                              isLoading={isLoading.state === true && isLoading.id === cartItem.id}
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
