@@ -2,6 +2,7 @@
 
 import {
   Avatar,
+  Badge,
   Button,
   Divider,
   Dropdown,
@@ -21,6 +22,7 @@ import { Fragment, type Key } from "react";
 
 import Logo from "../../../public/logo.png";
 import { signOutAction } from "../lib/actions";
+import type { CartData } from "../lib/definitions";
 import CartDrawer from "./cart-drawer";
 import {
   CartIcon,
@@ -32,7 +34,7 @@ import {
   UserAvatarFallbackIcon,
 } from "./icons";
 
-export default function Navbar({ user }: { user?: User }) {
+export default function Navbar({ user, cartData }: { user?: User; cartData: CartData[] }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const onDropdownActionHandler = (key: Key) => {
@@ -48,7 +50,7 @@ export default function Navbar({ user }: { user?: User }) {
   return (
     <NextNavbar shouldHideOnScroll>
       <NavbarBrand>
-        <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+        <Link prefetch href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image src={Logo} className="h-8 w-8" alt="Flowbite Logo" />
           <p className="self-center text-2xl font-semibold whitespace-nowrap hidden sm:flex dark:text-white">
             Food delivery
@@ -65,9 +67,18 @@ export default function Navbar({ user }: { user?: User }) {
           <Fragment>
             <NavbarItem>
               <Button disableRipple isIconOnly aria-label="Cart" variant="light" onPress={onOpen}>
-                <CartIcon />
+                <Badge
+                  size="sm"
+                  shape="circle"
+                  color="primary"
+                  content={cartData.length}
+                  style={{ fontSize: "0.6rem" }}
+                  isInvisible={cartData.length === 0}
+                >
+                  <CartIcon />
+                </Badge>
               </Button>
-              <CartDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
+              <CartDrawer user={user} cartData={cartData} isOpen={isOpen} onOpenChange={onOpenChange} />
             </NavbarItem>
             <Dropdown backdrop="blur" placement="bottom-end">
               <DropdownTrigger>

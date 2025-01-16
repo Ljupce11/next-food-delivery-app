@@ -15,7 +15,11 @@ import {
   Tab,
   Tabs,
 } from "@nextui-org/react";
-import { Fragment, type Key, useState } from "react";
+import type { User } from "next-auth";
+import { type Key, useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import { updateCartDataFromDrawer } from "../lib/actions";
+import type { CartData } from "../lib/definitions";
 
 const MOTION_PROPS = {
   variants: {
@@ -32,90 +36,30 @@ const MOTION_PROPS = {
   },
 };
 
-const DATA = [
-  {
-    restaurantName: "Pizza Perfection",
-    restaurantAddress: "Crust Court 15B, Stockholm",
-    image: "https://marketplace.canva.com/EAFXH3NOgek/1/0/1600w/canva-red-minimalist-restaurant-logo-2ygr4Ex-o9s.jpg",
-    items: [
-      {
-        id: 1,
-        name: "Margherita Pizza",
-        extra: "Mushrooms",
-        price: 59,
-        unitPrice: 59,
-        amount: 1,
-        image: "https://images.freeimages.com/image/thumbs/683/delicious-pizza-meal-png-5692708.png",
-      },
-      {
-        id: 2,
-        name: "Margherita Pizza",
-        extra: "Onions",
-        price: 129,
-        unitPrice: 129,
-        amount: 1,
-        image: "https://images.freeimages.com/image/thumbs/683/delicious-pizza-meal-png-5692708.png",
-      },
-      {
-        id: 3,
-        name: "Margherita Pizza",
-        extra: "Cheese",
-        price: 79,
-        unitPrice: 79,
-        amount: 1,
-        image: "https://images.freeimages.com/image/thumbs/683/delicious-pizza-meal-png-5692708.png",
-      },
-    ],
-  },
-  {
-    restaurantName: "Burger Bliss",
-    restaurantAddress: "Burger Boulevard 12A, Gothenburg",
-    image:
-      "https://coreldrawdesign.com/resources/previews/preview-restaurants-logo-design-cdr-template-vector-free-1704712805.jpg",
-    items: [
-      {
-        id: 1,
-        name: "Cheeseburger",
-        extra: "Cheese",
-        price: 112,
-        unitPrice: 112,
-        amount: 1,
-        image:
-          "https://st2.depositphotos.com/3631281/6723/v/950/depositphotos_67238219-stock-illustration-a-double-burger-with-meat.jpg",
-      },
-      {
-        id: 2,
-        name: "Cheeseburger",
-        extra: "Bacon",
-        price: 129,
-        unitPrice: 129,
-        amount: 1,
-        image:
-          "https://st2.depositphotos.com/3631281/6723/v/950/depositphotos_67238219-stock-illustration-a-double-burger-with-meat.jpg",
-      },
-      {
-        id: 3,
-        name: "Cheeseburger",
-        extra: "Onions",
-        price: 79,
-        unitPrice: 79,
-        amount: 1,
-        image:
-          "https://st2.depositphotos.com/3631281/6723/v/950/depositphotos_67238219-stock-illustration-a-double-burger-with-meat.jpg",
-      },
-    ],
-  },
-];
-
 const DELIVERY = 50;
 
-export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: () => void }) {
-  const [cartData, setCartData] = useState(DATA);
-  const [selectedRestaurant, setSelectedRestaurant] = useState<Key>(DATA.length > 0 ? DATA[0].restaurantName : "");
+export default function CartDrawer({
+  isOpen,
+  user,
+  cartData: existingCartData,
+  onOpenChange,
+}: { isOpen: boolean; user: User; cartData: CartData[]; onOpenChange: () => void }) {
+  const [cartData, setCartData] = useState(existingCartData);
+  const [selectedRestaurantKey, setSelectedRestaurantKey] = useState<Key>("");
+  const selectedRestaurant = cartData.find((restaurant) => restaurant.restaurantId === selectedRestaurantKey);
 
-  const addRemoveItem = (itemId: number, action: "add" | "remove") => {
+  useEffect(() => {
+    if (existingCartData) {
+      setCartData(existingCartData);
+      if (selectedRestaurantKey === "") {
+        setSelectedRestaurantKey(existingCartData.length > 0 ? existingCartData[0].restaurantId : "");
+      }
+    }
+  }, [existingCartData, selectedRestaurantKey]);
+
+  const addRemoveItem = (itemId: string, action: "add" | "remove") => {
     const updatedCart = [...cartData].map((restaurant) => {
-      if (restaurant.restaurantName === selectedRestaurant) {
+      if (restaurant.restaurantId === selectedRestaurant?.restaurantId) {
         return {
           ...restaurant,
           items: restaurant.items.map((item) => {
@@ -123,7 +67,7 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
               item.amount = action === "add" ? item.amount + 1 : item.amount > 1 ? item.amount - 1 : item.amount;
               return {
                 ...item,
-                price: item.unitPrice * item.amount,
+                price: Number(item.unitPrice) * item.amount,
               };
             }
             return item;
@@ -133,11 +77,12 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
       return restaurant;
     });
     setCartData(updatedCart);
+    updateCartDataWithDebounce(updatedCart);
   };
 
-  const deleteItem = (itemId: number) => {
+  const deleteItem = (itemId: string) => {
     const updatedCard = [...cartData].map((restaurant) => {
-      if (restaurant.restaurantName === selectedRestaurant) {
+      if (restaurant.restaurantId === selectedRestaurant?.restaurantId) {
         return {
           ...restaurant,
           items: restaurant.items.filter((item) => item.id !== itemId),
@@ -146,12 +91,22 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
       return restaurant;
     });
     setCartData(updatedCard);
+    updateCartDataWithDebounce(updatedCard);
   };
 
+  const updateCartDataWithDebounce = useDebouncedCallback(async (updatedCart: CartData[]) => {
+    try {
+      await updateCartDataFromDrawer(user.id || "", updatedCart);
+    } catch (error) {
+      console.error("FAILED to update cart:", error);
+      throw new Error("FAILED to update cart.");
+    }
+  }, 300);
+
   const subTotal = cartData
-    .find((restaurant) => restaurant.restaurantName === selectedRestaurant)
+    .find((restaurant) => restaurant.restaurantId === selectedRestaurant?.restaurantId)
     ?.items.reduce((acc, current) => {
-      return acc + current.price;
+      return acc + Number(current.price);
     }, 0);
   const total = subTotal ? subTotal + DELIVERY : 0;
 
@@ -159,19 +114,18 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
     <Drawer backdrop="blur" isOpen={isOpen} motionProps={MOTION_PROPS} onOpenChange={onOpenChange}>
       <DrawerContent>
         <DrawerHeader className="flex flex-col gap-1">Your items</DrawerHeader>
-
         <DrawerBody>
           <Tabs
             aria-label="Dynamic tabs"
             items={cartData}
             size="sm"
             // @ts-expect-error
-            selectedKey={selectedRestaurant}
-            onSelectionChange={(e) => setSelectedRestaurant(e)}
+            selectedKey={selectedRestaurantKey}
+            onSelectionChange={(e) => setSelectedRestaurantKey(e)}
           >
-            {({ restaurantName, restaurantAddress, items, image }) => (
+            {cartData.map(({ restaurantId, restaurantName, restaurantAddress, image, items }) => (
               <Tab
-                key={restaurantName}
+                key={restaurantId}
                 title={
                   <div className="flex items-center space-x-2">
                     <svg
@@ -194,56 +148,52 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
                   </div>
                 }
               >
-                <Fragment>
-                  <div className="flex w-full items-center pt-5 gap-6">
-                    <Image
-                      isBlurred
-                      src={image}
-                      width={100}
-                      height={100}
-                      alt="Event image"
-                      className="aspect-square object-cover"
-                    />
-                    <div className="flex flex-col">
-                      <h1 className="text-lg font-semibold">{restaurantName}</h1>
-                      <p className="text-sm text-default-500">{restaurantAddress}</p>
-                      <div className="flex items-center pt-1">
-                        {Array.from({ length: 5 }).map(() => (
-                          <svg
-                            key={self.crypto.randomUUID()}
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="size-4 text-yellow-400"
-                          >
-                            <title>Rating</title>
-                            <path
-                              fillRule="evenodd"
-                              d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        ))}
-                      </div>
+                <div className="flex w-full items-center pt-5 gap-6">
+                  <Image
+                    isBlurred
+                    src={image}
+                    width={100}
+                    height={100}
+                    alt="Event image"
+                    className="aspect-square object-cover"
+                  />
+                  <div className="flex flex-col">
+                    <h1 className="text-lg font-semibold">{restaurantName}</h1>
+                    <p className="text-sm text-default-500">{restaurantAddress}</p>
+                    <div className="flex items-center pt-1">
+                      {Array.from({ length: 5 }).map(() => (
+                        <svg
+                          key={self.crypto.randomUUID()}
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="size-4 text-yellow-400"
+                        >
+                          <title>Rating</title>
+                          <path
+                            fillRule="evenodd"
+                            d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      ))}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-3 mt-7">
-                    {items.map((cartItem) => (
-                      <Card key={cartItem.id} shadow="none" className="border">
-                        <CardBody>
-                          <div className="flex justify-between items-center gap-3">
-                            <div className="flex items-center gap-2">
-                              <Image
-                                width={50}
-                                height={50}
-                                src={cartItem.image}
-                                className="aspect-square object-cover"
-                              />
-                              <div className="flex flex-col text-xs text-default-500">
-                                <p>{cartItem.name}</p>
-                                <p>Extra: {cartItem.extra}</p>
-                              </div>
+                </div>
+                <div className="flex flex-col gap-3 mt-7">
+                  {items.map((cartItem) => (
+                    <Card key={cartItem.id} shadow="none" className="border">
+                      <CardBody>
+                        <div className="flex justify-between items-center gap-3">
+                          <div className="flex items-center gap-2">
+                            <Image width={50} height={50} src={cartItem.image} className="aspect-square object-cover" />
+                            <div className="flex flex-col text-xs text-default-500">
+                              <p>{cartItem.name}</p>
+                              <p>Extra: {cartItem.extra}</p>
                             </div>
+                          </div>
+                          <div className="flex items-center justify-end gap-3">
+                            <p className="text-default-500 text-sm">{cartItem.price}kr</p>
                             <ButtonGroup size="sm" variant="flat">
                               <Button disableRipple isIconOnly onPress={() => addRemoveItem(cartItem.id, "remove")}>
                                 <svg
@@ -279,7 +229,6 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
                                 </svg>
                               </Button>
                             </ButtonGroup>
-                            <p className="text-default-500 text-sm">{cartItem.price}kr</p>
                             <Button
                               disableRipple
                               size="sm"
@@ -305,23 +254,23 @@ export default function CartDrawer({ isOpen, onOpenChange }: { isOpen: boolean; 
                               </svg>
                             </Button>
                           </div>
-                        </CardBody>
-                      </Card>
-                    ))}
-                    <div className="flex flex-col w-full gap-1 text-default-500 font-medium text-sm">
-                      <div className="flex items-center justify-between">
-                        <p>Subtotal:</p>
-                        <p>{subTotal}kr</p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <p>Delivery:</p>
-                        <p>50kr</p>
-                      </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  ))}
+                  <div className="flex flex-col w-full gap-1 text-default-500 font-medium text-sm">
+                    <div className="flex items-center justify-between">
+                      <p>Subtotal:</p>
+                      <p>{subTotal}kr</p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <p>Delivery:</p>
+                      <p>50kr</p>
                     </div>
                   </div>
-                </Fragment>
+                </div>
               </Tab>
-            )}
+            ))}
           </Tabs>
         </DrawerBody>
         <Divider />

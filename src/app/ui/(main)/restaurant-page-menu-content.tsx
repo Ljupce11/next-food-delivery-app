@@ -3,35 +3,37 @@
 import type { MenuItem } from "@/app/lib/definitions";
 import { Card, CardBody, CardFooter, Divider, Image } from "@nextui-org/react";
 
-const images = [
-  "https://nextui.org/images/fruit-7.jpeg",
-  "https://nextui.org/images/fruit-8.jpeg",
-  "https://nextui.org/images/fruit-5.jpeg",
-  "https://nextui.org/images/fruit-4.jpeg",
-  "https://nextui.org/images/fruit-3.jpeg",
-];
+// const images = [
+//   "https://nextui.org/images/fruit-7.jpeg",
+//   "https://nextui.org/images/fruit-8.jpeg",
+//   "https://nextui.org/images/fruit-5.jpeg",
+//   "https://nextui.org/images/fruit-4.jpeg",
+//   "https://nextui.org/images/fruit-3.jpeg",
+// ];
 
 type Props = {
   menuItems: MenuItem[];
   onOpen: () => void;
-  setSelectedMenuItem: (data: { name: string; price: number }) => void;
+  setSelectedMenuItem: (data: { id: string; name: string; price: number; image: string }) => void;
 };
 
 export default function RestaurantPageMenuContent({ menuItems, onOpen, setSelectedMenuItem }: Props) {
+  const onCardClickHandler = (id: string, name: string, price: number, image: string) => {
+    onOpen();
+    setSelectedMenuItem({ id, name, price, image });
+  };
+
   return (
     <div className="w-full lg:w-3/4">
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        {menuItems.map(({ id, name, price }, index) => {
+        {menuItems.map(({ id, name, price, image }) => {
           return (
             <Card
               disableRipple
               key={id}
               isPressable
               shadow="sm"
-              onPress={() => {
-                onOpen();
-                setSelectedMenuItem({ name: name, price: price });
-              }}
+              onPress={() => onCardClickHandler(id, name, price, image)}
             >
               <CardBody className="overflow-visible">
                 <Image
@@ -39,7 +41,8 @@ export default function RestaurantPageMenuContent({ menuItems, onOpen, setSelect
                   width={"100%"}
                   height={"150px"}
                   className="object-cover rounded-xl"
-                  src={images[index % images.length]}
+                  src={image}
+                  // src={images[index % images.length]}
                 />
               </CardBody>
               <CardFooter className="pt-0 flex-col items-start">

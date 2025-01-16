@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import type { MenuItem, Restaurant } from "./definitions";
+import type { AdvancedUser, CartData, MenuItem, Restaurant } from "./definitions";
 
 export async function fetchRestaurants(search: string) {
   try {
@@ -32,5 +32,30 @@ export async function fetchMenuItems(id: string) {
   } catch (error) {
     console.error("Failed to fetch menus:", error);
     throw new Error("Failed to fetch menus.");
+  }
+}
+
+export async function fetchUserData(id: string) {
+  try {
+    const userData = await sql<AdvancedUser>`SELECT id, name, email, phone, address, cart FROM users WHERE id=${id}`;
+    return userData.rows[0];
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
+    throw new Error("Failed to fetch user data.");
+  }
+}
+
+export async function updateCart(id: string, data: CartData[]) {
+  try {
+    const menuItems = await sql<MenuItem>`
+      UPDATE users
+      SET cart=${JSON.stringify(data)}
+      WHERE id=${id}
+      RETURNING cart
+    `;
+    return menuItems.rows[0];
+  } catch (error) {
+    console.error("Failed to update cart:", error);
+    throw new Error("Failed to update cart.");
   }
 }
