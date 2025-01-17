@@ -1,9 +1,10 @@
 "use client";
 
 import type { Restaurant } from "@/app/lib/definitions";
+import { TruckIcon } from "@heroicons/react/24/outline";
+import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardFooter, Image } from "@heroui/react";
 import Link from "next/link";
-import { DeliveryIcon, RatingIcon } from "../icons";
 
 type Props = {
   restaurants: Restaurant[];
@@ -21,11 +22,11 @@ export default function RestaurantCards({ restaurants }: Props) {
                 <p className="text-tiny text-black font-bold">{name}</p>
                 <div className="flex items-center text-black  gap-1">
                   <div className="flex items-center gap-1 md:hidden xl:flex">
-                    <DeliveryIcon />
+                    <TruckIcon className="size-4" />
                     <p className="text-small">59kr</p>
                     <p>|</p>
                   </div>
-                  <RatingIcon />
+                  <StarIcon className="size-4" />
                   <p className="text-small">4.5</p>
                 </div>
               </div>

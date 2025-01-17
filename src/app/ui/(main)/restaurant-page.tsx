@@ -2,6 +2,7 @@
 
 import { updateCartData } from "@/app/lib/actions";
 import type { AdvancedUser, CartData, MenuItem, Restaurant } from "@/app/lib/definitions";
+import { MinusIcon, PlusIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
 import {
   Button,
   ButtonGroup,
@@ -143,27 +144,13 @@ export default function RestaurantPage({ user, restaurant, menuItems }: Props) {
           <ModalFooter>
             <ButtonGroup variant="flat" color="primary">
               <Button disableRipple isIconOnly>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-                  <title>Remove</title>
-                  <path
-                    fillRule="evenodd"
-                    d="M4.25 12a.75.75 0 0 1 .75-.75h14a.75.75 0 0 1 0 1.5H5a.75.75 0 0 1-.75-.75Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <MinusIcon className="size-4" />
               </Button>
               <Button disableRipple isDisabled className=" text-md" isIconOnly>
                 {1}
               </Button>
               <Button disableRipple isIconOnly>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-                  <title>Add</title>
-                  <path
-                    fillRule="evenodd"
-                    d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <PlusIcon className="size-4" />
               </Button>
             </ButtonGroup>
             <Button
@@ -174,21 +161,7 @@ export default function RestaurantPage({ user, restaurant, menuItems }: Props) {
               color="primary"
               onPress={onAddToCartHandler}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-5"
-              >
-                <title>Cart</title>
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                />
-              </svg>
+              <ShoppingBagIcon className="size-5" />
               <p className="font-semibold">Add to cart</p>
             </Button>
           </ModalFooter>

@@ -1,11 +1,11 @@
 "use client";
 
+import { UserIcon } from "@heroicons/react/24/outline";
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
 import Image from "next/image";
 import { Fragment, useActionState, useEffect } from "react";
 
 import { signUp } from "../lib/actions";
-import { LoginIcon } from "../ui/icons";
 
 export default function Page() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -46,7 +46,7 @@ export default function Page() {
       <div className="flex justify-end flex-col-reverse gap-4 lg:flex-row h-screen p-4 overflow-hidden">
         <div className="lg:w-6/12 flex flex-col items-center justify-center gap-5">
           <div className="border border-gray-100 dark:border-gray-700 p-3 rounded-full shadow-md">
-            <LoginIcon />
+            <UserIcon className="size-6" />
           </div>
           <div className="flex flex-col items-center gap-2">
             <h1 className="font-semibold text-2xl">Create a new account</h1>

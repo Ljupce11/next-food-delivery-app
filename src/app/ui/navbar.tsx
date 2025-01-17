@@ -1,6 +1,15 @@
 "use client";
 
 import {
+  ArrowRightStartOnRectangleIcon,
+  ChatBubbleLeftEllipsisIcon,
+  ClipboardDocumentListIcon,
+  HeartIcon,
+  ShoppingBagIcon,
+  UserCircleIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
+import {
   Avatar,
   Badge,
   Button,
@@ -24,15 +33,6 @@ import Logo from "../../../public/logo.png";
 import { signOutAction } from "../lib/actions";
 import type { CartData } from "../lib/definitions";
 import CartDrawer from "./cart-drawer";
-import {
-  CartIcon,
-  FavoritesIcon,
-  FeedbackIcon,
-  LogoutIcon,
-  OrdersIcon,
-  ProfileIcon,
-  UserAvatarFallbackIcon,
-} from "./icons";
 
 export default function Navbar({ user, cartData }: { user?: User; cartData?: CartData[] }) {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
@@ -75,7 +75,7 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
                   style={{ fontSize: "0.6rem" }}
                   isInvisible={cartData?.length === 0}
                 >
-                  <CartIcon />
+                  <ShoppingBagIcon className="size-6" />
                 </Badge>
               </Button>
               <CartDrawer
@@ -97,7 +97,7 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
                   radius="lg"
                   name={typeof user.name === "string" ? user.name : ""}
                   showFallback={user.name === undefined}
-                  fallback={<UserAvatarFallbackIcon />}
+                  fallback={<UserIcon className="size-4" strokeWidth={2.5} />}
                 />
               </DropdownTrigger>
               <DropdownMenu
@@ -116,7 +116,7 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
                       radius="lg"
                       name={typeof user.name === "string" ? user.name : ""}
                       showFallback={user.name === undefined}
-                      fallback={<UserAvatarFallbackIcon />}
+                      fallback={<UserIcon className="size-4" strokeWidth={2.5} />}
                     />
                     <div className="flex flex-col">
                       <p className="font-semibold">{user.name}</p>
@@ -126,20 +126,24 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
                 }
               >
                 <DropdownItem isReadOnly key="divider-one" startContent={<Divider />} textValue="divider-one" />
-                <DropdownItem key="user-profile" startContent={<ProfileIcon />}>
+                <DropdownItem key="user-profile" startContent={<UserCircleIcon className="size-5" />}>
                   Profile
                 </DropdownItem>
-                <DropdownItem key="orders" startContent={<OrdersIcon />}>
+                <DropdownItem key="orders" startContent={<ClipboardDocumentListIcon className="size-5" />}>
                   Orders
                 </DropdownItem>
-                <DropdownItem key="favorites" startContent={<FavoritesIcon />}>
+                <DropdownItem key="favorites" startContent={<HeartIcon className="size-5" />}>
                   Favorites
                 </DropdownItem>
                 <DropdownItem isReadOnly key="divider-two" startContent={<Divider />} textValue="divider-two" />
-                <DropdownItem key="help_and_feedback" startContent={<FeedbackIcon />}>
+                <DropdownItem key="help_and_feedback" startContent={<ChatBubbleLeftEllipsisIcon className="size-5" />}>
                   Help & Feedback
                 </DropdownItem>
-                <DropdownItem key="logout" startContent={<LogoutIcon />} color="danger">
+                <DropdownItem
+                  key="logout"
+                  startContent={<ArrowRightStartOnRectangleIcon className="size-5" />}
+                  color="danger"
+                >
                   Log Out
                 </DropdownItem>
               </DropdownMenu>

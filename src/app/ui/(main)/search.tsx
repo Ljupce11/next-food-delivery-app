@@ -1,13 +1,13 @@
 "use client";
 
 import { startsWith } from "@/app/lib/utils";
+import { ClockIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { searchRestaurants } from "../../lib/actions";
-import { ClockIcon, SearchIcon } from "../icons";
 
 export const previousSearches = [
   { name: "Burger king", key: "burger-king" },
@@ -109,13 +109,13 @@ export default function Search() {
       onInputChange={onInputChange}
       onSelectionChange={onSelectionChange}
       startContent={
-        <SearchIcon className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0" />
+        <MagnifyingGlassIcon className="size-5 text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0" />
       }
     >
       {(previousSearch) => (
         <AutocompleteItem variant="flat" key={previousSearch.key}>
           <div className="flex gap-2 items-center">
-            <ClockIcon />
+            <ClockIcon className="size-6 text-default-500" />
             <div className="flex flex-col">
               <span className="text-small">{previousSearch.name}</span>
             </div>
