@@ -1,48 +1,33 @@
 "use client";
 
 import { UserIcon } from "@heroicons/react/24/outline";
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
+import { Button, Form, Input, useDisclosure } from "@heroui/react";
 import Image from "next/image";
-import { Fragment, useActionState, useEffect } from "react";
+import { Fragment, useActionState, useEffect, useState } from "react";
+import type { z } from "zod";
 
 import { signUp } from "../lib/actions";
+import type { signUpSchema } from "../lib/schemas";
+import { SignUpModal } from "../ui/modals/sign-up-modal";
+
+type FormData = z.infer<typeof signUpSchema>;
 
 export default function Page() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [state, formAction, isPending] = useActionState(signUp, { success: false, message: "" });
-  console.log(state);
+  const [formErrors, setFormErrors] = useState<Partial<FormData>>({});
 
   useEffect(() => {
     if (state.success) {
       onOpen();
+    } else {
+      setFormErrors(state.errors || {});
     }
   }, [state, onOpen]);
 
   return (
     <Fragment>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
-              <ModalBody>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar risus non risus hendrerit
-                  venenatis. Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+      <SignUpModal isOpen={isOpen} onOpenChange={onOpenChange} />
       <div className="flex justify-end flex-col-reverse gap-4 lg:flex-row h-screen p-4 overflow-hidden">
         <div className="lg:w-6/12 flex flex-col items-center justify-center gap-5">
           <div className="border border-gray-100 dark:border-gray-700 p-3 rounded-full shadow-md">
@@ -52,7 +37,12 @@ export default function Page() {
             <h1 className="font-semibold text-2xl">Create a new account</h1>
             <p className="text-sm">Enter your details to sign up</p>
           </div>
-          <form action={formAction} className="w-full lg:w-6/12 flex flex-col gap-4">
+          <Form
+            action={formAction}
+            validationErrors={formErrors}
+            validationBehavior="native"
+            className="w-full lg:w-6/12 flex flex-col gap-4"
+          >
             <Input
               isRequired
               label="First name"
@@ -89,11 +79,10 @@ export default function Page() {
               labelPlacement="outside"
               placeholder="Enter your password"
             />
-            <Button isLoading={isPending} disableRipple type="submit" color="primary">
+            <Button fullWidth isLoading={isPending} disableRipple type="submit" color="primary">
               Sign up
             </Button>
-            {/* {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>} */}
-          </form>
+          </Form>
         </div>
         <div className="h-40 lg:h-full lg:w-6/12 rounded-2xl border-1 overflow-hidden">
           <Image

@@ -1,6 +1,6 @@
 "use client";
 import { UserIcon } from "@heroicons/react/24/outline";
-import { Button, Input } from "@heroui/react";
+import { Button, Form, Input } from "@heroui/react";
 import Image from "next/image";
 import { useActionState } from "react";
 
@@ -19,8 +19,9 @@ export default function Page() {
           <h1 className="font-semibold text-2xl">Sign in to your account</h1>
           <p className="text-sm">Enter your details to sign in</p>
         </div>
-        <form action={formAction} className="w-full lg:w-6/12 flex flex-col gap-4">
+        <Form action={formAction} className="w-full lg:w-6/12 flex flex-col gap-4">
           <Input
+            isRequired
             name="email"
             label="Email"
             type="email"
@@ -29,6 +30,7 @@ export default function Page() {
             placeholder="Enter your email"
           />
           <Input
+            isRequired
             name="password"
             label="Password"
             type="password"
@@ -36,11 +38,11 @@ export default function Page() {
             labelPlacement="outside"
             placeholder="Enter your password"
           />
-          <Button isLoading={isPending} disableRipple type="submit" color="primary" aria-disabled={isPending}>
+          {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>}
+          <Button fullWidth isLoading={isPending} disableRipple type="submit" color="primary" aria-disabled={isPending}>
             Sign in
           </Button>
-          {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>}
-        </form>
+        </Form>
       </div>
       <div className="h-40 lg:h-full lg:w-6/12 rounded-2xl border-1 overflow-hidden">
         <Image

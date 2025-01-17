@@ -91,10 +91,10 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
                 <Avatar
                   isBordered
                   size="sm"
-                  as="button"
-                  color="default"
-                  className="transition-transform"
                   radius="lg"
+                  as="button"
+                  color="primary"
+                  className="transition-transform"
                   name={typeof user.name === "string" ? user.name : ""}
                   showFallback={user.name === undefined}
                   fallback={<UserIcon className="size-4" strokeWidth={2.5} />}

@@ -26,6 +26,9 @@
       },
       "correctness": {
         "noChildrenProp": "off"
+      },
+      "complexity": {
+        "noForEach": "off"
       }
     }
   },
