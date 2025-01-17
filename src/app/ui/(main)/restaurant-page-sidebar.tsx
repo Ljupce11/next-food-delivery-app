@@ -1,7 +1,7 @@
 "use client";
 
 import type { Restaurant } from "@/app/lib/definitions";
-import { Divider, Image, Tab, Tabs } from "@nextui-org/react";
+import { Divider, Image, Tab, Tabs } from "@heroui/react";
 import { useEffect, useState } from "react";
 
 const categories = [

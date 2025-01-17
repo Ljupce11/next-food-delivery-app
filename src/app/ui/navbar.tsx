@@ -14,7 +14,7 @@ import {
   NavbarItem,
   Navbar as NextNavbar,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import type { User } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";

@@ -1,7 +1,7 @@
 "use client";
 
 import type { Restaurant } from "@/app/lib/definitions";
-import { Card, CardFooter, Image } from "@nextui-org/react";
+import { Card, CardFooter, Image } from "@heroui/react";
 import Link from "next/link";
 import { DeliveryIcon, RatingIcon } from "../icons";
 

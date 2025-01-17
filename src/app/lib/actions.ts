@@ -1,6 +1,7 @@
 "use server";
 
 import { sql } from "@vercel/postgres";
+// import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 
@@ -25,6 +26,29 @@ export async function authenticate(prevState: string | undefined, formData: Form
     }
     throw error;
   }
+}
+
+export async function signUp(_prevState: { success?: boolean; message?: string }, formData: FormData) {
+  const first_name = formData.get("first_name")?.toString();
+  const last_name = formData.get("last_name")?.toString();
+  const full_name = `${first_name} ${last_name}`;
+  const email = formData.get("email")?.toString();
+  const password = formData.get("password")?.toString();
+  const address = "Halsjogatan 37, Malmö";
+  return { success: true, message: "Account created successfully." };
+  // try {
+  //   const saltRounds = 10;
+  //   const hashedPassword = await bcrypt.hash(password || "", saltRounds);
+  //   await sql`
+  //     INSERT INTO users (id, name, email, password, phone, address, cart)
+  //     VALUES
+  //     (gen_random_uuid(), ${full_name}, ${email}, ${hashedPassword.toString()}, 0721234567, ${address}, ${JSON.stringify([])})
+  //   `;
+  //   return { success: true, message: "Account created successfully." };
+  // } catch (error) {
+  //   console.log("Error:", error);
+  //   return { success: false, message: "Failed to create account." };
+  // }
 }
 
 export async function signOutAction() {

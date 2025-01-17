@@ -14,7 +14,7 @@ import {
   Image,
   Tab,
   Tabs,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import type { User } from "next-auth";
 import { type Key, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
@@ -128,8 +128,28 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
     }, 0);
   const total = subTotal ? subTotal + DELIVERY : 0;
 
+  const onOpenChangeHandler = () => {
+    // TEMPORARY FIX: Remove the drawer from the DOM after it's closed
+    if (isOpen) {
+      const childElement = document.querySelector(".cart-drawer");
+      const parentElement = childElement?.parentElement;
+      if (parentElement) {
+        setTimeout(() => {
+          parentElement.remove();
+        }, 500);
+      }
+    }
+    onOpenChange();
+  };
+
   return (
-    <Drawer backdrop="blur" isOpen={isOpen} motionProps={MOTION_PROPS} onOpenChange={onOpenChange}>
+    <Drawer
+      classNames={{ wrapper: "cart-drawer" }}
+      backdrop="blur"
+      isOpen={isOpen}
+      motionProps={MOTION_PROPS}
+      onOpenChange={onOpenChangeHandler}
+    >
       <DrawerContent>
         <DrawerHeader className="flex flex-col gap-1">Your items</DrawerHeader>
         <DrawerBody>

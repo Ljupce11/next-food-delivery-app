@@ -1,5 +1,5 @@
 "use client";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import Image from "next/image";
 import { useActionState } from "react";
 
@@ -12,7 +12,7 @@ export default function Page() {
   return (
     <div className="flex justify-end flex-col-reverse gap-4 lg:flex-row h-screen p-4 overflow-hidden">
       <div className="lg:w-6/12 flex flex-col items-center justify-center gap-5">
-        <div className="border-1 border-gray-300 dark:border-gray-700 p-3 rounded-full shadow-lg">
+        <div className="border-1 border-gray-100 dark:border-gray-700 p-3 rounded-full shadow-md">
           <LoginIcon />
         </div>
         <div className="flex flex-col items-center gap-2">

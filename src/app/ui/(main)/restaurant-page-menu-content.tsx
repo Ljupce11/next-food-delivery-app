@@ -1,7 +1,7 @@
 "use client";
 
 import type { MenuItem } from "@/app/lib/definitions";
-import { Card, CardBody, CardFooter, Divider, Image } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, Divider, Image } from "@heroui/react";
 
 // const images = [
 //   "https://nextui.org/images/fruit-7.jpeg",

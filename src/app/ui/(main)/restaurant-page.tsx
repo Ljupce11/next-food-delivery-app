@@ -13,7 +13,7 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useState } from "react";
 import RestaurantPageMenuContent from "./restaurant-page-menu-content";
 import RestaurantPageSidebar from "./restaurant-page-sidebar";
