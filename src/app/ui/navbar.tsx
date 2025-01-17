@@ -33,14 +33,24 @@ import Logo from "../../../public/logo.png";
 import { signOutAction } from "../lib/actions";
 import type { CartData } from "../lib/definitions";
 import CartDrawer from "./cart-drawer";
+import { HelpFeedbackModal } from "./modals/help-feedback-modal";
 
 export default function Navbar({ user, cartData }: { user?: User; cartData?: CartData[] }) {
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isCartOpen,
+    onOpen: onOpenCart,
+    onClose: onCloseCart,
+    onOpenChange: onOpenChangeCart,
+  } = useDisclosure();
+  const { isOpen: isContactOpen, onOpen: onOpenContact, onOpenChange: onOpenChangeContact } = useDisclosure();
 
   const onDropdownActionHandler = (key: Key) => {
     switch (key) {
       case "logout":
         signOutAction();
+        break;
+      case "help_and_feedback":
+        onOpenContact();
         break;
       default:
         console.log(key);
@@ -49,6 +59,7 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
 
   return (
     <NextNavbar isBordered shouldHideOnScroll>
+      <HelpFeedbackModal isOpen={isContactOpen} onOpenChange={onOpenChangeContact} />
       <NavbarBrand>
         <Link prefetch href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image src={Logo} className="h-8 w-8" alt="Flowbite Logo" />
@@ -66,7 +77,7 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
         {user ? (
           <Fragment>
             <NavbarItem>
-              <Button disableRipple isIconOnly aria-label="Cart" variant="light" onPress={onOpen}>
+              <Button disableRipple isIconOnly aria-label="Cart" variant="light" onPress={onOpenCart}>
                 <Badge
                   size="sm"
                   shape="circle"
@@ -81,9 +92,9 @@ export default function Navbar({ user, cartData }: { user?: User; cartData?: Car
               <CartDrawer
                 user={user}
                 cartData={cartData}
-                isOpen={isOpen}
-                onClose={onClose}
-                onOpenChange={onOpenChange}
+                isOpen={isCartOpen}
+                onClose={onCloseCart}
+                onOpenChange={onOpenChangeCart}
               />
             </NavbarItem>
             <Dropdown backdrop="blur" placement="bottom-end">
