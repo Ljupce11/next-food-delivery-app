@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import type { AdvancedUser, CartData, MenuItem, Order, Restaurant } from "./definitions";
+import type { AdvancedUser, CartData, MenuItem, Order, OrderAnalytics, Restaurant } from "./definitions";
 
 export async function fetchRestaurants(search: string) {
   try {
@@ -67,5 +67,24 @@ export async function fetchOrders(id: string | null) {
   } catch (error) {
     console.error("Failed to fetch orders:", error);
     throw new Error("Failed to fetch orders.");
+  }
+}
+
+export async function fetchOrderAnalytics(id: string | null) {
+  try {
+    const order = await sql<OrderAnalytics>`
+    SELECT 
+      (SELECT COUNT(*) FROM orders WHERE user_id = ${id}) AS row_count_orders,
+      (SELECT COUNT(DISTINCT restaurant_id) FROM orders WHERE user_id = ${id}) AS unique_restaurant_count,
+      (SELECT SUM(total) FROM orders WHERE user_id = ${id}) AS total_sum,
+      (SELECT SUM(oi.quantity) 
+      FROM order_items oi
+      JOIN orders o ON oi.order_id = o.id
+      WHERE o.user_id = ${id}) AS total_quantity
+    `;
+    return order.rows[0];
+  } catch (error) {
+    console.error("Failed to fetch order analytics:", error);
+    throw new Error("Failed to fetch order analytics.");
   }
 }

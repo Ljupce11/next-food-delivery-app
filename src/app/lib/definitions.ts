@@ -59,3 +59,10 @@ export type OrderItem = {
   quantity: number;
   item_image: string;
 };
+
+export type OrderAnalytics = {
+  total_sum: string;
+  total_quantity: string;
+  row_count_orders: string;
+  unique_restaurant_count: string;
+};
