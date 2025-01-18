@@ -1,5 +1,6 @@
 "use client";
 
+import { completeOrder } from "@/app/lib/actions";
 import type { Order } from "@/app/lib/definitions";
 import { CheckCircleIcon, ClipboardDocumentListIcon, ClockIcon } from "@heroicons/react/24/outline";
 import {
@@ -38,6 +39,7 @@ type Props = {
 export default function OrdersInfoContent({ orders }: Props) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [modalDetails, setModalDetails] = useState<Order | null>(null);
+  const [isLoading, setIsLoading] = useState<{ id: string | null; state: boolean }>({ id: null, state: false });
 
   const onOpenModalHandler = useCallback(
     (order: Order) => {
@@ -47,78 +49,35 @@ export default function OrdersInfoContent({ orders }: Props) {
     [onOpen],
   );
 
-  const renderCell = useCallback(
-    (order: Order, columnKey: React.Key) => {
-      const cellValue = order[columnKey as keyof Order];
-      switch (columnKey) {
-        case "restaurant_name":
-          return (
-            <User avatarProps={{ radius: "lg", src: order.restaurant_avatar }} name={cellValue}>
-              {order.restaurant_name}
-            </User>
-          );
-        case "order_date": {
-          const date = new Date(order.order_date);
-          const options = {
-            year: "numeric" as const,
-            month: "2-digit" as const,
-            day: "2-digit" as const,
-            hour: "2-digit" as const,
-            minute: "2-digit" as const,
-            hour12: false,
-          };
-          const orderDate = date.toLocaleDateString("sv-SE", options);
-          return <p className="text-bold text-sm capitalize">{orderDate}</p>;
-        }
-        case "status":
-          return (
-            <Chip className="capitalize" color={statusColorMap[order.status]} size="sm" variant="flat">
-              <div className="flex items-center gap-1">
-                {order.status === "In Progress" ? (
-                  <ClockIcon className="size-4" />
-                ) : (
-                  <CheckCircleIcon className="size-4" />
-                )}
-                {cellValue}
-              </div>
-            </Chip>
-          );
-        case "total":
-          return <p className="text-bold">{cellValue}kr</p>;
-        case "details":
-          return (
-            <div className="flex justify-center items-center w-full gap-2">
-              <Tooltip size="sm" color="foreground" content="Complete order">
-                <Button
-                  className={`${order.status === "In Progress" ? "visible" : "invisible"}`}
-                  onPress={() => {}}
-                  size="sm"
-                  variant="flat"
-                  color="success"
-                  isIconOnly
-                  disableRipple
-                >
-                  <CheckCircleIcon className="size-5" />
-                </Button>
-              </Tooltip>
-              <Tooltip size="sm" color="foreground" content="More info">
-                <Button onPress={() => onOpenModalHandler(order)} size="sm" variant="flat" isIconOnly disableRipple>
-                  <ClipboardDocumentListIcon className="size-5" />
-                </Button>
-              </Tooltip>
-            </div>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [onOpenModalHandler],
-  );
+  const completeOrderHandler = useCallback(async (orderId: string) => {
+    setIsLoading({ id: orderId, state: true });
+    try {
+      await completeOrder(orderId);
+    } catch (error) {
+      setIsLoading({ id: null, state: false });
+      console.error(error);
+      throw new Error("Failed to complete order");
+    }
+  }, []);
+
+  const DateCell = ({ order }: { order: Order }) => {
+    const date = new Date(order.order_date);
+    const options = {
+      year: "numeric" as const,
+      month: "2-digit" as const,
+      day: "2-digit" as const,
+      hour: "2-digit" as const,
+      minute: "2-digit" as const,
+      hour12: false,
+    };
+    const orderDate = date.toLocaleDateString("sv-SE", options);
+    return <p className="text-bold text-sm capitalize">{orderDate}</p>;
+  };
 
   return (
     <Fragment>
       <OrderDetailsModal modalDetails={modalDetails} isOpen={isOpen} onOpenChange={onOpenChange} />
-      <Table isStriped aria-label="Example table with custom cells">
+      <Table isStriped aria-label="Orders table">
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.uid} align={column.uid === "details" ? "center" : "start"}>
@@ -126,10 +85,57 @@ export default function OrdersInfoContent({ orders }: Props) {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={orders} emptyContent={"You haven't made any orders yet"}>
-          {(item) => (
-            <TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>
-          )}
+        <TableBody emptyContent={"You haven't made any orders yet"}>
+          {orders.map((order) => (
+            <TableRow key={order.id}>
+              <TableCell>
+                <User avatarProps={{ radius: "lg", src: order.restaurant_avatar }} name={order.restaurant_name}>
+                  {order.restaurant_name}
+                </User>
+              </TableCell>
+              <TableCell>
+                <DateCell order={order} />
+              </TableCell>
+              <TableCell>
+                <Chip className="capitalize" color={statusColorMap[order.status]} size="sm" variant="flat">
+                  <div className="flex items-center gap-1">
+                    {order.status === "In Progress" ? (
+                      <ClockIcon className="size-4" />
+                    ) : (
+                      <CheckCircleIcon className="size-4" />
+                    )}
+                    {order.status}
+                  </div>
+                </Chip>
+              </TableCell>
+              <TableCell>
+                <p className="text-bold">{order.total}kr</p>
+              </TableCell>
+              <TableCell>
+                <div className="flex justify-center items-center w-full gap-2">
+                  <Tooltip size="sm" color="foreground" content="Complete order">
+                    <Button
+                      size="sm"
+                      variant="flat"
+                      color="success"
+                      isIconOnly
+                      disableRipple
+                      isLoading={isLoading.id === order.id && isLoading.state}
+                      onPress={() => completeOrderHandler(order.id)}
+                      className={`${order.status === "In Progress" ? "visible" : "invisible"}`}
+                    >
+                      <CheckCircleIcon className="size-5" />
+                    </Button>
+                  </Tooltip>
+                  <Tooltip size="sm" color="foreground" content="More info">
+                    <Button onPress={() => onOpenModalHandler(order)} size="sm" variant="flat" isIconOnly disableRipple>
+                      <ClipboardDocumentListIcon className="size-5" />
+                    </Button>
+                  </Tooltip>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </Fragment>

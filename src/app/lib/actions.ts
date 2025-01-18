@@ -126,3 +126,17 @@ export async function completeCheckout(orderDetails: CheckoutOrderDetails, updat
     throw new Error("Failed to complete checkout.");
   }
 }
+
+export async function completeOrder(orderId: string) {
+  try {
+    await sql<CartData>`
+      UPDATE orders
+      SET status='Delivered'
+      WHERE id=${orderId}
+    `;
+    revalidatePath("/orders");
+  } catch (error) {
+    console.error("Failed to update cart:", error);
+    throw new Error("Failed to update cart.");
+  }
+}
