@@ -46,7 +46,7 @@ export default function OrderItemsDetails({ orderDetails }: { orderDetails: Orde
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
       </TableHeader>
-      <TableBody items={orderItems}>
+      <TableBody items={orderItems} emptyContent={"No order items found"}>
         {isLoading ? (
           <TableRow key={1}>
             <TableCell>

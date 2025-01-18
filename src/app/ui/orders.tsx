@@ -116,7 +116,7 @@ export default function OrdersContent({ orders }: { orders: Order[] }) {
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody items={orders}>
+          <TableBody items={orders} emptyContent={"You haven't made any orders yet"}>
             {(item) => (
               <TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>
             )}
