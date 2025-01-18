@@ -20,7 +20,7 @@ import {
 import type { User } from "next-auth";
 import { Fragment, type Key, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { updateCartDataFromDrawer } from "../lib/actions";
+import { completeCheckout, updateCartDataFromDrawer } from "../lib/actions";
 import type { CartData } from "../lib/definitions";
 
 const MOTION_PROPS = {
@@ -52,6 +52,7 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
   const [cartData, setCartData] = useState(existingCartData);
   const [selectedRestaurantKey, setSelectedRestaurantKey] = useState<Key>("");
   const [isLoading, setIsLoading] = useState<{ id: string | null; state: boolean }>({ id: null, state: false });
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState<boolean>(false);
   const selectedRestaurant = cartData?.find((restaurant) => restaurant.restaurantId === selectedRestaurantKey);
 
   useEffect(() => {
@@ -146,6 +147,33 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
       setTimeout(() => {
         parentElement.remove();
       }, 500);
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (!selectedRestaurant) return;
+    const dbData = {
+      total: total,
+      user_id: user.id,
+      status: "In Progress",
+      id: self.crypto.randomUUID(),
+      restaurant_avatar: selectedRestaurant.image,
+      restaurant_id: selectedRestaurant.restaurantId,
+      restaurant_name: selectedRestaurant.restaurantName,
+      items: selectedRestaurant.items,
+    };
+    const updatedCartData = cartData?.filter(
+      (restaurant) => restaurant.restaurantId !== selectedRestaurant.restaurantId,
+    );
+    setIsCheckoutLoading(true);
+    try {
+      await completeCheckout(dbData, updatedCartData);
+      setIsCheckoutLoading(false);
+      heroUITemporaryFix();
+      onClose();
+    } catch (error) {
+      setIsCheckoutLoading(false);
+      console.log(error);
     }
   };
 
@@ -277,7 +305,7 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
                   <p className="text-default-600 font-semibold">Total:</p>
                   <p className="text-default-600 font-semibold">{total}kr</p>
                 </div>
-                <Button disableRipple fullWidth color="primary" onPress={() => {}}>
+                <Button isLoading={isCheckoutLoading} disableRipple fullWidth color="primary" onPress={handleCheckout}>
                   Go to checkout
                 </Button>
               </div>

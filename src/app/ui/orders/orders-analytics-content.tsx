@@ -40,7 +40,7 @@ export default function OrdersAnalyticsContent({ orderAnalytics }: Props) {
               <CardBody>
                 <p className="text-lg font-semibold">
                   {value}
-                  {id === "totalSpent" && "kr"}
+                  {id === "total_sum" && "kr"}
                 </p>
                 <p>{text}</p>
               </CardBody>

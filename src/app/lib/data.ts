@@ -62,7 +62,7 @@ export async function updateCart(id: string, data: CartData[]) {
 
 export async function fetchOrders(id: string | null) {
   try {
-    const orders = await sql<Order>`SELECT * FROM orders WHERE user_id=${id}`;
+    const orders = await sql<Order>`SELECT * FROM orders WHERE user_id=${id} ORDER BY order_date DESC;`;
     return orders.rows;
   } catch (error) {
     console.error("Failed to fetch orders:", error);

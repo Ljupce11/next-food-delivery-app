@@ -66,3 +66,22 @@ export type OrderAnalytics = {
   row_count_orders: string;
   unique_restaurant_count: string;
 };
+
+export type CheckoutOrderDetails = {
+  total: number;
+  user_id: string | undefined;
+  status: string;
+  id: string;
+  restaurant_avatar: string;
+  restaurant_id: string;
+  restaurant_name: string;
+  items: {
+    id: string;
+    name: string;
+    extra: string;
+    price: number;
+    unitPrice: number;
+    amount: number;
+    image: string;
+  }[];
+};

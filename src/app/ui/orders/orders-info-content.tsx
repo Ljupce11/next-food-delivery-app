@@ -1,7 +1,7 @@
 "use client";
 
 import type { Order } from "@/app/lib/definitions";
-import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, ClipboardDocumentListIcon, ClockIcon } from "@heroicons/react/24/outline";
 import {
   Button,
   Chip,
@@ -12,6 +12,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Tooltip,
   User,
   useDisclosure,
 } from "@heroui/react";
@@ -57,24 +58,55 @@ export default function OrdersInfoContent({ orders }: Props) {
             </User>
           );
         case "order_date": {
-          const date = new Date();
-          const options = { year: "numeric" as const, month: "2-digit" as const, day: "2-digit" as const };
+          const date = new Date(order.order_date);
+          const options = {
+            year: "numeric" as const,
+            month: "2-digit" as const,
+            day: "2-digit" as const,
+            hour: "2-digit" as const,
+            minute: "2-digit" as const,
+            hour12: false,
+          };
           const orderDate = date.toLocaleDateString("sv-SE", options);
           return <p className="text-bold text-sm capitalize">{orderDate}</p>;
         }
         case "status":
           return (
             <Chip className="capitalize" color={statusColorMap[order.status]} size="sm" variant="flat">
-              {cellValue}
+              <div className="flex items-center gap-1">
+                {order.status === "In Progress" ? (
+                  <ClockIcon className="size-4" />
+                ) : (
+                  <CheckCircleIcon className="size-4" />
+                )}
+                {cellValue}
+              </div>
             </Chip>
           );
         case "total":
           return <p className="text-bold">{cellValue}kr</p>;
         case "details":
           return (
-            <Button onPress={() => onOpenModalHandler(order)} size="sm" variant="flat" isIconOnly disableRipple>
-              <ClipboardDocumentListIcon className="size-5" />
-            </Button>
+            <div className="flex justify-center items-center w-full gap-2">
+              <Tooltip size="sm" color="foreground" content="Complete order">
+                <Button
+                  className={`${order.status === "In Progress" ? "visible" : "invisible"}`}
+                  onPress={() => {}}
+                  size="sm"
+                  variant="flat"
+                  color="success"
+                  isIconOnly
+                  disableRipple
+                >
+                  <CheckCircleIcon className="size-5" />
+                </Button>
+              </Tooltip>
+              <Tooltip size="sm" color="foreground" content="More info">
+                <Button onPress={() => onOpenModalHandler(order)} size="sm" variant="flat" isIconOnly disableRipple>
+                  <ClipboardDocumentListIcon className="size-5" />
+                </Button>
+              </Tooltip>
+            </div>
           );
         default:
           return cellValue;

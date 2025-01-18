@@ -7,8 +7,9 @@ import { revalidatePath } from "next/cache";
 
 import { signIn, signOut } from "../../../auth";
 import { fetchRestaurants, updateCart } from "./data";
-import type { CartData, OrderItem, Restaurant } from "./definitions";
+import type { CartData, CheckoutOrderDetails, OrderItem, Restaurant } from "./definitions";
 import { signUpSchema } from "./schemas";
+import { prepareCheckoutQueries } from "./utils";
 
 export async function authenticate(prevState: string | undefined, formData: FormData) {
   try {
@@ -105,5 +106,23 @@ export async function fetchOrderItems(id: string) {
   } catch (error) {
     console.error("Failed to fetch order items:", error);
     throw new Error("Failed to fetch order items.");
+  }
+}
+
+export async function completeCheckout(orderDetails: CheckoutOrderDetails, updatedCartData?: CartData[]) {
+  const { queries, params, items } = prepareCheckoutQueries(orderDetails, updatedCartData);
+  try {
+    // Execute the orders query (7 parameters)
+    await sql.query(queries[0], params.slice(0, 7));
+    // Execute each order_items query (5 parameters for each item)
+    for (let i = 1; i <= items.length; i++) {
+      await sql.query(queries[i], params.slice(7 + (i - 1) * 5, 7 + i * 5)); // Each query needs 5 params
+    }
+    // Execute the users update query (1 parameter)
+    await sql.query(queries[queries.length - 1], params.slice(params.length - 1));
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Failed to complete checkout:", error);
+    throw new Error("Failed to complete checkout.");
   }
 }
