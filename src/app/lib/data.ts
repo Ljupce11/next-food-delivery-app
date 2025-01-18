@@ -60,7 +60,7 @@ export async function updateCart(id: string, data: CartData[]) {
   }
 }
 
-export async function fetchOrders(id: string) {
+export async function fetchOrders(id: string | null) {
   try {
     const orders = await sql<Order>`SELECT * FROM orders WHERE user_id=${id}`;
     return orders.rows;

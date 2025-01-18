@@ -4,6 +4,6 @@ import { auth } from "../../../../auth";
 
 export default async function Page() {
   const authData = await auth();
-  const orders = await fetchOrders(authData?.user?.id || "");
+  const orders = await fetchOrders(authData?.user?.id || null);
   return <OrdersContent orders={orders} />;
 }
