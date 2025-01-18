@@ -13,6 +13,7 @@ import {
   Avatar,
   Badge,
   Button,
+  Chip,
   Divider,
   Dropdown,
   DropdownItem,
@@ -82,9 +83,10 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
               />
             </DropdownTrigger>
             <DropdownMenu
-              onAction={onDropdownActionHandler}
-              aria-label="Profile Actions"
               variant="flat"
+              aria-label="Profile Actions"
+              onAction={onDropdownActionHandler}
+              disabledKeys={["user-profile", "favorites"]}
               topContent={
                 <div className="flex items-center gap-4 px-2 py-2">
                   <Avatar
@@ -107,13 +109,29 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
               }
             >
               <DropdownItem isReadOnly key="divider-one" startContent={<Divider />} textValue="divider-one" />
-              <DropdownItem key="user-profile" startContent={<UserCircleIcon className="size-5" />}>
+              <DropdownItem
+                key="user-profile"
+                startContent={<UserCircleIcon className="size-5" />}
+                endContent={
+                  <Chip variant="flat" color="secondary" size="sm">
+                    Coming soon
+                  </Chip>
+                }
+              >
                 Profile
               </DropdownItem>
               <DropdownItem key="orders" startContent={<ClipboardDocumentListIcon className="size-5" />}>
                 Orders
               </DropdownItem>
-              <DropdownItem key="favorites" startContent={<HeartIcon className="size-5" />}>
+              <DropdownItem
+                key="favorites"
+                startContent={<HeartIcon className="size-5" />}
+                endContent={
+                  <Chip variant="flat" color="secondary" size="sm">
+                    Coming soon
+                  </Chip>
+                }
+              >
                 Favorites
               </DropdownItem>
               <DropdownItem isReadOnly key="divider-two" startContent={<Divider />} textValue="divider-two" />

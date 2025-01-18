@@ -39,3 +39,23 @@ export type CartData = {
     image: string;
   }[];
 };
+
+export type Order = {
+  id: string;
+  total: string;
+  user_id: string;
+  order_date: string;
+  restaurant_id: string;
+  restaurant_name: string;
+  restaurant_avatar: string;
+  status: "In Progress" | "Delivered";
+};
+
+export type OrderItem = {
+  id: string;
+  name: string;
+  price: string;
+  order_id: string;
+  quantity: number;
+  item_image: string;
+};

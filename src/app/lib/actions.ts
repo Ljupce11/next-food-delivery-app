@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 
 import { signIn, signOut } from "../../../auth";
 import { fetchRestaurants, updateCart } from "./data";
-import type { CartData } from "./definitions";
+import type { CartData, OrderItem, Restaurant } from "./definitions";
 import { signUpSchema } from "./schemas";
 
 export async function authenticate(prevState: string | undefined, formData: FormData) {
@@ -85,5 +85,25 @@ export async function updateCartDataFromDrawer(userId: string, cartData: CartDat
   } catch (error) {
     console.error("Failed to update cart:", error);
     throw new Error("Failed to update cart.");
+  }
+}
+
+export async function fetchRestaurantInfo(id: string) {
+  try {
+    const restaurant = await sql<Restaurant>`SELECT * FROM restaurants WHERE id=${id}`;
+    return restaurant.rows[0];
+  } catch (error) {
+    console.error("Failed to fetch restaurant:", error);
+    throw new Error("Failed to fetch restaurant.");
+  }
+}
+
+export async function fetchOrderItems(id: string) {
+  try {
+    const restaurant = await sql<OrderItem>`SELECT * FROM order_items WHERE order_id=${id}`;
+    return restaurant.rows;
+  } catch (error) {
+    console.error("Failed to fetch order items:", error);
+    throw new Error("Failed to fetch order items.");
   }
 }
