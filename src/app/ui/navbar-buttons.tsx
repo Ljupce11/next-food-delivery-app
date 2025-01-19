@@ -24,10 +24,11 @@ import {
 } from "@heroui/react";
 import type { User } from "next-auth";
 import Link from "next/link";
-import { Fragment, type Key } from "react";
+import { Fragment, type Key, Suspense, lazy } from "react";
 
 import type { CartData } from "../lib/definitions";
-import CartDrawer from "./cart-drawer";
+
+const LazyCartDrawer = lazy(() => import("./cart-drawer"));
 
 type Props = {
   user?: User;
@@ -60,13 +61,15 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
                 <ShoppingBagIcon className="size-6" />
               </Badge>
             </Button>
-            <CartDrawer
-              user={user}
-              cartData={cartData}
-              isOpen={isCartOpen}
-              onClose={onCloseCart}
-              onOpenChange={onOpenChangeCart}
-            />
+            <Suspense fallback={null}>
+              <LazyCartDrawer
+                user={user}
+                cartData={cartData}
+                isOpen={isCartOpen}
+                onClose={onCloseCart}
+                onOpenChange={onOpenChangeCart}
+              />
+            </Suspense>
           </NavbarItem>
           <Dropdown backdrop="blur" placement="bottom-end">
             <DropdownTrigger>
