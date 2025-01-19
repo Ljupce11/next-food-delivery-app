@@ -5,6 +5,7 @@ import {
   Card,
   CardBody,
   CardFooter,
+  Divider,
   Skeleton,
   Table,
   TableBody,
@@ -143,5 +144,87 @@ export function OrdersInfoSkeleton() {
         })}
       </TableBody>
     </Table>
+  );
+}
+
+export function RestaurantPageMenuSkeleton() {
+  return (
+    <div className="w-full lg:w-3/4">
+      <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        {Array.from({ length: 9 }).map((_, index) => {
+          const id = index + 1;
+          return (
+            <Card disableRipple key={id} isPressable shadow="sm">
+              <CardBody className="overflow-visible">
+                <Skeleton className="rounded-xl">
+                  <div style={{ height: "150px" }} className="w-full rounded-xl bg-default-200" />
+                </Skeleton>
+              </CardBody>
+              <CardFooter className="pt-0 flex-col items-start gap-1">
+                <Skeleton className="rounded-xl">
+                  <div className="h-3 w-24 rounded-xl bg-default-200" />
+                </Skeleton>
+                <Skeleton className="rounded-xl">
+                  <div className="h-3 w-48 rounded-xl bg-default-200" />
+                </Skeleton>
+                <Divider className="my-2.5" />
+                <div className="flex items-center justify-between w-full text-sm">
+                  <Skeleton className="rounded-xl">
+                    <div className="h-5 w-10 rounded-xl bg-default-200" />
+                  </Skeleton>
+                  <Skeleton className="rounded-xl">
+                    <div className="h-5 w-20 rounded-xl bg-default-200" />
+                  </Skeleton>
+                </div>
+              </CardFooter>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export function RestaurantPageSidebarSkeleton() {
+  return (
+    <div className="w-full lg:w-1/6 overflow-x-hidden">
+      <div className="flex flex-col w-full items-center gap-6">
+        <Skeleton className="rounded-xl">
+          <div style={{ height: "100px", width: "100px" }} className="rounded-xl bg-default-200" />
+        </Skeleton>
+        <div className="flex flex-col items-center gap-2 mt-2">
+          <Skeleton className="rounded-xl">
+            <div className="h-5 w-28 rounded-xl bg-default-200" />
+          </Skeleton>
+          <Skeleton className="rounded-xl">
+            <div className="h-4 w-44 rounded-xl bg-default-200" />
+          </Skeleton>
+          <Skeleton className="rounded-xl">
+            <div className="h-4 w-28 rounded-xl bg-default-200" />
+          </Skeleton>
+          <Skeleton className="rounded-xl">
+            <div className="h-4 w-20 rounded-xl bg-default-200" />
+          </Skeleton>
+          <Skeleton className="rounded-xl">
+            <div className="h-4 w-28 rounded-xl bg-default-200" />
+          </Skeleton>
+        </div>
+      </div>
+      <Divider className="my-5" />
+      <div className="flex justify-center w-full">
+        <Skeleton className="w-full md:w-auto rounded-xl">
+          <div className="h-10 w-full md:h-72 md:w-28 rounded-xl bg-default-200" />
+        </Skeleton>
+      </div>
+    </div>
+  );
+}
+
+export function RestaurantPageSkeleton() {
+  return (
+    <div className="flex flex-col justify-around w-full px-8 py-5 gap-3 lg:flex-row">
+      <RestaurantPageSidebarSkeleton />
+      <RestaurantPageMenuSkeleton />
+    </div>
   );
 }
