@@ -9,7 +9,7 @@ type Props = {
   onOpenChange: (isOpen: boolean) => void;
 };
 
-export function HelpFeedbackModal({ isOpen, onOpenChange }: Props) {
+export default function HelpFeedbackModal({ isOpen, onOpenChange }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   const onSendHandler = (e: FormEvent<HTMLFormElement>) => {

@@ -3,12 +3,13 @@
 import { UserIcon } from "@heroicons/react/24/outline";
 import { Button, Form, Input, useDisclosure } from "@heroui/react";
 import Image from "next/image";
-import { Fragment, useActionState, useEffect, useState } from "react";
+import { Fragment, Suspense, lazy, useActionState, useEffect, useState } from "react";
 import type { z } from "zod";
 
 import { signUp } from "../lib/actions";
 import type { signUpSchema } from "../lib/schemas";
-import { SignUpModal } from "../ui/modals/sign-up-modal";
+
+const LazySignUpModal = lazy(() => import("../ui/modals/sign-up-modal"));
 
 type FormData = z.infer<typeof signUpSchema>;
 
@@ -27,7 +28,9 @@ export default function Page() {
 
   return (
     <Fragment>
-      <SignUpModal isOpen={isOpen} onOpenChange={onOpenChange} />
+      <Suspense fallback={null}>
+        <LazySignUpModal isOpen={isOpen} onOpenChange={onOpenChange} />
+      </Suspense>
       <div className="flex justify-end flex-col-reverse gap-4 lg:flex-row h-screen p-4 overflow-hidden">
         <div className="lg:w-6/12 flex flex-col items-center justify-center gap-5">
           <div className="border border-gray-100 dark:border-gray-700 p-3 rounded-full shadow-md">

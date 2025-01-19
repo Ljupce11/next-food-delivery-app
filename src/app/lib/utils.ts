@@ -1,4 +1,4 @@
-import type { CartData, CheckoutOrderDetails } from "./definitions";
+import type { AdvancedUser, CartData, CheckoutOrderDetails, MenuItem, Restaurant } from "./definitions";
 
 export function startsWith(str: string, prefix: string): boolean {
   const lowerStr = str.toLowerCase();
@@ -78,4 +78,94 @@ export function prepareCheckoutQueries(orderDetails: CheckoutOrderDetails, updat
     params,
     items,
   };
+}
+
+export function addItemToCart(user: AdvancedUser, restaurant: Restaurant, selectedMenuItem: MenuItem) {
+  let updatedCartData: CartData[] = [];
+  const existingCartData = user.cart;
+
+  if (existingCartData) {
+    updatedCartData = [...existingCartData];
+    if (updatedCartData.length > 0) {
+      const existingRestaurantIndex = updatedCartData.findIndex((cartData) => cartData.restaurantId === restaurant.id);
+      if (existingRestaurantIndex !== -1) {
+        if (updatedCartData[existingRestaurantIndex].items.length > 0) {
+          if (updatedCartData[existingRestaurantIndex].items.some((item) => item.id === selectedMenuItem?.id)) {
+            updatedCartData[existingRestaurantIndex].items.map((item) => {
+              if (item.id === selectedMenuItem?.id) {
+                item.amount += 1;
+              }
+              return item;
+            });
+          } else {
+            updatedCartData[existingRestaurantIndex].items.push({
+              id: selectedMenuItem?.id,
+              name: selectedMenuItem?.name || "",
+              extra: "",
+              price: selectedMenuItem?.price || 0,
+              unitPrice: selectedMenuItem?.price || 0,
+              amount: 1,
+              image: selectedMenuItem?.image,
+            });
+          }
+        }
+      } else {
+        updatedCartData.push({
+          restaurantId: restaurant.id,
+          restaurantName: restaurant.name,
+          restaurantAddress: restaurant.address,
+          image: restaurant.image,
+          items: [
+            {
+              id: selectedMenuItem?.id,
+              name: selectedMenuItem?.name || "",
+              extra: "",
+              price: selectedMenuItem?.price || 0,
+              unitPrice: selectedMenuItem?.price || 0,
+              amount: 1,
+              image: selectedMenuItem?.image,
+            },
+          ],
+        });
+      }
+    } else {
+      updatedCartData.push({
+        restaurantId: restaurant.id,
+        restaurantName: restaurant.name,
+        restaurantAddress: restaurant.address,
+        image: restaurant.image,
+        items: [
+          {
+            id: selectedMenuItem?.id,
+            name: selectedMenuItem?.name || "",
+            extra: "",
+            price: selectedMenuItem?.price || 0,
+            unitPrice: selectedMenuItem?.price || 0,
+            amount: 1,
+            image: selectedMenuItem?.image,
+          },
+        ],
+      });
+    }
+  } else {
+    updatedCartData.push({
+      restaurantId: restaurant.id,
+      restaurantName: restaurant.name,
+      restaurantAddress: restaurant.address,
+      image: restaurant.image,
+      items: [
+        {
+          id: selectedMenuItem?.id,
+          name: selectedMenuItem?.name || "",
+          extra: "",
+          price: selectedMenuItem?.price || 0,
+          unitPrice: selectedMenuItem?.price || 0,
+          amount: 1,
+          image: selectedMenuItem?.image,
+        },
+      ],
+    });
+  }
+
+  return updatedCartData;
 }

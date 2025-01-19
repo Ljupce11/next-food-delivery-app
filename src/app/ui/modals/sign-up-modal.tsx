@@ -7,7 +7,7 @@ type Props = {
   onOpenChange: (isOpen: boolean) => void;
 };
 
-export function SignUpModal({ isOpen, onOpenChange }: Props) {
+export default function SignUpModal({ isOpen, onOpenChange }: Props) {
   return (
     <Modal
       hideCloseButton

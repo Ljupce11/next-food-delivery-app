@@ -17,8 +17,9 @@ import {
   User,
   useDisclosure,
 } from "@heroui/react";
-import { Fragment, useCallback, useState } from "react";
-import OrderDetailsModal from "../modals/order-details-modal";
+import { Fragment, Suspense, lazy, useCallback, useState } from "react";
+
+const LazyOrderDetailsModal = lazy(() => import("../modals/order-details-modal"));
 
 const columns = [
   { name: "RESTAURANT", uid: "restaurant_name" },
@@ -76,7 +77,9 @@ export default function OrdersInfoContent({ orders }: Props) {
 
   return (
     <Fragment>
-      <OrderDetailsModal modalDetails={modalDetails} isOpen={isOpen} onOpenChange={onOpenChange} />
+      <Suspense fallback={null}>
+        <LazyOrderDetailsModal modalDetails={modalDetails} isOpen={isOpen} onOpenChange={onOpenChange} />
+      </Suspense>
       <Table isStriped aria-label="Orders table">
         <TableHeader columns={columns}>
           {(column) => (
