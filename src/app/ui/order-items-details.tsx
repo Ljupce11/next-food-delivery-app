@@ -1,7 +1,7 @@
 "use client";
 
 import { Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, User } from "@heroui/react";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 
 import { fetchOrderItems } from "../lib/actions";
 import type { Order, OrderItem } from "../lib/definitions";
@@ -48,28 +48,35 @@ export default function OrderItemsDetails({ orderDetails }: { orderDetails: Orde
       </TableHeader>
       <TableBody items={orderItems} emptyContent={"No order items found"}>
         {isLoading ? (
-          <TableRow key={1}>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-10 w-10 rounded-xl">
-                  <div className="h-10 w-10 rounded-xl bg-default-200" />
-                </Skeleton>
-                <Skeleton className="w-36 rounded-lg">
-                  <div className="h-5 w-36 rounded-xl bg-default-200" />
-                </Skeleton>
-              </div>
-            </TableCell>
-            <TableCell>
-              <Skeleton className="w-8 rounded-lg">
-                <div className="h-5 w-8 rounded-xl bg-default-200" />
-              </Skeleton>
-            </TableCell>
-            <TableCell>
-              <Skeleton className="w-10 rounded-lg">
-                <div className="h-5 w-10 rounded-xl bg-default-200" />
-              </Skeleton>
-            </TableCell>
-          </TableRow>
+          <Fragment>
+            {Array.from({ length: 2 }).map((_, index) => {
+              const id = index + 1;
+              return (
+                <TableRow key={id}>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-10 w-10 rounded-xl">
+                        <div className="h-10 w-10 rounded-xl bg-default-200" />
+                      </Skeleton>
+                      <Skeleton className="w-36 rounded-lg">
+                        <div className="h-5 w-36 rounded-xl bg-default-200" />
+                      </Skeleton>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="w-8 rounded-lg">
+                      <div className="h-5 w-8 rounded-xl bg-default-200" />
+                    </Skeleton>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="w-10 rounded-lg">
+                      <div className="h-5 w-10 rounded-xl bg-default-200" />
+                    </Skeleton>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </Fragment>
         ) : (
           (item) => (
             <TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>

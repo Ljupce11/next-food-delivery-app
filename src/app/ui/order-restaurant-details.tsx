@@ -34,7 +34,6 @@ export default function OrderRestaurantDetails({ orderDetails }: { orderDetails:
   return (
     <div className="flex w-full items-center gap-6">
       <Image
-        isBlurred
         width={100}
         height={100}
         alt="Event image"

@@ -16,7 +16,14 @@ type Props = {
 export default function OrderDetailsModal({ isOpen, modalDetails: orderDetails, onOpenChange }: Props) {
   const { total } = orderDetails || {};
   return (
-    <Modal backdrop="blur" size="xl" isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal
+      size="xl"
+      backdrop="blur"
+      scrollBehavior="inside"
+      style={{ height: "500px" }}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+    >
       <ModalContent>
         {(onClose) => (
           <Fragment>
