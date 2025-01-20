@@ -215,6 +215,7 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
                 >
                   <div className="flex w-full items-center pt-5 gap-6">
                     <Image
+                      removeWrapper
                       isBlurred
                       src={image}
                       width={100}

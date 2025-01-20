@@ -40,6 +40,7 @@ export default function RestaurantPageSidebar({ restaurant }: { restaurant: Rest
     >
       <div className="flex flex-col w-full items-center gap-6">
         <Image
+          removeWrapper
           isBlurred
           width={100}
           height={100}

@@ -51,7 +51,13 @@ export default function RestaurantMenuItemModal({
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">{selectedMenuItem?.name}</ModalHeader>
         <ModalBody>
-          <Image height={200} width={"100%"} className="w-full object-cover" src={selectedMenuItem?.image} />
+          <Image
+            removeWrapper
+            height={200}
+            width={"100%"}
+            className="w-full object-cover"
+            src={selectedMenuItem?.image}
+          />
           <p>Some description about this menu item</p>
           <b>{selectedMenuItem?.price}kr</b>
         </ModalBody>

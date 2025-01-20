@@ -46,7 +46,7 @@ export default function Navbar({ user, cartData }: Props) {
       </Suspense>
       <NavbarBrand>
         <Link prefetch href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <Image src={Logo} className="h-8 w-8" alt="Flowbite Logo" />
+          <Image src={Logo} className="h-8 w-8" alt="Food delivery" />
           <p className="self-center text-2xl font-semibold whitespace-nowrap hidden sm:flex dark:text-white">
             Food delivery
           </p>
