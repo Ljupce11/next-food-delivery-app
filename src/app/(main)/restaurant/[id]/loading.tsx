@@ -1,7 +1,7 @@
 "use client";
 
-import { RestaurantsSkeleton } from "@/app/ui/skeletons";
+import { RestaurantPageSkeleton } from "@/app/ui/skeletons";
 
 export default function Loading() {
-  return <RestaurantsSkeleton />;
+  return <RestaurantPageSkeleton />;
 }
