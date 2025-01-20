@@ -44,33 +44,33 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
     onOpenChange: onOpenChangeCart,
   } = useDisclosure();
 
-  return (
-    <Fragment>
-      {user ? (
-        <Fragment>
-          <NavbarItem>
-            <Button disableRipple isIconOnly aria-label="Cart" variant="light" onPress={onOpenCart}>
-              <Badge
-                size="sm"
-                shape="circle"
-                color="primary"
-                content={cartData?.length}
-                style={{ fontSize: "0.6rem" }}
-                isInvisible={cartData?.length === 0}
-              >
-                <ShoppingBagIcon className="size-6" />
-              </Badge>
-            </Button>
-            <Suspense fallback={null}>
-              <LazyCartDrawer
-                user={user}
-                cartData={cartData}
-                isOpen={isCartOpen}
-                onClose={onCloseCart}
-                onOpenChange={onOpenChangeCart}
-              />
-            </Suspense>
-          </NavbarItem>
+  if (user) {
+    return (
+      <Fragment>
+        <NavbarItem>
+          <Button disableRipple isIconOnly aria-label="Cart" variant="light" onPress={onOpenCart}>
+            <Badge
+              size="sm"
+              shape="circle"
+              color="primary"
+              content={cartData?.length}
+              style={{ fontSize: "0.6rem" }}
+              isInvisible={cartData?.length === 0}
+            >
+              <ShoppingBagIcon className="size-6" />
+            </Badge>
+          </Button>
+          <Suspense fallback={null}>
+            <LazyCartDrawer
+              user={user}
+              cartData={cartData}
+              isOpen={isCartOpen}
+              onClose={onCloseCart}
+              onOpenChange={onOpenChangeCart}
+            />
+          </Suspense>
+        </NavbarItem>
+        <NavbarItem>
           <Dropdown backdrop="blur" placement="bottom-end">
             <DropdownTrigger>
               <Avatar
@@ -150,19 +150,20 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
-        </Fragment>
-      ) : (
-        <Fragment>
-          <NavbarItem>
-            <Link href="/login">Sign In</Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link href="/sign-up" className="bg-blue-100 rounded-xl px-3 py-2 text-blue-700">
-              Sign up
-            </Link>
-          </NavbarItem>
-        </Fragment>
-      )}
+        </NavbarItem>
+      </Fragment>
+    );
+  }
+  return (
+    <Fragment>
+      <NavbarItem>
+        <Link href="/login">Sign In</Link>
+      </NavbarItem>
+      <NavbarItem>
+        <Link href="/sign-up" className="bg-blue-100 rounded-xl px-3 py-2 text-blue-700">
+          Sign up
+        </Link>
+      </NavbarItem>
     </Fragment>
   );
 }
