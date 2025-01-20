@@ -2,29 +2,34 @@
 
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Image } from "@heroui/react";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
-import { motion } from "motion/react";
 import { fetchRestaurantInfo } from "../lib/actions";
 import type { Order, Restaurant } from "../lib/definitions";
+import { useRestaurantsStore } from "../lib/stores";
 import { OrderRestaurantDetailsSkeleton } from "./skeletons";
 
 export default function OrderRestaurantDetails({ orderDetails }: { orderDetails: Order | null }) {
   const { restaurant_id, restaurant_avatar, restaurant_name } = orderDetails || {};
+  const { restaurants } = useRestaurantsStore();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getRestaurantInfo = async () => {
       if (restaurant_id) {
-        setIsLoading(true);
-        const restaurant = await fetchRestaurantInfo(restaurant_id);
-        setIsLoading(false);
+        let restaurant = restaurants.find(({ id }) => id === restaurant_id);
+        if (!restaurant) {
+          setIsLoading(true);
+          restaurant = await fetchRestaurantInfo(restaurant_id);
+          setIsLoading(false);
+        }
         setRestaurant(restaurant);
       }
     };
     getRestaurantInfo();
-  }, [restaurant_id]);
+  }, [restaurant_id, restaurants]);
 
   return (
     <div className="flex w-full items-center gap-6">

@@ -1,16 +1,24 @@
 "use client";
 
 import type { Restaurant } from "@/app/lib/definitions";
+import { useRestaurantsStore } from "@/app/lib/stores";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardFooter, Image } from "@heroui/react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 type Props = {
   restaurants: Restaurant[];
 };
 
 export default function RestaurantCards({ restaurants }: Props) {
+  const { setRestaurants } = useRestaurantsStore();
+
+  useEffect(() => {
+    setRestaurants(restaurants);
+  }, [restaurants, setRestaurants]);
+
   return (
     <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-8">
       {restaurants.map(({ id, name, image, rating }) => (
