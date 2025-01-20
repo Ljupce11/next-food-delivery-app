@@ -4,6 +4,7 @@ import { StarIcon } from "@heroicons/react/24/solid";
 import { Image } from "@heroui/react";
 import { useEffect, useState } from "react";
 
+import { motion } from "motion/react";
 import { fetchRestaurantInfo } from "../lib/actions";
 import type { Order, Restaurant } from "../lib/definitions";
 import { OrderRestaurantDetailsSkeleton } from "./skeletons";
@@ -38,7 +39,12 @@ export default function OrderRestaurantDetails({ orderDetails }: { orderDetails:
       {isLoading ? (
         <OrderRestaurantDetailsSkeleton />
       ) : (
-        <div className="flex flex-col">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="flex flex-col"
+        >
           <h1 className="text-lg font-semibold">{restaurant_name}</h1>
           <p className="text-sm text-default-500">{restaurant?.address}</p>
           <div className="flex items-center pt-1">
@@ -49,7 +55,7 @@ export default function OrderRestaurantDetails({ orderDetails }: { orderDetails:
             <p className="pl-2 text-sm font-semibold text-default-400">{restaurant?.rating}</p>
           </div>
           <p className="text-sm text-default-500 pt-1">{restaurant?.cuisine}</p>
-        </div>
+        </motion.div>
       )}
     </div>
   );

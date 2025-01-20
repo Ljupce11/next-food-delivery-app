@@ -4,6 +4,7 @@ import type { Restaurant } from "@/app/lib/definitions";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Divider, Image, Tab, Tabs } from "@heroui/react";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 const categories = [
@@ -31,7 +32,12 @@ export default function RestaurantPageSidebar({ restaurant }: { restaurant: Rest
   }, []);
 
   return (
-    <div className="w-full lg:w-1/6 overflow-x-hidden">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="w-full lg:w-1/6 overflow-x-hidden pt-9"
+    >
       <div className="flex flex-col w-full items-center gap-6">
         <Image
           isBlurred
@@ -64,6 +70,6 @@ export default function RestaurantPageSidebar({ restaurant }: { restaurant: Rest
           {({ id, label }) => <Tab key={id} title={label} />}
         </Tabs>
       </div>
-    </div>
+    </motion.div>
   );
 }

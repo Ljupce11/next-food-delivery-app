@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@heroui/react";
+import { motion } from "motion/react";
 import { Fragment } from "react";
 
 export function RestaurantsSkeleton() {
@@ -100,50 +101,52 @@ export function OrdersInfoSkeleton() {
     { name: "DETAILS", uid: "details" },
   ];
   return (
-    <Table isStriped>
-      <TableHeader columns={columns}>
-        {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
-      </TableHeader>
-      <TableBody>
-        {Array.from({ length: 5 }).map((_, index) => {
-          const id = index + 1;
-          return (
-            <TableRow key={id}>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Skeleton className="h-10 w-10 rounded-xl">
-                    <div className="h-10 w-10 rounded-xl bg-default-200" />
+    <Fragment>
+      <Table isStriped>
+        <TableHeader columns={columns}>
+          {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: 5 }).map((_, index) => {
+            const id = index + 1;
+            return (
+              <TableRow key={id}>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-10 w-10 rounded-xl">
+                      <div className="h-10 w-10 rounded-xl bg-default-200" />
+                    </Skeleton>
+                    <Skeleton className="w-36 rounded-lg">
+                      <div className="h-5 w-36 rounded-xl bg-default-200" />
+                    </Skeleton>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-24 rounded-lg">
+                    <div className="h-5 w-24 rounded-xl bg-default-200" />
                   </Skeleton>
-                  <Skeleton className="w-36 rounded-lg">
-                    <div className="h-5 w-36 rounded-xl bg-default-200" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-24 rounded-lg">
+                    <div className="h-5 w-24 rounded-xl bg-default-200" />
                   </Skeleton>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Skeleton className="w-24 rounded-lg">
-                  <div className="h-5 w-24 rounded-xl bg-default-200" />
-                </Skeleton>
-              </TableCell>
-              <TableCell>
-                <Skeleton className="w-24 rounded-lg">
-                  <div className="h-5 w-24 rounded-xl bg-default-200" />
-                </Skeleton>
-              </TableCell>
-              <TableCell>
-                <Skeleton className="w-10 rounded-lg">
-                  <div className="h-5 w-10 rounded-xl bg-default-200" />
-                </Skeleton>
-              </TableCell>
-              <TableCell>
-                <Skeleton className="w-8 rounded-lg">
-                  <div className="h-8 w-8 rounded-xl bg-default-200" />
-                </Skeleton>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-10 rounded-lg">
+                    <div className="h-5 w-10 rounded-xl bg-default-200" />
+                  </Skeleton>
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-8 rounded-lg">
+                    <div className="h-8 w-8 rounded-xl bg-default-200" />
+                  </Skeleton>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </Fragment>
   );
 }
 
@@ -187,7 +190,7 @@ export function RestaurantPageMenuSkeleton() {
 
 export function RestaurantPageSidebarSkeleton() {
   return (
-    <div className="w-full lg:w-1/6 overflow-x-hidden">
+    <div className="w-full lg:w-1/6 overflow-x-hidden pt-9">
       <div className="flex flex-col w-full items-center gap-6">
         <Skeleton className="rounded-xl">
           <div style={{ height: "100px", width: "100px" }} className="rounded-xl bg-default-200" />
@@ -222,9 +225,14 @@ export function RestaurantPageSidebarSkeleton() {
 
 export function RestaurantPageSkeleton() {
   return (
-    <div className="flex flex-col justify-around w-full px-8 py-5 gap-3 lg:flex-row">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col justify-around w-full px-8 py-5 gap-3 lg:flex-row"
+    >
       <RestaurantPageSidebarSkeleton />
       <RestaurantPageMenuSkeleton />
-    </div>
+    </motion.div>
   );
 }

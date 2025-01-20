@@ -3,6 +3,7 @@
 import type { OrderAnalytics } from "@/app/lib/definitions";
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 import { Card, CardBody } from "@heroui/react";
+import { motion } from "motion/react";
 import { Fragment } from "react";
 
 const orderAnalyticsInitialData = [
@@ -33,7 +34,12 @@ export default function OrdersAnalyticsContent({ orderAnalytics }: Props) {
         </Card>
         <h1 className="text-xl font-semibold">Your orders</h1>
       </div>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="grid grid-cols-2 gap-4 md:grid-cols-4"
+      >
         {orderAnalyticsData.map(({ id, value, text }) => {
           return (
             <Card key={id} shadow="sm">
@@ -47,7 +53,7 @@ export default function OrdersAnalyticsContent({ orderAnalytics }: Props) {
             </Card>
           );
         })}
-      </div>
+      </motion.div>
     </Fragment>
   );
 }

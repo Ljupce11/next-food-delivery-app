@@ -17,7 +17,8 @@ import {
   User,
   useDisclosure,
 } from "@heroui/react";
-import { Fragment, Suspense, lazy, useCallback, useState } from "react";
+import { motion } from "motion/react";
+import { Suspense, lazy, useCallback, useState } from "react";
 
 const LazyOrderDetailsModal = lazy(() => import("../modals/order-details-modal"));
 
@@ -76,7 +77,7 @@ export default function OrdersInfoContent({ orders }: Props) {
   };
 
   return (
-    <Fragment>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <Suspense fallback={null}>
         <LazyOrderDetailsModal modalDetails={modalDetails} isOpen={isOpen} onOpenChange={onOpenChange} />
       </Suspense>
@@ -141,6 +142,6 @@ export default function OrdersInfoContent({ orders }: Props) {
           ))}
         </TableBody>
       </Table>
-    </Fragment>
+    </motion.div>
   );
 }

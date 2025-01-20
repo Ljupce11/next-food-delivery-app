@@ -3,6 +3,7 @@
 import type { AdvancedUser, MenuItem, Restaurant } from "@/app/lib/definitions";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
 import { Card, CardBody, CardFooter, Divider, Image, useDisclosure } from "@heroui/react";
+import { motion } from "motion/react";
 import { Fragment, Suspense, lazy, useState } from "react";
 
 const LazyRestaurantMenuItemModal = lazy(() => import("../modals/restaurant-menu-item-modal"));
@@ -24,7 +25,7 @@ export default function RestaurantPageMenuContent({ restaurant, menuItems, user 
 
   return (
     <Fragment>
-      <Suspense fallback={<div className="text-2xl">Loading menu item...</div>}>
+      <Suspense fallback={null}>
         <LazyRestaurantMenuItemModal
           user={user}
           isOpen={isOpen}
@@ -34,7 +35,12 @@ export default function RestaurantPageMenuContent({ restaurant, menuItems, user 
           onOpenChange={onOpenChange}
         />
       </Suspense>
-      <div className="w-full lg:w-3/4">
+      <motion.div
+        className="w-full lg:w-3/4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
         <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           {menuItems.map(({ id, name, price, image, restaurant_id }) => {
             return (
@@ -71,7 +77,7 @@ export default function RestaurantPageMenuContent({ restaurant, menuItems, user 
             );
           })}
         </div>
-      </div>
+      </motion.div>
     </Fragment>
   );
 }
