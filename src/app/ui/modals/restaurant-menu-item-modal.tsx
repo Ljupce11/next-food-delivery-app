@@ -1,7 +1,8 @@
 "use client";
 
 import { updateCartData } from "@/app/lib/actions";
-import type { AdvancedUser, CartData, MenuItem, Restaurant } from "@/app/lib/definitions";
+import type { CartData, MenuItem, Restaurant } from "@/app/lib/definitions";
+import { useUserStore } from "@/app/lib/stores/userStore";
 import { addItemToCart } from "@/app/lib/utils";
 import { MinusIcon, PlusIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
 import {
@@ -19,7 +20,6 @@ import { useState } from "react";
 
 type Props = {
   isOpen: boolean;
-  user?: AdvancedUser;
   restaurant: Restaurant;
   selectedMenuItem: MenuItem | null;
   onClose: () => void;
@@ -27,21 +27,21 @@ type Props = {
 };
 
 export default function RestaurantMenuItemModal({
-  user,
   isOpen,
   restaurant,
   selectedMenuItem,
   onClose,
   onOpenChange,
 }: Props) {
+  const userData = useUserStore((state) => state.userData);
   const [isLoading, setIsLoading] = useState(false);
 
   const onAddToCartHandler = async () => {
-    if (!user?.id) return;
+    if (!userData?.id) return;
     if (!selectedMenuItem) return;
-    const updatedCartData: CartData[] = addItemToCart(user, restaurant, selectedMenuItem);
+    const updatedCartData: CartData[] = addItemToCart(userData, restaurant, selectedMenuItem);
     setIsLoading(true);
-    await updateCartData(user.id, updatedCartData, restaurant.id);
+    await updateCartData(userData.id, updatedCartData, restaurant.id);
     setIsLoading(false);
     onClose();
   };

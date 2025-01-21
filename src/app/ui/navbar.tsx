@@ -4,11 +4,12 @@ import { NavbarBrand, NavbarContent, Navbar as NextNavbar, useDisclosure } from 
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type Key, Suspense, lazy } from "react";
+import { type Key, Suspense, lazy, useEffect } from "react";
 
 import Logo from "../../../public/logo.png";
 import { signOutAction } from "../lib/actions";
 import type { AdvancedUser, CartData } from "../lib/definitions";
+import { useUserStore } from "../lib/stores/userStore";
 import NavbarButtons from "./navbar-buttons";
 
 const LazyHelpFeedbackModal = lazy(() => import("./modals/help-feedback-modal"));
@@ -21,6 +22,11 @@ export default function Navbar({ user }: Props) {
   const cartData: CartData[] = user?.cart || [];
   const router = useRouter();
   const { isOpen: isContactOpen, onOpen: onOpenContact, onOpenChange: onOpenChangeContact } = useDisclosure();
+  const setUserData = useUserStore((state) => state.setUserData);
+
+  useEffect(() => {
+    setUserData(user || null);
+  }, [user, setUserData]);
 
   const onDropdownActionHandler = (key: Key) => {
     switch (key) {

@@ -11,10 +11,9 @@ const LazyRestaurantMenuItemModal = lazy(() => import("../modals/restaurant-menu
 type Props = {
   restaurant: Restaurant;
   menuItems: MenuItem[];
-  user?: AdvancedUser;
 };
 
-export default function RestaurantPageMenuContent({ restaurant, menuItems, user }: Props) {
+export default function RestaurantPageMenuContent({ restaurant, menuItems }: Props) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(null);
 
@@ -27,7 +26,6 @@ export default function RestaurantPageMenuContent({ restaurant, menuItems, user 
     <Fragment>
       <Suspense fallback={null}>
         <LazyRestaurantMenuItemModal
-          user={user}
           isOpen={isOpen}
           restaurant={restaurant}
           selectedMenuItem={selectedMenuItem}
