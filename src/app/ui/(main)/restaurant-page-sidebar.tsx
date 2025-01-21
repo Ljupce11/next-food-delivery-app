@@ -56,7 +56,7 @@ export default function RestaurantPageSidebar({ restaurant }: { restaurant: Rest
               const id = index + 1;
               return <StarIcon key={id} className="size-4 text-yellow-400" />;
             })}
-            <p className="pl-2 text-sm font-semibold text-default-400">{rating}</p>
+            <p className="pl-2 text-sm font-semibold text-default-500">{rating}</p>
           </div>
           <p className="text-sm text-default-500 pt-1">{cuisine}</p>
           <div className="flex items-center gap-1 pt-1">
