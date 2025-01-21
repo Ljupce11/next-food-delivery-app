@@ -106,7 +106,6 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
       await updateCartDataFromDrawer(user.id || "", updatedCart);
       setIsLoading({ id: itemId, state: false });
       if (updatedCart.length === 0) {
-        heroUITemporaryFix();
         onClose();
       }
     } catch (error) {
@@ -133,21 +132,7 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
   const total = subTotal ? subTotal + DELIVERY : 0;
 
   const onOpenChangeHandler = () => {
-    if (isOpen) {
-      heroUITemporaryFix();
-    }
     onOpenChange();
-  };
-
-  const heroUITemporaryFix = () => {
-    // TEMPORARY FIX: Remove the drawer from the DOM after it's closed
-    const childElement = document.querySelector(".cart-drawer");
-    const parentElement = childElement?.parentElement;
-    if (parentElement) {
-      setTimeout(() => {
-        parentElement.remove();
-      }, 500);
-    }
   };
 
   const handleCheckout = async () => {
@@ -169,7 +154,6 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
     try {
       await completeCheckout(dbData, updatedCartData);
       setIsCheckoutLoading(false);
-      heroUITemporaryFix();
       onClose();
     } catch (error) {
       setIsCheckoutLoading(false);

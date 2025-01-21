@@ -60,15 +60,18 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
               <ShoppingBagIcon className="size-6" />
             </Badge>
           </Button>
-          <Suspense fallback={null}>
-            <LazyCartDrawer
-              user={user}
-              cartData={cartData}
-              isOpen={isCartOpen}
-              onClose={onCloseCart}
-              onOpenChange={onOpenChangeCart}
-            />
-          </Suspense>
+          {/* Hero UI temporary fix */}
+          {isCartOpen && (
+            <Suspense fallback={null}>
+              <LazyCartDrawer
+                user={user}
+                cartData={cartData}
+                isOpen={isCartOpen}
+                onClose={onCloseCart}
+                onOpenChange={onOpenChangeCart}
+              />
+            </Suspense>
+          )}
         </NavbarItem>
         <NavbarItem>
           <Dropdown backdrop="blur" placement="bottom-end">
