@@ -48,7 +48,7 @@ export default function RestaurantPageSidebar({ restaurant }: { restaurant: Rest
           className="aspect-square object-cover"
           src={image}
         />
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center text-center">
           <h1 className="text-lg font-semibold">{name}</h1>
           <p className="text-sm text-default-500">{address}</p>
           <div className="flex items-center pt-1">
