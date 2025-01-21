@@ -102,7 +102,7 @@ export function OrdersInfoSkeleton() {
   ];
   return (
     <Fragment>
-      <Table isStriped>
+      <Table aria-label="Loading orders information" isStriped>
         <TableHeader columns={columns}>
           {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
         </TableHeader>

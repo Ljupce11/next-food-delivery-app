@@ -42,7 +42,7 @@ export default function OrderItemsDetails({ orderDetails }: { orderDetails: Orde
   }, []);
 
   return (
-    <Table removeWrapper isStriped aria-label="Example table with custom cells">
+    <Table removeWrapper isStriped aria-label="Item details">
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
       </TableHeader>

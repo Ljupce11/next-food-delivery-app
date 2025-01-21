@@ -113,7 +113,7 @@ export default function Search() {
       }
     >
       {(previousSearch) => (
-        <AutocompleteItem variant="flat" key={previousSearch.key}>
+        <AutocompleteItem variant="flat" key={previousSearch.key} textValue={previousSearch.name}>
           <div className="flex gap-2 items-center">
             <ClockIcon className="size-6 text-default-500" />
             <div className="flex flex-col">
