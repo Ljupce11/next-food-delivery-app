@@ -39,7 +39,7 @@ export default function OrderRestaurantDetails({ orderDetails }: { orderDetails:
         height={100}
         alt="Event image"
         className="aspect-square object-cover"
-        src={restaurant_avatar}
+        src={`/api/image-proxy?url=${encodeURIComponent(restaurant_avatar || "")}`}
       />
       {isLoading ? (
         <OrderRestaurantDetailsSkeleton />

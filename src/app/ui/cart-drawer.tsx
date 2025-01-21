@@ -217,11 +217,11 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
                     <Image
                       removeWrapper
                       isBlurred
-                      src={image}
                       width={100}
                       height={100}
                       alt="Event image"
                       className="aspect-square object-cover"
+                      src={`/api/image-proxy?url=${encodeURIComponent(image)}`}
                     />
                     <div className="flex flex-col">
                       <h1 className="text-lg font-semibold">{restaurantName}</h1>
@@ -244,8 +244,8 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
                                 removeWrapper
                                 width={50}
                                 height={50}
-                                src={cartItem.image}
                                 className="aspect-square object-cover"
+                                src={`/api/image-proxy?url=${encodeURIComponent(cartItem.image)}`}
                               />
                               <div className="flex flex-col text-xs text-default-500">
                                 <p>{cartItem.name}</p>

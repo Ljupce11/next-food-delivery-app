@@ -6,12 +6,13 @@ const nextConfig: NextConfig = {
   //   ppr: "incremental",
   // },
   images: {
-    domains: [
-      "marketplace.canva.com",
-      "assets.zenn.com",
-      "coreldrawdesign.com",
-      "media.istockphoto.com",
-      "st3.depositphotos.com",
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost", // Allow localhost during development
+        port: "3000",
+        pathname: "/api/image-proxy/**",
+      },
     ],
   },
 };

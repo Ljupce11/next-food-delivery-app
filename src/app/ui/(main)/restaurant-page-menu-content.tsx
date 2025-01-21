@@ -58,7 +58,7 @@ export default function RestaurantPageMenuContent({ restaurant, menuItems, user 
                     width={"100%"}
                     height={"150px"}
                     className="object-cover rounded-xl"
-                    src={image}
+                    src={`/api/image-proxy?url=${encodeURIComponent(image)}`}
                   />
                 </CardBody>
                 <CardFooter className="pt-0 flex-col items-start">
