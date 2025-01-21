@@ -46,7 +46,7 @@ export default function RestaurantPageSidebar({ restaurant }: { restaurant: Rest
           height={100}
           alt="Event image"
           className="aspect-square object-cover"
-          src={`/api/image-proxy?url=${encodeURIComponent(image)}`}
+          src={image}
         />
         <div className="flex flex-col items-center">
           <h1 className="text-lg font-semibold">{name}</h1>

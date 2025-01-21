@@ -47,7 +47,7 @@ export default function Page() {
       <div className="h-40 lg:h-full lg:w-6/12 rounded-2xl border-1 overflow-hidden">
         <Image
           priority
-          src="/login.webp"
+          src="/img/login/login.webp"
           alt="Login"
           width={0}
           height={0}

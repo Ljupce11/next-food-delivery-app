@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type Key, Suspense, lazy, useEffect } from "react";
 
-import Logo from "../../../public/logo.png";
 import { signOutAction } from "../lib/actions";
 import type { AdvancedUser, CartData } from "../lib/definitions";
 import { useUserStore } from "../lib/stores/userStore";
@@ -51,7 +50,7 @@ export default function Navbar({ user }: Props) {
       </Suspense>
       <NavbarBrand>
         <Link prefetch href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <Image src={Logo} className="h-8 w-8" alt="Food delivery" />
+          <Image src={"/img/logo.png"} sizes="100vw" width={0} height={0} className="h-8 w-8" alt="Food delivery" />
           <p className="self-center text-2xl font-semibold whitespace-nowrap hidden sm:flex dark:text-white">
             Food delivery
           </p>

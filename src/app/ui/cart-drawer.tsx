@@ -205,7 +205,7 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
                       height={100}
                       alt="Event image"
                       className="aspect-square object-cover"
-                      src={`/api/image-proxy?url=${encodeURIComponent(image)}`}
+                      src={image}
                     />
                     <div className="flex flex-col">
                       <h1 className="text-lg font-semibold">{restaurantName}</h1>
@@ -229,7 +229,7 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
                                 width={50}
                                 height={50}
                                 className="aspect-square object-cover"
-                                src={`/api/image-proxy?url=${encodeURIComponent(cartItem.image)}`}
+                                src={cartItem.image}
                               />
                               <div className="flex flex-col text-xs text-default-500">
                                 <p>{cartItem.name}</p>

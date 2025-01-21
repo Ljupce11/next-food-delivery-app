@@ -56,7 +56,7 @@ export default function RestaurantMenuItemModal({
             height={200}
             width={"100%"}
             className="w-full object-cover"
-            src={`/api/image-proxy?url=${encodeURIComponent(selectedMenuItem?.image || "")}`}
+            src={selectedMenuItem?.image || ""}
           />
           <p>Some description about this menu item</p>
           <b>{selectedMenuItem?.price}kr</b>
