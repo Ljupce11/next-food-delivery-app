@@ -84,7 +84,7 @@ export default function OrdersInfoContent({ orders }: Props) {
       <Table isStriped aria-label="Orders table">
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn key={column.uid} align={column.uid === "details" ? "center" : "start"}>
+            <TableColumn scope="col" key={column.uid} align={column.uid === "details" ? "center" : "start"}>
               {column.name}
             </TableColumn>
           )}
@@ -124,6 +124,7 @@ export default function OrdersInfoContent({ orders }: Props) {
                       color="success"
                       isIconOnly
                       disableRipple
+                      aria-label="Complete order"
                       isLoading={isLoading.id === order.id && isLoading.state}
                       onPress={() => completeOrderHandler(order.id)}
                       className={`${order.status === "In Progress" ? "visible" : "invisible"}`}
@@ -132,7 +133,14 @@ export default function OrdersInfoContent({ orders }: Props) {
                     </Button>
                   </Tooltip>
                   <Tooltip size="sm" color="foreground" content="More info">
-                    <Button onPress={() => onOpenModalHandler(order)} size="sm" variant="flat" isIconOnly disableRipple>
+                    <Button
+                      size="sm"
+                      variant="flat"
+                      isIconOnly
+                      disableRipple
+                      aria-label="View more information"
+                      onPress={() => onOpenModalHandler(order)}
+                    >
                       <ClipboardDocumentListIcon className="size-5" />
                     </Button>
                   </Tooltip>

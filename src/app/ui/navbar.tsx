@@ -50,17 +50,12 @@ export default function Navbar({ user }: Props) {
       </Suspense>
       <NavbarBrand>
         <Link prefetch href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <Image src={"/img/logo.png"} sizes="100vw" width={0} height={0} className="h-8 w-8" alt="Food delivery" />
+          <Image width={0} height={0} sizes="100vw" className="h-8 w-8" src="/img/logo.png" alt="Food delivery logo" />
           <p className="self-center text-2xl font-semibold whitespace-nowrap hidden sm:flex dark:text-white">
             Food delivery
           </p>
         </Link>
       </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        {/* <NavbarItem>
-          <Search />
-        </NavbarItem> */}
-      </NavbarContent>
       <NavbarContent justify="end">
         <NavbarButtons user={user} cartData={cartData} onDropdownActionHandler={onDropdownActionHandler} />
       </NavbarContent>
