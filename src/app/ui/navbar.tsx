@@ -1,7 +1,6 @@
 "use client";
 
 import { NavbarBrand, NavbarContent, Navbar as NextNavbar, useDisclosure } from "@heroui/react";
-import type { User } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,17 +8,17 @@ import { type Key, Suspense, lazy } from "react";
 
 import Logo from "../../../public/logo.png";
 import { signOutAction } from "../lib/actions";
-import type { CartData } from "../lib/definitions";
+import type { AdvancedUser, CartData } from "../lib/definitions";
 import NavbarButtons from "./navbar-buttons";
 
 const LazyHelpFeedbackModal = lazy(() => import("./modals/help-feedback-modal"));
 
 type Props = {
-  user?: User;
-  cartData?: CartData[];
+  user?: AdvancedUser;
 };
 
-export default function Navbar({ user, cartData }: Props) {
+export default function Navbar({ user }: Props) {
+  const cartData: CartData[] = user?.cart || [];
   const router = useRouter();
   const { isOpen: isContactOpen, onOpen: onOpenContact, onOpenChange: onOpenChangeContact } = useDisclosure();
 

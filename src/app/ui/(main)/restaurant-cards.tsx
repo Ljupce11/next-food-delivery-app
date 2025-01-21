@@ -1,7 +1,7 @@
 "use client";
 
 import type { Restaurant } from "@/app/lib/definitions";
-import { useRestaurantsStore } from "@/app/lib/stores";
+import { useRestaurantsStore } from "@/app/lib/stores/restaurantsStore";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardFooter, Image } from "@heroui/react";
@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function RestaurantCards({ restaurants }: Props) {
-  const { setRestaurants } = useRestaurantsStore();
+  const setRestaurants = useRestaurantsStore((state) => state.setRestaurants);
 
   useEffect(() => {
     setRestaurants(restaurants);

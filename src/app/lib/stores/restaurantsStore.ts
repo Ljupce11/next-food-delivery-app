@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Restaurant } from "./definitions";
+import type { Restaurant } from "../definitions";
 
 type RestaurantStore = {
   restaurants: Restaurant[];

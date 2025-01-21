@@ -7,12 +7,12 @@ import { useEffect, useState } from "react";
 
 import { fetchRestaurantInfo } from "../lib/actions";
 import type { Order, Restaurant } from "../lib/definitions";
-import { useRestaurantsStore } from "../lib/stores";
+import { useRestaurantsStore } from "../lib/stores/restaurantsStore";
 import { OrderRestaurantDetailsSkeleton } from "./skeletons";
 
 export default function OrderRestaurantDetails({ orderDetails }: { orderDetails: Order | null }) {
   const { restaurant_id, restaurant_avatar, restaurant_name } = orderDetails || {};
-  const { restaurants } = useRestaurantsStore();
+  const restaurants = useRestaurantsStore((state) => state.restaurants);
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 

@@ -13,7 +13,7 @@ export default async function MainLayout({
 
   return (
     <div className={"flex flex-col"}>
-      <Navbar cartData={userData?.cart} user={userData} />
+      <Navbar user={userData} />
       {children}
     </div>
   );
