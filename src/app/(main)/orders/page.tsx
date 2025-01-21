@@ -5,7 +5,6 @@ import { Suspense } from "react";
 import { auth } from "../../../../auth";
 
 export default async function Page() {
-  console.log("Page");
   const authData = await auth();
   const userId = authData?.user?.id || null;
   return (
