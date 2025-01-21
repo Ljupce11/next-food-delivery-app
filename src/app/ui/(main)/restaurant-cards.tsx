@@ -5,6 +5,7 @@ import { useRestaurantsStore } from "@/app/lib/stores/restaurantsStore";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardFooter, Image } from "@heroui/react";
+import { motion } from "motion/react";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -20,7 +21,12 @@ export default function RestaurantCards({ restaurants }: Props) {
   }, [restaurants, setRestaurants]);
 
   return (
-    <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-8">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-8"
+    >
       {restaurants.map(({ id, name, image, rating }) => (
         <Link href={`/restaurant/${id}`} key={id} prefetch={true}>
           <Card key={id} isFooterBlurred className="border-none" radius="lg" shadow="sm">
@@ -42,6 +48,6 @@ export default function RestaurantCards({ restaurants }: Props) {
           </Card>
         </Link>
       ))}
-    </div>
+    </motion.div>
   );
 }
