@@ -203,7 +203,7 @@ export default function CartDrawer({ isOpen, user, cartData: existingCartData, o
                       isBlurred
                       width={100}
                       height={100}
-                      alt="Event image"
+                      alt="Restaurant logo"
                       className="aspect-square object-cover"
                       src={image}
                     />

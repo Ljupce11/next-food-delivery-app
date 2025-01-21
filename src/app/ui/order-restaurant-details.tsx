@@ -37,7 +37,7 @@ export default function OrderRestaurantDetails({ orderDetails }: { orderDetails:
         removeWrapper
         width={100}
         height={100}
-        alt="Event image"
+        alt="Restaurant logo"
         className="aspect-square object-cover"
         src={restaurant_avatar || ""}
       />

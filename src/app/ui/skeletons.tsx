@@ -63,7 +63,7 @@ export function OrderRestaurantDetailsSkeleton() {
 export function OrdersAnalyticsSkeleton() {
   return (
     <Fragment>
-      <div className="flex items-center justify-center md:justify-start gap-3">
+      <div className="flex items-center gap-3">
         <Card shadow="sm">
           <CardBody>
             <ClipboardDocumentListIcon className="size-6" />
