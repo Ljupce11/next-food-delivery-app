@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Food Delivery App
 
-## Getting Started
+A modern food delivery application built with Next.js 15, featuring real-time restaurant search, order management, and a seamless checkout experience.
 
-First, run the development server:
+## 🚀 Features
+
+- **Authentication** - Secure user authentication with NextAuth
+- **Restaurant Discovery** - Browse and search restaurants
+- **Shopping Cart** - Real-time cart management with Zustand
+- **Order Management** - Track and manage orders
+- **User Profiles** - Personalized user experiences
+- **Responsive Design** - Mobile-first UI with HeroUI components
+
+## 🛠️ Tech Stack
+
+- **Framework:** [Next.js 15](https://nextjs.org/) (Canary)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Database:** [Vercel Postgres](https://vercel.com/storage/postgres)
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/)
+- **State Management:** [Zustand](https://zustand-demo.pmnd.rs/)
+- **Styling:** 
+  - [Tailwind CSS](https://tailwindcss.com/)
+  - [@heroui/react](https://heroui.com/)
+- **Linting:** [Biome](https://biomejs.dev/)
+
+## 🚦 Getting Started
+
+1. **Clone the repository**
+
+```bash
+git clone <repository-url>
+```
+
+2. **Install dependencies**
+
+```bash
+npm install
+# or
+yarn install
+```
+
+3. **Set up environment variables**
+
+```bash
+cp .env.example .env.local
+```
+
+4. **Start the development server**
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📝 Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To run this project, you will need to add the following environment variables to your .env.local file:
 
-## Learn More
+```
+DATABASE_URL=
+NEXTAUTH_URL=
+NEXTAUTH_SECRET=
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 🧱 Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/
+│   ├── (main)/        # Main application routes
+│   ├── lib/           # Utility functions, hooks, etc.
+│   ├── ui/            # UI components
+│   └── providers.tsx  # App providers
+├── middleware.ts      # NextAuth middleware
+└── ...
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Development
 
-## Deploy on Vercel
+```bash
+# Run development server
+npm run dev
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Type checking
+npm run tsc
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Linting
+npm run lint
+
+# Formatting
+npm run format
+```
+
+## 📚 Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [NextAuth.js Documentation](https://next-auth.js.org)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [HeroUI Documentation](https://heroui.com/docs)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
