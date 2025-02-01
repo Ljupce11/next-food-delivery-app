@@ -1,6 +1,5 @@
 "use client";
 
-import { startsWith } from "@/app/lib/utils";
 import { ClockIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -37,7 +36,9 @@ export default function Search() {
     if (searchParams.get("search")) {
       setFieldState((prevState) => ({
         ...prevState,
-        items: previousSearches.filter((item) => startsWith(item.name, prevState.inputValue)),
+        items: previousSearches.filter((item) =>
+          item.name.toLowerCase().startsWith(prevState.inputValue.toLowerCase()),
+        ),
       }));
     }
   }, [searchParams]);
@@ -59,7 +60,9 @@ export default function Search() {
         return {
           selectedKey: key,
           inputValue: selectedItem?.name || "",
-          items: previousSearches.filter((item) => startsWith(item.name, selectedItem?.name || "")),
+          items: previousSearches.filter((item) =>
+            item.name.toLowerCase().startsWith(selectedItem?.name.toLowerCase() || ""),
+          ),
         };
       });
     }

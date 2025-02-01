@@ -1,22 +1,5 @@
 import type { AdvancedUser, CartData, CheckoutOrderDetails, MenuItem, Restaurant } from "./definitions";
 
-export function startsWith(str: string, prefix: string): boolean {
-  const lowerStr = str.toLowerCase();
-  const lowerPrefix = prefix.toLowerCase();
-
-  if (lowerPrefix.length > lowerStr.length) {
-    return false;
-  }
-
-  for (let i = 0; i < lowerPrefix.length; i++) {
-    if (lowerStr[i] !== lowerPrefix[i]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 export function prepareCheckoutQueries(orderDetails: CheckoutOrderDetails, updatedCartData?: CartData[]) {
   const {
     id: new_order_id,
