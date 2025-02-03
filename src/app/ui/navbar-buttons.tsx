@@ -92,7 +92,7 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
               variant="flat"
               aria-label="Profile Actions"
               onAction={onDropdownActionHandler}
-              disabledKeys={["user-profile", "favorites"]}
+              disabledKeys={["favorites"]}
               topContent={
                 <div className="flex items-center gap-4 px-2 py-2">
                   <Avatar
@@ -115,15 +115,7 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
               }
             >
               <DropdownItem isReadOnly key="divider-one" startContent={<Divider />} textValue="divider-one" />
-              <DropdownItem
-                key="user-profile"
-                startContent={<UserCircleIcon className="size-5" />}
-                endContent={
-                  <Chip variant="flat" color="secondary" size="sm">
-                    Coming soon
-                  </Chip>
-                }
-              >
+              <DropdownItem key="user-profile" startContent={<UserCircleIcon className="size-5" />}>
                 Profile
               </DropdownItem>
               <DropdownItem key="orders" startContent={<ClipboardDocumentListIcon className="size-5" />}>

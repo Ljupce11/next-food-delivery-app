@@ -38,6 +38,9 @@ export default function Navbar({ user }: Props) {
       case "orders":
         router.push("/orders");
         break;
+      case "user-profile":
+        router.push("/profile");
+        break;
       default:
         console.log(key);
     }
