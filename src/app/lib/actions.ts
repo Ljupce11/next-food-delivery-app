@@ -7,11 +7,19 @@ import { revalidatePath } from "next/cache";
 
 import { signIn, signOut } from "../../../auth";
 import { fetchRestaurants, updateCart } from "./data";
-import type { CartData, CheckoutOrderDetails, OrderItem, Restaurant } from "./definitions";
+import type {
+  CartData,
+  CheckoutOrderDetails,
+  OrderItem,
+  Restaurant,
+} from "./definitions";
 import { signUpSchema } from "./schemas";
 import { prepareCheckoutQueries } from "./utils";
 
-export async function authenticate(prevState: string | undefined, formData: FormData) {
+export async function authenticate(
+  _prevState: string | undefined,
+  formData: FormData,
+) {
   try {
     await signIn("credentials", {
       ...Object.fromEntries(formData),
@@ -30,7 +38,10 @@ export async function authenticate(prevState: string | undefined, formData: Form
   }
 }
 
-export async function signUp(_prevState: { success?: boolean; message?: string }, formData: FormData) {
+export async function signUp(
+  _prevState: { success?: boolean; message?: string },
+  formData: FormData,
+) {
   const data = Object.fromEntries(formData.entries());
   try {
     const { first_name, last_name, email, password } = signUpSchema.parse(data);
@@ -66,14 +77,21 @@ export async function searchRestaurants(query: string) {
   return await fetchRestaurants(query);
 }
 
-export async function updateCartData(userId: string, cartData: CartData[], restaurantId: string) {
+export async function updateCartData(
+  userId: string,
+  cartData: CartData[],
+  restaurantId: string,
+) {
   const updatedCartData = await updateCart(userId, cartData);
   revalidatePath("/");
   revalidatePath(`/restaurant/${restaurantId}`);
   return updatedCartData;
 }
 
-export async function updateCartDataFromDrawer(userId: string, cartData: CartData[]) {
+export async function updateCartDataFromDrawer(
+  userId: string,
+  cartData: CartData[],
+) {
   try {
     const menuItems = await sql<CartData>`
       UPDATE users
@@ -91,7 +109,8 @@ export async function updateCartDataFromDrawer(userId: string, cartData: CartDat
 
 export async function fetchRestaurantInfo(id: string) {
   try {
-    const restaurant = await sql<Restaurant>`SELECT * FROM restaurants WHERE id=${id}`;
+    const restaurant =
+      await sql<Restaurant>`SELECT * FROM restaurants WHERE id=${id}`;
     return restaurant.rows[0];
   } catch (error) {
     console.error("Failed to fetch restaurant:", error);
@@ -101,7 +120,8 @@ export async function fetchRestaurantInfo(id: string) {
 
 export async function fetchOrderItems(id: string) {
   try {
-    const restaurant = await sql<OrderItem>`SELECT * FROM order_items WHERE order_id=${id}`;
+    const restaurant =
+      await sql<OrderItem>`SELECT * FROM order_items WHERE order_id=${id}`;
     return restaurant.rows;
   } catch (error) {
     console.error("Failed to fetch order items:", error);
@@ -109,8 +129,14 @@ export async function fetchOrderItems(id: string) {
   }
 }
 
-export async function completeCheckout(orderDetails: CheckoutOrderDetails, updatedCartData?: CartData[]) {
-  const { queries, params, items } = prepareCheckoutQueries(orderDetails, updatedCartData);
+export async function completeCheckout(
+  orderDetails: CheckoutOrderDetails,
+  updatedCartData?: CartData[],
+) {
+  const { queries, params, items } = prepareCheckoutQueries(
+    orderDetails,
+    updatedCartData,
+  );
   try {
     // Execute the orders query (7 parameters)
     await sql.query(queries[0], params.slice(0, 7));
@@ -119,7 +145,10 @@ export async function completeCheckout(orderDetails: CheckoutOrderDetails, updat
       await sql.query(queries[i], params.slice(7 + (i - 1) * 5, 7 + i * 5)); // Each query needs 5 params
     }
     // Execute the users update query (1 parameter)
-    await sql.query(queries[queries.length - 1], params.slice(params.length - 1));
+    await sql.query(
+      queries[queries.length - 1],
+      params.slice(params.length - 1),
+    );
     revalidatePath("/");
   } catch (error) {
     console.error("Failed to complete checkout:", error);

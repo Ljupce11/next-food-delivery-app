@@ -1,6 +1,15 @@
-import type { AdvancedUser, CartData, CheckoutOrderDetails, MenuItem, Restaurant } from "./definitions";
+import type {
+  AdvancedUser,
+  CartData,
+  CheckoutOrderDetails,
+  MenuItem,
+  Restaurant,
+} from "./definitions";
 
-export function prepareCheckoutQueries(orderDetails: CheckoutOrderDetails, updatedCartData?: CartData[]) {
+export function prepareCheckoutQueries(
+  orderDetails: CheckoutOrderDetails,
+  updatedCartData?: CartData[],
+) {
   const {
     id: new_order_id,
     user_id,
@@ -36,21 +45,26 @@ export function prepareCheckoutQueries(orderDetails: CheckoutOrderDetails, updat
     WHERE id = $1;
   `);
 
-  // Prepare the params array
   // First, add the params for the `orders` query
   const params = [
-    new_order_id, // For orders query (order_id)
-    user_id, // user_id
-    restaurant_id, // restaurant_id
-    total, // total
-    status, // status
-    restaurant_name, // restaurant_name
-    restaurant_avatar, // restaurant_avatar
+    new_order_id,
+    user_id,
+    restaurant_id,
+    total,
+    status,
+    restaurant_name,
+    restaurant_avatar,
   ];
 
   // Add the params for the `order_items` queries dynamically based on the `items` array
   items.forEach((item) => {
-    params.push(new_order_id, item.name, item.amount, item.unitPrice, item.image);
+    params.push(
+      new_order_id,
+      item.name,
+      item.amount,
+      item.unitPrice,
+      item.image,
+    );
   });
 
   // Add the `user_id` parameter for the `UPDATE` query
@@ -63,17 +77,27 @@ export function prepareCheckoutQueries(orderDetails: CheckoutOrderDetails, updat
   };
 }
 
-export function addItemToCart(user: AdvancedUser, restaurant: Restaurant, selectedMenuItem: MenuItem) {
+export function addItemToCart(
+  user: AdvancedUser,
+  restaurant: Restaurant,
+  selectedMenuItem: MenuItem,
+) {
   let updatedCartData: CartData[] = [];
   const existingCartData = user.cart;
 
   if (existingCartData) {
     updatedCartData = [...existingCartData];
     if (updatedCartData.length > 0) {
-      const existingRestaurantIndex = updatedCartData.findIndex((cartData) => cartData.restaurantId === restaurant.id);
+      const existingRestaurantIndex = updatedCartData.findIndex(
+        (cartData) => cartData.restaurantId === restaurant.id,
+      );
       if (existingRestaurantIndex !== -1) {
         if (updatedCartData[existingRestaurantIndex].items.length > 0) {
-          if (updatedCartData[existingRestaurantIndex].items.some((item) => item.id === selectedMenuItem?.id)) {
+          if (
+            updatedCartData[existingRestaurantIndex].items.some(
+              (item) => item.id === selectedMenuItem?.id,
+            )
+          ) {
             updatedCartData[existingRestaurantIndex].items.map((item) => {
               if (item.id === selectedMenuItem?.id) {
                 item.amount += 1;

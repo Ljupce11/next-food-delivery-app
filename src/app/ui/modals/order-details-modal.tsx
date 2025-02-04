@@ -1,7 +1,15 @@
 "use client";
 
 import type { Order } from "@/app/lib/definitions";
-import { Button, Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
+import {
+  Button,
+  Divider,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@heroui/react";
 import { Fragment } from "react";
 
 import OrderItemsDetails from "../order-items-details";
@@ -13,7 +21,11 @@ type Props = {
   onOpenChange: (isOpen: boolean) => void;
 };
 
-export default function OrderDetailsModal({ isOpen, modalDetails: orderDetails, onOpenChange }: Props) {
+export default function OrderDetailsModal({
+  isOpen,
+  modalDetails: orderDetails,
+  onOpenChange,
+}: Props) {
   const { total } = orderDetails || {};
   return (
     <Modal
@@ -27,7 +39,9 @@ export default function OrderDetailsModal({ isOpen, modalDetails: orderDetails, 
       <ModalContent>
         {(onClose) => (
           <Fragment>
-            <ModalHeader className="flex flex-col gap-1">Order Details</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">
+              Order Details
+            </ModalHeader>
             <ModalBody>
               <OrderRestaurantDetails orderDetails={orderDetails} />
               <Divider className="my-3" />
@@ -41,7 +55,12 @@ export default function OrderDetailsModal({ isOpen, modalDetails: orderDetails, 
                     <p className="text-default-600 font-semibold">Total:</p>
                     <p className="text-default-600 font-semibold">{total}kr</p>
                   </div>
-                  <Button fullWidth disableRipple variant="flat" onPress={onClose}>
+                  <Button
+                    fullWidth
+                    disableRipple
+                    variant="flat"
+                    onPress={onClose}
+                  >
                     Close
                   </Button>
                 </div>

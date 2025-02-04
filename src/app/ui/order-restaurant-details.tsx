@@ -10,8 +10,13 @@ import type { Order, Restaurant } from "../lib/definitions";
 import { useRestaurantsStore } from "../lib/stores/restaurantsStore";
 import { OrderRestaurantDetailsSkeleton } from "./skeletons";
 
-export default function OrderRestaurantDetails({ orderDetails }: { orderDetails: Order | null }) {
-  const { restaurant_id, restaurant_avatar, restaurant_name } = orderDetails || {};
+type Props = {
+  orderDetails: Order | null;
+};
+
+export default function OrderRestaurantDetails({ orderDetails }: Props) {
+  const { restaurant_id, restaurant_avatar, restaurant_name } =
+    orderDetails || {};
   const restaurants = useRestaurantsStore((state) => state.restaurants);
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +62,9 @@ export default function OrderRestaurantDetails({ orderDetails }: { orderDetails:
               const id = index + 1;
               return <StarIcon key={id} className="size-4 text-yellow-400" />;
             })}
-            <p className="pl-2 text-sm font-semibold text-default-400">{restaurant?.rating}</p>
+            <p className="pl-2 text-sm font-semibold text-default-400">
+              {restaurant?.rating}
+            </p>
           </div>
           <p className="text-sm text-default-500 pt-1">{restaurant?.cuisine}</p>
         </motion.div>

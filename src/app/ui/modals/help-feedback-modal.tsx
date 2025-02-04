@@ -1,7 +1,16 @@
 "use client";
 
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
-import { Button, Form, Input, Modal, ModalBody, ModalContent, ModalHeader, Textarea } from "@heroui/react";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  Textarea,
+} from "@heroui/react";
 import { type FormEvent, useState } from "react";
 
 type Props = {
@@ -22,7 +31,12 @@ export default function HelpFeedbackModal({ isOpen, onOpenChange }: Props) {
   };
 
   return (
-    <Modal backdrop="blur" size="xl" isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal
+      size="xl"
+      backdrop="blur"
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+    >
       <ModalContent>
         <ModalHeader className="flex items-center gap-2">
           <ChatBubbleLeftEllipsisIcon className="size-6" /> Help & Feedback
@@ -55,7 +69,14 @@ export default function HelpFeedbackModal({ isOpen, onOpenChange }: Props) {
               labelPlacement="outside"
               placeholder="Enter your message"
             />
-            <Button className="my-3" type="submit" isLoading={isLoading} disableRipple fullWidth color="primary">
+            <Button
+              fullWidth
+              type="submit"
+              disableRipple
+              color="primary"
+              className="my-3"
+              isLoading={isLoading}
+            >
               Send message
             </Button>
           </Form>

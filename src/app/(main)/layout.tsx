@@ -9,7 +9,9 @@ export default async function MainLayout({
   children: React.ReactNode;
 }>) {
   const authData = await auth();
-  const userData: AdvancedUser | undefined = await fetchUserData(authData?.user?.id || null);
+  const userData: AdvancedUser | undefined = await fetchUserData(
+    authData?.user?.id || null,
+  );
 
   return (
     <div className={"flex flex-col"}>

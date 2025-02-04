@@ -18,8 +18,12 @@ export default async function Page(props: {
       <div className="bg-gradient-to-r from-sky-50 via-blue-50 to-sky-50 py-16">
         <div className="w-full px-8 lg:w-3/4 lg:px-0 mx-auto flex flex-col lg:flex-row items-center justify-between">
           <div className="lg:w-1/2 text-left mb-8 lg:mb-0">
-            <h1 className="text-4xl font-bold mb-4">Delicious Food, Delivered to Your Door</h1>
-            <p className="text-gray-600 text-lg">Order from your favorite local restaurants with just a few clicks</p>
+            <h1 className="text-4xl font-bold mb-4">
+              Delicious Food, Delivered to Your Door
+            </h1>
+            <p className="text-gray-600 text-lg">
+              Order from your favorite local restaurants with just a few clicks
+            </p>
           </div>
 
           <div className="lg:w-1/2 lg:pl-8">

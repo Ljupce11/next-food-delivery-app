@@ -23,7 +23,13 @@ export function RestaurantsSkeleton() {
       {Array.from({ length: 12 }).map((_, i) => {
         const id = i + 1;
         return (
-          <Card key={id} isFooterBlurred className="border-none" shadow="none" radius="lg">
+          <Card
+            key={id}
+            radius="lg"
+            shadow="none"
+            isFooterBlurred
+            className="border-none"
+          >
             <Skeleton className="rounded-lg">
               <div className="h-48 rounded-lg bg-default-300" />
             </Skeleton>
@@ -107,7 +113,9 @@ export function OrdersInfoSkeleton() {
     <Fragment>
       <Table aria-label="Loading orders information" isStriped>
         <TableHeader columns={columns}>
-          {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
+          {(column) => (
+            <TableColumn key={column.uid}>{column.name}</TableColumn>
+          )}
         </TableHeader>
         <TableBody>
           {Array.from({ length: 5 }).map((_, index) => {
@@ -163,7 +171,10 @@ export function RestaurantPageMenuSkeleton() {
             <Card disableRipple key={id} isPressable shadow="sm">
               <CardBody className="overflow-visible">
                 <Skeleton className="rounded-xl">
-                  <div style={{ height: "150px" }} className="w-full rounded-xl bg-default-200" />
+                  <div
+                    style={{ height: "150px" }}
+                    className="w-full rounded-xl bg-default-200"
+                  />
                 </Skeleton>
               </CardBody>
               <CardFooter className="pt-0 flex-col items-start gap-1">
@@ -196,7 +207,10 @@ export function RestaurantPageSidebarSkeleton() {
     <div className="w-full lg:w-1/6 overflow-x-hidden pt-9">
       <div className="flex flex-col w-full items-center gap-6">
         <Skeleton className="rounded-xl">
-          <div style={{ height: "100px", width: "100px" }} className="rounded-xl bg-default-200" />
+          <div
+            style={{ height: "100px", width: "100px" }}
+            className="rounded-xl bg-default-200"
+          />
         </Skeleton>
         <div className="flex flex-col items-center gap-2 mt-2">
           <Skeleton className="rounded-xl">

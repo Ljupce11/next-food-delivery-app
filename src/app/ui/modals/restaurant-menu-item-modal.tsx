@@ -4,7 +4,11 @@ import { updateCartData } from "@/app/lib/actions";
 import type { CartData, MenuItem, Restaurant } from "@/app/lib/definitions";
 import { useUserStore } from "@/app/lib/stores/userStore";
 import { addItemToCart } from "@/app/lib/utils";
-import { MinusIcon, PlusIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
+import {
+  MinusIcon,
+  PlusIcon,
+  ShoppingBagIcon,
+} from "@heroicons/react/24/outline";
 import {
   Button,
   ButtonGroup,
@@ -39,7 +43,11 @@ export default function RestaurantMenuItemModal({
   const onAddToCartHandler = async () => {
     if (!userData?.id) return;
     if (!selectedMenuItem) return;
-    const updatedCartData: CartData[] = addItemToCart(userData, restaurant, selectedMenuItem);
+    const updatedCartData: CartData[] = addItemToCart(
+      userData,
+      restaurant,
+      selectedMenuItem,
+    );
     setIsLoading(true);
     await updateCartData(userData.id, updatedCartData, restaurant.id);
     setIsLoading(false);
@@ -47,9 +55,16 @@ export default function RestaurantMenuItemModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl" backdrop="blur">
+    <Modal
+      size="xl"
+      backdrop="blur"
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+    >
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">{selectedMenuItem?.name}</ModalHeader>
+        <ModalHeader className="flex flex-col gap-1">
+          {selectedMenuItem?.name}
+        </ModalHeader>
         <ModalBody>
           <Image
             removeWrapper

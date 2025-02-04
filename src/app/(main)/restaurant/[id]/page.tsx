@@ -4,7 +4,11 @@ import RestaurantPageSidebar from "@/app/ui/(main)/restaurant-page-sidebar";
 import { RestaurantPageMenuSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function Page({ params }: Props) {
   const { id } = await params;
   const restaurant = await fetchRestaurant(id);
   return (

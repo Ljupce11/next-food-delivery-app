@@ -3,7 +3,14 @@
 import { UserIcon } from "@heroicons/react/24/outline";
 import { Button, Form, Input, useDisclosure } from "@heroui/react";
 import Image from "next/image";
-import { Fragment, Suspense, lazy, useActionState, useEffect, useState } from "react";
+import {
+  Fragment,
+  Suspense,
+  lazy,
+  useActionState,
+  useEffect,
+  useState,
+} from "react";
 import type { z } from "zod";
 
 import { signUp } from "../lib/actions";
@@ -15,7 +22,10 @@ type FormData = z.infer<typeof signUpSchema>;
 
 export default function Page() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [state, formAction, isPending] = useActionState(signUp, { success: false, message: "" });
+  const [state, formAction, isPending] = useActionState(signUp, {
+    success: false,
+    message: "",
+  });
   const [formErrors, setFormErrors] = useState<Partial<FormData>>({});
 
   useEffect(() => {
@@ -51,7 +61,7 @@ export default function Page() {
               label="First name"
               name="first_name"
               type="text"
-              variant={"bordered"}
+              variant="bordered"
               labelPlacement="outside"
               placeholder="Enter your first name"
             />
@@ -60,7 +70,7 @@ export default function Page() {
               label="Last name"
               name="last_name"
               type="text"
-              variant={"bordered"}
+              variant="bordered"
               labelPlacement="outside"
               placeholder="Enter your last name"
             />
@@ -69,7 +79,7 @@ export default function Page() {
               label="Email"
               name="email"
               type="email"
-              variant={"bordered"}
+              variant="bordered"
               labelPlacement="outside"
               placeholder="Enter your email"
             />
@@ -78,11 +88,18 @@ export default function Page() {
               label="Password"
               name="password"
               type="password"
-              variant={"bordered"}
+              variant="bordered"
               labelPlacement="outside"
               placeholder="Enter your password"
             />
-            <Button fullWidth isLoading={isPending} disableRipple type="submit" color="primary">
+            <Button
+              fullWidth
+              disableRipple
+              type="submit"
+              color="primary"
+              isLoading={isPending}
+              aria-disabled={isPending}
+            >
               Sign up
             </Button>
           </Form>

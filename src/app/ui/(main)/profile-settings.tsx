@@ -10,7 +10,9 @@ export default function ProfileSettings() {
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <BellIcon className="size-6 text-default-600" />
-            <h3 className="text-lg font-medium leading-6 text-gray-900">Notifications</h3>
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
+              Notifications
+            </h3>
           </div>
           <div className="space-y-4">
             {[
@@ -30,11 +32,19 @@ export default function ProfileSettings() {
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <Cog8ToothIcon className="size-6 text-default-600" />
-            <h3 className="text-lg font-medium leading-6 text-gray-900">Preferences</h3>
+            <h3 className="text-lg font-medium leading-6 text-gray-900">
+              Preferences
+            </h3>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <Select selectedKeys={["en"]} variant="bordered" size="sm" className="max-w-xs" label="Select a language">
+              <Select
+                size="sm"
+                variant="bordered"
+                className="max-w-xs"
+                selectedKeys={["en"]}
+                label="Select a language"
+              >
                 <SelectItem key="en">English</SelectItem>
                 <SelectItem key="es">Spanish</SelectItem>
                 <SelectItem key="fr">French</SelectItem>

@@ -2,7 +2,11 @@
 
 import { completeOrder } from "@/app/lib/actions";
 import type { Order } from "@/app/lib/definitions";
-import { CheckCircleIcon, ClipboardDocumentListIcon, ClockIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  ClipboardDocumentListIcon,
+  ClockIcon,
+} from "@heroicons/react/24/outline";
 import {
   Button,
   Chip,
@@ -20,7 +24,9 @@ import {
 import { motion } from "motion/react";
 import { Suspense, lazy, useCallback, useState } from "react";
 
-const LazyOrderDetailsModal = lazy(() => import("../modals/order-details-modal"));
+const LazyOrderDetailsModal = lazy(
+  () => import("../modals/order-details-modal"),
+);
 
 const columns = [
   { name: "RESTAURANT", uid: "restaurant_name" },
@@ -35,13 +41,22 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   Delivered: "success",
 };
 
+type IsLoading = {
+  id: string | null;
+  state: boolean;
+};
+
 type Props = {
   orders: Order[];
 };
+
 export default function OrdersInfoContent({ orders }: Props) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [modalDetails, setModalDetails] = useState<Order | null>(null);
-  const [isLoading, setIsLoading] = useState<{ id: string | null; state: boolean }>({ id: null, state: false });
+  const [isLoading, setIsLoading] = useState<IsLoading>({
+    id: null,
+    state: false,
+  });
 
   const onOpenModalHandler = useCallback(
     (order: Order) => {
@@ -77,14 +92,26 @@ export default function OrdersInfoContent({ orders }: Props) {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
       <Suspense fallback={null}>
-        <LazyOrderDetailsModal modalDetails={modalDetails} isOpen={isOpen} onOpenChange={onOpenChange} />
+        <LazyOrderDetailsModal
+          isOpen={isOpen}
+          modalDetails={modalDetails}
+          onOpenChange={onOpenChange}
+        />
       </Suspense>
       <Table isStriped aria-label="Orders table">
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn scope="col" key={column.uid} align={column.uid === "details" ? "center" : "start"}>
+            <TableColumn
+              scope="col"
+              key={column.uid}
+              align={column.uid === "details" ? "center" : "start"}
+            >
               {column.name}
             </TableColumn>
           )}
@@ -93,7 +120,10 @@ export default function OrdersInfoContent({ orders }: Props) {
           {orders.map((order) => (
             <TableRow key={order.id}>
               <TableCell>
-                <User avatarProps={{ radius: "lg", src: order.restaurant_avatar }} name={order.restaurant_name}>
+                <User
+                  avatarProps={{ radius: "lg", src: order.restaurant_avatar }}
+                  name={order.restaurant_name}
+                >
                   {order.restaurant_name}
                 </User>
               </TableCell>
@@ -101,7 +131,12 @@ export default function OrdersInfoContent({ orders }: Props) {
                 <DateCell order={order} />
               </TableCell>
               <TableCell>
-                <Chip className="capitalize" color={statusColorMap[order.status]} size="sm" variant="flat">
+                <Chip
+                  size="sm"
+                  variant="flat"
+                  className="capitalize"
+                  color={statusColorMap[order.status]}
+                >
                   <div className="flex items-center gap-1">
                     {order.status === "In Progress" ? (
                       <ClockIcon className="size-4" />
@@ -117,7 +152,11 @@ export default function OrdersInfoContent({ orders }: Props) {
               </TableCell>
               <TableCell>
                 <div className="flex justify-center items-center w-full gap-2">
-                  <Tooltip size="sm" color="foreground" content="Complete order">
+                  <Tooltip
+                    size="sm"
+                    color="foreground"
+                    content="Complete order"
+                  >
                     <Button
                       size="sm"
                       variant="flat"

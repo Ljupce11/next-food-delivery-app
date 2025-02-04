@@ -12,6 +12,7 @@ export const signUpSchema = z.object({
     .regex(/[0-9]/, "Password must contain at least one number")
     .regex(/[\W_]/, "Password must contain at least one special character")
     .refine((value) => !/123|abc|password/i.test(value), {
-      message: "Password must not contain easily guessable patterns like '123', 'abc', or 'password'",
+      message:
+        "Password must not contain easily guessable patterns like '123', 'abc', or 'password'",
     }),
 });

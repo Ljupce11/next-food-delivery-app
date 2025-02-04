@@ -17,7 +17,11 @@ const categories = [
   { id: "desserts", label: "Desserts" },
 ];
 
-export default function RestaurantPageSidebar({ restaurant }: { restaurant: Restaurant }) {
+type Props = {
+  restaurant: Restaurant;
+};
+
+export default function RestaurantPageSidebar({ restaurant }: Props) {
   const { name, address, cuisine, rating, image } = restaurant;
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
@@ -56,7 +60,9 @@ export default function RestaurantPageSidebar({ restaurant }: { restaurant: Rest
               const id = index + 1;
               return <StarIcon key={id} className="size-4 text-yellow-400" />;
             })}
-            <p className="pl-2 text-sm font-semibold text-default-500">{rating}</p>
+            <p className="pl-2 text-sm font-semibold text-default-500">
+              {rating}
+            </p>
           </div>
           <p className="text-sm text-default-500 pt-1">{cuisine}</p>
           <div className="flex items-center gap-1 pt-1">
@@ -67,7 +73,12 @@ export default function RestaurantPageSidebar({ restaurant }: { restaurant: Rest
       </div>
       <Divider className="my-5" />
       <div className="overflow-auto">
-        <Tabs className="mx-auto" isVertical={!(screenWidth < 1024)} aria-label="Dynamic tabs" items={categories}>
+        <Tabs
+          items={categories}
+          className="mx-auto"
+          aria-label="Dynamic tabs"
+          isVertical={!(screenWidth < 1024)}
+        >
           {({ id, label }) => <Tab key={id} title={label} />}
         </Tabs>
       </div>

@@ -1,5 +1,12 @@
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@heroui/react";
 import Link from "next/link";
 
 type Props = {
@@ -28,7 +35,14 @@ export default function SignUpModal({ isOpen, onOpenChange }: Props) {
               </div>
             </ModalBody>
             <ModalFooter>
-              <Button as={Link} href="/login" fullWidth disableRipple color="primary" onPress={onClose}>
+              <Button
+                as={Link}
+                fullWidth
+                disableRipple
+                href="/login"
+                color="primary"
+                onPress={onClose}
+              >
                 Sign In
               </Button>
             </ModalFooter>

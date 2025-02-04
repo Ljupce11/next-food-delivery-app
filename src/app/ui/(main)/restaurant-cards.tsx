@@ -29,8 +29,22 @@ export default function RestaurantCards({ restaurants }: Props) {
     >
       {restaurants.map(({ id, name, image, rating }) => (
         <Link href={`/restaurant/${id}`} key={id} prefetch={true}>
-          <Card key={id} isFooterBlurred className="border-none" radius="lg" shadow="sm">
-            <Image isZoomed removeWrapper alt={name} height={200} width={"100%"} className="object-cover" src={image} />
+          <Card
+            key={id}
+            radius="lg"
+            shadow="sm"
+            isFooterBlurred
+            className="border-none"
+          >
+            <Image
+              isZoomed
+              alt={name}
+              src={image}
+              height={200}
+              removeWrapper
+              width={"100%"}
+              className="object-cover"
+            />
             <CardFooter className="justify-between before:bg-black/20 bg-white/50 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
               <div className="flex justify-between items-center w-full gap-2">
                 <p className="text-tiny text-black font-bold">{name}</p>

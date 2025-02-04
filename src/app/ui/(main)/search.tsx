@@ -37,7 +37,9 @@ export default function Search() {
       setFieldState((prevState) => ({
         ...prevState,
         items: previousSearches.filter((item) =>
-          item.name.toLowerCase().startsWith(prevState.inputValue.toLowerCase()),
+          item.name
+            .toLowerCase()
+            .startsWith(prevState.inputValue.toLowerCase()),
         ),
       }));
     }
@@ -45,7 +47,9 @@ export default function Search() {
 
   const onSelectionChange = useDebouncedCallback((key: React.Key | null) => {
     const updatedFieldState = { ...fieldState };
-    const selectedItem = updatedFieldState.items.find((option) => option.key === key);
+    const selectedItem = updatedFieldState.items.find(
+      (option) => option.key === key,
+    );
     const params = new URLSearchParams(searchParams);
     if (updatedFieldState.inputValue) {
       params.set("search", updatedFieldState.inputValue);
@@ -61,7 +65,9 @@ export default function Search() {
           selectedKey: key,
           inputValue: selectedItem?.name || "",
           items: previousSearches.filter((item) =>
-            item.name.toLowerCase().startsWith(selectedItem?.name.toLowerCase() || ""),
+            item.name
+              .toLowerCase()
+              .startsWith(selectedItem?.name.toLowerCase() || ""),
           ),
         };
       });
@@ -76,25 +82,28 @@ export default function Search() {
     fetchRestaurantsOnInputChange(value);
   };
 
-  const fetchRestaurantsOnInputChange = useDebouncedCallback(async (value: string) => {
-    if (value) {
-      setIsLoading(true);
-      const restaurants = await searchRestaurants(value);
-      setIsLoading(false);
-      const autoCompleteData = restaurants.map((restaurant) => {
-        return { name: restaurant.name, key: restaurant.id };
-      });
-      setFieldState((prevState) => ({
-        ...prevState,
-        items: autoCompleteData,
-      }));
-    } else {
-      setFieldState((prevState) => ({
-        ...prevState,
-        items: previousSearches,
-      }));
-    }
-  }, 300);
+  const fetchRestaurantsOnInputChange = useDebouncedCallback(
+    async (value: string) => {
+      if (value) {
+        setIsLoading(true);
+        const restaurants = await searchRestaurants(value);
+        setIsLoading(false);
+        const autoCompleteData = restaurants.map((restaurant) => {
+          return { name: restaurant.name, key: restaurant.id };
+        });
+        setFieldState((prevState) => ({
+          ...prevState,
+          items: autoCompleteData,
+        }));
+      } else {
+        setFieldState((prevState) => ({
+          ...prevState,
+          items: previousSearches,
+        }));
+      }
+    },
+    300,
+  );
 
   return (
     <Autocomplete
@@ -116,7 +125,11 @@ export default function Search() {
       }
     >
       {(previousSearch) => (
-        <AutocompleteItem variant="flat" key={previousSearch.key} textValue={previousSearch.name}>
+        <AutocompleteItem
+          variant="flat"
+          key={previousSearch.key}
+          textValue={previousSearch.name}
+        >
           <div className="flex gap-2 items-center">
             <ClockIcon className="size-6 text-default-500" />
             <div className="flex flex-col">

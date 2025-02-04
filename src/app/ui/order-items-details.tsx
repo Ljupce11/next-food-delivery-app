@@ -1,6 +1,15 @@
 "use client";
 
-import { Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, User } from "@heroui/react";
+import {
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  User,
+} from "@heroui/react";
 import { Fragment, useCallback, useEffect, useState } from "react";
 
 import { fetchOrderItems } from "../lib/actions";
@@ -12,7 +21,9 @@ export const columns = [
   { name: "PRICE", uid: "price" },
 ];
 
-export default function OrderItemsDetails({ orderDetails }: { orderDetails: Order | null }) {
+export default function OrderItemsDetails({
+  orderDetails,
+}: { orderDetails: Order | null }) {
   const { id } = orderDetails || {};
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,17 +40,25 @@ export default function OrderItemsDetails({ orderDetails }: { orderDetails: Orde
     getOrderItems();
   }, [id]);
 
-  const renderCell = useCallback((orderItem: OrderItem, columnKey: React.Key) => {
-    const cellValue = orderItem[columnKey as keyof OrderItem];
-    switch (columnKey) {
-      case "item_name":
-        return <User avatarProps={{ radius: "lg", src: orderItem.item_image }} name={orderItem.name} />;
-      case "price":
-        return <p className="text-bold">{cellValue}kr</p>;
-      default:
-        return cellValue;
-    }
-  }, []);
+  const renderCell = useCallback(
+    (orderItem: OrderItem, columnKey: React.Key) => {
+      const cellValue = orderItem[columnKey as keyof OrderItem];
+      switch (columnKey) {
+        case "item_name":
+          return (
+            <User
+              avatarProps={{ radius: "lg", src: orderItem.item_image }}
+              name={orderItem.name}
+            />
+          );
+        case "price":
+          return <p className="text-bold">{cellValue}kr</p>;
+        default:
+          return cellValue;
+      }
+    },
+    [],
+  );
 
   return (
     <Table removeWrapper isStriped aria-label="Item details">
@@ -79,7 +98,11 @@ export default function OrderItemsDetails({ orderDetails }: { orderDetails: Orde
           </Fragment>
         ) : (
           (item) => (
-            <TableRow key={item.id}>{(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}</TableRow>
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
           )
         )}
       </TableBody>

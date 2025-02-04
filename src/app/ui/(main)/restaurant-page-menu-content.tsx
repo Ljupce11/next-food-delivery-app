@@ -1,23 +1,43 @@
 "use client";
 
-import type { AdvancedUser, MenuItem, Restaurant } from "@/app/lib/definitions";
+import type { MenuItem, Restaurant } from "@/app/lib/definitions";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
-import { Card, CardBody, CardFooter, Divider, Image, useDisclosure } from "@heroui/react";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Divider,
+  Image,
+  useDisclosure,
+} from "@heroui/react";
 import { motion } from "motion/react";
 import { Fragment, Suspense, lazy, useState } from "react";
 
-const LazyRestaurantMenuItemModal = lazy(() => import("../modals/restaurant-menu-item-modal"));
+const LazyRestaurantMenuItemModal = lazy(
+  () => import("../modals/restaurant-menu-item-modal"),
+);
 
 type Props = {
   restaurant: Restaurant;
   menuItems: MenuItem[];
 };
 
-export default function RestaurantPageMenuContent({ restaurant, menuItems }: Props) {
+export default function RestaurantPageMenuContent({
+  restaurant,
+  menuItems,
+}: Props) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(null);
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(
+    null,
+  );
 
-  const onCardClickHandler = (id: string, name: string, price: number, image: string, restaurant_id: string) => {
+  const onCardClickHandler = (
+    id: string,
+    name: string,
+    price: number,
+    image: string,
+    restaurant_id: string,
+  ) => {
     onOpen();
     setSelectedMenuItem({ id, name, price, image, restaurant_id });
   };
@@ -47,7 +67,9 @@ export default function RestaurantPageMenuContent({ restaurant, menuItems }: Pro
                 key={id}
                 isPressable
                 shadow="sm"
-                onPress={() => onCardClickHandler(id, name, price, image, restaurant_id)}
+                onPress={() =>
+                  onCardClickHandler(id, name, price, image, restaurant_id)
+                }
               >
                 <CardBody className="overflow-visible">
                   <Image
@@ -61,7 +83,9 @@ export default function RestaurantPageMenuContent({ restaurant, menuItems }: Pro
                 </CardBody>
                 <CardFooter className="pt-0 flex-col items-start">
                   <b className="text-sm">{name}</b>
-                  <p className="text-xs">Some description here about this item</p>
+                  <p className="text-xs">
+                    Some description here about this item
+                  </p>
                   <Divider className="my-2.5" />
                   <div className="flex items-center justify-between w-full text-sm">
                     <p className="font-semibold">{price}kr</p>

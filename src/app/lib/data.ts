@@ -1,5 +1,12 @@
 import { sql } from "@vercel/postgres";
-import type { AdvancedUser, CartData, MenuItem, Order, OrderAnalytics, Restaurant } from "./definitions";
+import type {
+  AdvancedUser,
+  CartData,
+  MenuItem,
+  Order,
+  OrderAnalytics,
+  Restaurant,
+} from "./definitions";
 
 export async function fetchRestaurants(search: string) {
   try {
@@ -17,7 +24,8 @@ export async function fetchRestaurants(search: string) {
 
 export async function fetchRestaurant(id: string) {
   try {
-    const restaurant = await sql<Restaurant>`SELECT * FROM restaurants WHERE id=${id}`;
+    const restaurant =
+      await sql<Restaurant>`SELECT * FROM restaurants WHERE id=${id}`;
     return restaurant.rows[0];
   } catch (error) {
     console.error("Failed to fetch restaurant:", error);
@@ -27,7 +35,8 @@ export async function fetchRestaurant(id: string) {
 
 export async function fetchMenuItems(id: string) {
   try {
-    const menuItems = await sql<MenuItem>`SELECT * FROM menus WHERE restaurant_id=${id}`;
+    const menuItems =
+      await sql<MenuItem>`SELECT * FROM menus WHERE restaurant_id=${id}`;
     return menuItems.rows;
   } catch (error) {
     console.error("Failed to fetch menus:", error);
@@ -37,7 +46,8 @@ export async function fetchMenuItems(id: string) {
 
 export async function fetchUserData(id: string | null) {
   try {
-    const userData = await sql<AdvancedUser>`SELECT id, name, email, phone, address, cart FROM users WHERE id=${id}`;
+    const userData =
+      await sql<AdvancedUser>`SELECT id, name, email, phone, address, cart FROM users WHERE id=${id}`;
     return userData.rows[0];
   } catch (error) {
     console.error("Failed to fetch user data:", error);
@@ -62,7 +72,8 @@ export async function updateCart(id: string, data: CartData[]) {
 
 export async function fetchOrders(id: string | null) {
   try {
-    const orders = await sql<Order>`SELECT * FROM orders WHERE user_id=${id} ORDER BY order_date DESC;`;
+    const orders =
+      await sql<Order>`SELECT * FROM orders WHERE user_id=${id} ORDER BY order_date DESC;`;
     return orders.rows;
   } catch (error) {
     console.error("Failed to fetch orders:", error);

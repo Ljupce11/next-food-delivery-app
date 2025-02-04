@@ -33,7 +33,9 @@ export default function ProfileInfo({ user }: Props) {
         <div>
           <h2 className="text-xl font-medium text-gray-900">{user?.name}</h2>
           <p className="text-sm text-gray-500">{user?.email}</p>
-          <p className="mt-1 text-sm text-gray-500">Member since January 2024</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Member since January 2024
+          </p>
         </div>
       </div>
     </div>

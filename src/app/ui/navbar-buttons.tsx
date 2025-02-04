@@ -36,7 +36,11 @@ type Props = {
   onDropdownActionHandler: (key: Key) => void;
 };
 
-export default function NavbarButtons({ user, cartData, onDropdownActionHandler }: Props) {
+export default function NavbarButtons({
+  user,
+  cartData,
+  onDropdownActionHandler,
+}: Props) {
   const {
     isOpen: isCartOpen,
     onOpen: onOpenCart,
@@ -48,7 +52,13 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
     return (
       <Fragment>
         <NavbarItem>
-          <Button disableRipple isIconOnly aria-label="Cart" variant="light" onPress={onOpenCart}>
+          <Button
+            disableRipple
+            isIconOnly
+            aria-label="Cart"
+            variant="light"
+            onPress={onOpenCart}
+          >
             <Badge
               size="sm"
               shape="circle"
@@ -114,11 +124,22 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
                 </div>
               }
             >
-              <DropdownItem isReadOnly key="divider-one" startContent={<Divider />} textValue="divider-one" />
-              <DropdownItem key="user-profile" startContent={<UserCircleIcon className="size-5" />}>
+              <DropdownItem
+                isReadOnly
+                key="divider-one"
+                textValue="divider-one"
+                startContent={<Divider />}
+              />
+              <DropdownItem
+                key="user-profile"
+                startContent={<UserCircleIcon className="size-5" />}
+              >
                 Profile
               </DropdownItem>
-              <DropdownItem key="orders" startContent={<ClipboardDocumentListIcon className="size-5" />}>
+              <DropdownItem
+                key="orders"
+                startContent={<ClipboardDocumentListIcon className="size-5" />}
+              >
                 Orders
               </DropdownItem>
               <DropdownItem
@@ -132,13 +153,23 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
               >
                 Favorites
               </DropdownItem>
-              <DropdownItem isReadOnly key="divider-two" startContent={<Divider />} textValue="divider-two" />
-              <DropdownItem key="help_and_feedback" startContent={<ChatBubbleLeftEllipsisIcon className="size-5" />}>
+              <DropdownItem
+                isReadOnly
+                key="divider-two"
+                textValue="divider-two"
+                startContent={<Divider />}
+              />
+              <DropdownItem
+                key="help_and_feedback"
+                startContent={<ChatBubbleLeftEllipsisIcon className="size-5" />}
+              >
                 Help & Feedback
               </DropdownItem>
               <DropdownItem
                 key="logout"
-                startContent={<ArrowRightStartOnRectangleIcon className="size-5" />}
+                startContent={
+                  <ArrowRightStartOnRectangleIcon className="size-5" />
+                }
                 color="danger"
               >
                 Log Out
@@ -155,7 +186,10 @@ export default function NavbarButtons({ user, cartData, onDropdownActionHandler 
         <Link href="/login">Sign In</Link>
       </NavbarItem>
       <NavbarItem>
-        <Link href="/sign-up" className="bg-blue-100 rounded-xl px-3 py-2 text-blue-700">
+        <Link
+          href="/sign-up"
+          className="bg-blue-100 rounded-xl px-3 py-2 text-blue-700"
+        >
           Sign up
         </Link>
       </NavbarItem>

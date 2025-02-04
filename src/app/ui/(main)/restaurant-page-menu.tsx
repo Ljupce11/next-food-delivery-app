@@ -14,5 +14,7 @@ export default async function RestaurantPageMenu({ restaurant }: Props) {
     return <RestaurantEmptyMenu />;
   }
 
-  return <RestaurantPageMenuContent menuItems={menuItems} restaurant={restaurant} />;
+  return (
+    <RestaurantPageMenuContent menuItems={menuItems} restaurant={restaurant} />
+  );
 }

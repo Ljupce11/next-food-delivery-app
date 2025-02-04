@@ -12,10 +12,13 @@ type RestaurantStore = {
 export const useRestaurantsStore = create<RestaurantStore>((set) => ({
   restaurants: [],
   setRestaurants: (restaurants) => set({ restaurants }),
-  addRestaurant: (restaurant) => set((state) => ({ restaurants: [...state.restaurants, restaurant] })),
+  addRestaurant: (restaurant) =>
+    set((state) => ({ restaurants: [...state.restaurants, restaurant] })),
   updateRestaurant: (restaurant) =>
     set((state) => ({
-      restaurants: state.restaurants.map((r) => (r.id === restaurant.id ? restaurant : r)),
+      restaurants: state.restaurants.map((r) =>
+        r.id === restaurant.id ? restaurant : r,
+      ),
     })),
   removeRestaurant: (restaurantId) =>
     set((state) => ({

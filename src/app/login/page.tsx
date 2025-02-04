@@ -7,7 +7,10 @@ import { useActionState } from "react";
 import { authenticate } from "../lib/actions";
 
 export default function Page() {
-  const [errorMessage, formAction, isPending] = useActionState(authenticate, undefined);
+  const [errorMessage, formAction, isPending] = useActionState(
+    authenticate,
+    undefined,
+  );
 
   return (
     <div className="flex justify-end flex-col-reverse gap-4 lg:flex-row h-screen p-4 overflow-hidden">
@@ -19,7 +22,10 @@ export default function Page() {
           <h1 className="font-semibold text-2xl">Sign in to your account</h1>
           <p className="text-sm">Enter your details to sign in</p>
         </div>
-        <Form action={formAction} className="w-full lg:w-6/12 flex flex-col gap-4">
+        <Form
+          action={formAction}
+          className="w-full lg:w-6/12 flex flex-col gap-4"
+        >
           <Input
             isRequired
             name="email"
@@ -38,8 +44,17 @@ export default function Page() {
             labelPlacement="outside"
             placeholder="Enter your password"
           />
-          {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>}
-          <Button fullWidth isLoading={isPending} disableRipple type="submit" color="primary" aria-disabled={isPending}>
+          {errorMessage && (
+            <div className="text-red-500 text-sm">{errorMessage}</div>
+          )}
+          <Button
+            fullWidth
+            disableRipple
+            type="submit"
+            color="primary"
+            isLoading={isPending}
+            aria-disabled={isPending}
+          >
             Sign in
           </Button>
         </Form>
