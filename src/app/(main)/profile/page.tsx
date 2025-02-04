@@ -1,5 +1,5 @@
-import ProfileInfo from "@/app/ui/(main)/profile-info";
-import ProfileSettings from "@/app/ui/(main)/profile-settings";
+import ProfileInfo from "@/ui/(main)/profile-info";
+import ProfileSettings from "@/ui/(main)/profile-settings";
 
 import { auth } from "../../../../auth";
 

@@ -1,7 +1,7 @@
-import { fetchRestaurant } from "@/app/lib/data";
-import RestaurantPageMenu from "@/app/ui/(main)/restaurant-page-menu";
-import RestaurantPageSidebar from "@/app/ui/(main)/restaurant-page-sidebar";
-import { RestaurantPageMenuSkeleton } from "@/app/ui/skeletons";
+import { fetchRestaurant } from "@/lib/data";
+import RestaurantPageMenu from "@/ui/(main)/restaurant-page-menu";
+import RestaurantPageSidebar from "@/ui/(main)/restaurant-page-sidebar";
+import { RestaurantPageMenuSkeleton } from "@/ui/skeletons";
 import { Suspense } from "react";
 
 type Props = {

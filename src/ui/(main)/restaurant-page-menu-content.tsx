@@ -1,6 +1,6 @@
 "use client";
 
-import type { MenuItem, Restaurant } from "@/app/lib/definitions";
+import type { MenuItem, Restaurant } from "@/lib/definitions";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
 import {
   Card,

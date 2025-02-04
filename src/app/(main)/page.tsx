@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { Suspense } from "react";
 
-import Restaurants from "../ui/(main)/restaurants";
-import Search from "../ui/(main)/search";
-import { RestaurantsSkeleton } from "../ui/skeletons";
+import Restaurants from "../../ui/(main)/restaurants";
+import Search from "../../ui/(main)/search";
+import { RestaurantsSkeleton } from "../../ui/skeletons";
 
 export default async function Page(props: {
   searchParams?: Promise<{

@@ -1,5 +1,5 @@
-import { fetchMenuItems } from "@/app/lib/data";
-import type { Restaurant } from "@/app/lib/definitions";
+import { fetchMenuItems } from "@/lib/data";
+import type { Restaurant } from "@/lib/definitions";
 import RestaurantEmptyMenu from "./restaurant-empty-menu";
 import RestaurantPageMenuContent from "./restaurant-page-menu-content";
 

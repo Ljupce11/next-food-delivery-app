@@ -1,7 +1,7 @@
 "use client";
 
-import { completeOrder } from "@/app/lib/actions";
-import type { Order } from "@/app/lib/definitions";
+import { completeOrder } from "@/lib/actions";
+import type { Order } from "@/lib/definitions";
 import {
   CheckCircleIcon,
   ClipboardDocumentListIcon,

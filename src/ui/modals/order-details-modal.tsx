@@ -1,6 +1,6 @@
 "use client";
 
-import type { Order } from "@/app/lib/definitions";
+import type { Order } from "@/lib/definitions";
 import {
   Button,
   Divider,

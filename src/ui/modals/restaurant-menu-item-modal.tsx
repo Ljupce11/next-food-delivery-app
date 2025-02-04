@@ -1,9 +1,9 @@
 "use client";
 
-import { updateCartData } from "@/app/lib/actions";
-import type { CartData, MenuItem, Restaurant } from "@/app/lib/definitions";
-import { useUserStore } from "@/app/lib/stores/userStore";
-import { addItemToCart } from "@/app/lib/utils";
+import { updateCartData } from "@/lib/actions";
+import type { CartData, MenuItem, Restaurant } from "@/lib/definitions";
+import { useUserStore } from "@/lib/stores/userStore";
+import { addItemToCart } from "@/lib/utils";
 import {
   MinusIcon,
   PlusIcon,

@@ -13,10 +13,10 @@ import {
 } from "react";
 import type { z } from "zod";
 
-import { signUp } from "../lib/actions";
-import type { signUpSchema } from "../lib/schemas";
+import { signUp } from "../../lib/actions";
+import type { signUpSchema } from "../../lib/schemas";
 
-const LazySignUpModal = lazy(() => import("../ui/modals/sign-up-modal"));
+const LazySignUpModal = lazy(() => import("../../ui/modals/sign-up-modal"));
 
 type FormData = z.infer<typeof signUpSchema>;
 

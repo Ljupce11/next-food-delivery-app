@@ -4,7 +4,7 @@ import { Button, Form, Input } from "@heroui/react";
 import Image from "next/image";
 import { useActionState } from "react";
 
-import { authenticate } from "../lib/actions";
+import { authenticate } from "../../lib/actions";
 
 export default function Page() {
   const [errorMessage, formAction, isPending] = useActionState(

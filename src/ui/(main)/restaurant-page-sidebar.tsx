@@ -1,6 +1,6 @@
 "use client";
 
-import type { Restaurant } from "@/app/lib/definitions";
+import type { Restaurant } from "@/lib/definitions";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Divider, Image, Tab, Tabs } from "@heroui/react";

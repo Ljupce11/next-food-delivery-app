@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 
-import { signIn, signOut } from "../../../auth";
+import { signIn, signOut } from "../../auth";
 import { fetchRestaurants, updateCart } from "./data";
 import type {
   CartData,

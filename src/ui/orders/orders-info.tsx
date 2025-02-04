@@ -1,4 +1,4 @@
-import { fetchOrders } from "@/app/lib/data";
+import { fetchOrders } from "@/lib/data";
 import OrdersInfoContent from "./orders-info-content";
 
 type Props = {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { inter } from "../ui/fonts";
 import { Providers } from "./providers";
-import { inter } from "./ui/fonts";
 
 export const metadata: Metadata = {
   title: "Food Delivery App",

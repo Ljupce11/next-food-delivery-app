@@ -1,7 +1,7 @@
 import { auth } from "../../../auth";
-import { fetchUserData } from "../lib/data";
-import type { AdvancedUser } from "../lib/definitions";
-import Navbar from "../ui/navbar";
+import { fetchUserData } from "../../lib/data";
+import type { AdvancedUser } from "../../lib/definitions";
+import Navbar from "../../ui/navbar";
 
 export default async function MainLayout({
   children,

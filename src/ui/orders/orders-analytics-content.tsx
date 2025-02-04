@@ -1,6 +1,6 @@
 "use client";
 
-import type { OrderAnalytics } from "@/app/lib/definitions";
+import type { OrderAnalytics } from "@/lib/definitions";
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 import { Card, CardBody } from "@heroui/react";
 import { motion } from "motion/react";

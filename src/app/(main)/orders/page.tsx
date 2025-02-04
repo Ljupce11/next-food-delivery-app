@@ -1,9 +1,6 @@
-import OrdersAnalytics from "@/app/ui/orders/orders-analytics";
-import OrdersInfo from "@/app/ui/orders/orders-info";
-import {
-  OrdersAnalyticsSkeleton,
-  OrdersInfoSkeleton,
-} from "@/app/ui/skeletons";
+import OrdersAnalytics from "@/ui/orders/orders-analytics";
+import OrdersInfo from "@/ui/orders/orders-info";
+import { OrdersAnalyticsSkeleton, OrdersInfoSkeleton } from "@/ui/skeletons";
 import { Suspense } from "react";
 import { auth } from "../../../../auth";
 

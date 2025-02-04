@@ -1,7 +1,7 @@
 "use client";
 
-import type { Restaurant } from "@/app/lib/definitions";
-import { useRestaurantsStore } from "@/app/lib/stores/restaurantsStore";
+import type { Restaurant } from "@/lib/definitions";
+import { useRestaurantsStore } from "@/lib/stores/restaurantsStore";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardFooter, Image } from "@heroui/react";
