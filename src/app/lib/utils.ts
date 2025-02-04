@@ -82,96 +82,63 @@ export function addItemToCart(
   restaurant: Restaurant,
   selectedMenuItem: MenuItem,
 ) {
-  let updatedCartData: CartData[] = [];
-  const existingCartData = user.cart;
+  if (!selectedMenuItem) {
+    throw new Error("Selected menu item is required");
+  }
 
-  if (existingCartData) {
-    updatedCartData = [...existingCartData];
-    if (updatedCartData.length > 0) {
-      const existingRestaurantIndex = updatedCartData.findIndex(
-        (cartData) => cartData.restaurantId === restaurant.id,
-      );
-      if (existingRestaurantIndex !== -1) {
-        if (updatedCartData[existingRestaurantIndex].items.length > 0) {
-          if (
-            updatedCartData[existingRestaurantIndex].items.some(
-              (item) => item.id === selectedMenuItem?.id,
-            )
-          ) {
-            updatedCartData[existingRestaurantIndex].items.map((item) => {
-              if (item.id === selectedMenuItem?.id) {
-                item.amount += 1;
-              }
-              return item;
-            });
-          } else {
-            updatedCartData[existingRestaurantIndex].items.push({
-              id: selectedMenuItem?.id,
-              name: selectedMenuItem?.name || "",
-              extra: "",
-              price: selectedMenuItem?.price || 0,
-              unitPrice: selectedMenuItem?.price || 0,
-              amount: 1,
-              image: selectedMenuItem?.image,
-            });
-          }
-        }
-      } else {
-        updatedCartData.push({
-          restaurantId: restaurant.id,
-          restaurantName: restaurant.name,
-          restaurantAddress: restaurant.address,
-          image: restaurant.image,
-          items: [
-            {
-              id: selectedMenuItem?.id,
-              name: selectedMenuItem?.name || "",
-              extra: "",
-              price: selectedMenuItem?.price || 0,
-              unitPrice: selectedMenuItem?.price || 0,
-              amount: 1,
-              image: selectedMenuItem?.image,
-            },
-          ],
-        });
-      }
-    } else {
-      updatedCartData.push({
-        restaurantId: restaurant.id,
-        restaurantName: restaurant.name,
-        restaurantAddress: restaurant.address,
-        image: restaurant.image,
-        items: [
-          {
-            id: selectedMenuItem?.id,
-            name: selectedMenuItem?.name || "",
-            extra: "",
-            price: selectedMenuItem?.price || 0,
-            unitPrice: selectedMenuItem?.price || 0,
-            amount: 1,
-            image: selectedMenuItem?.image,
-          },
-        ],
-      });
-    }
+  const newCartItem = {
+    id: selectedMenuItem.id,
+    name: selectedMenuItem.name,
+    extra: "",
+    price: selectedMenuItem.price,
+    unitPrice: selectedMenuItem.price,
+    amount: 1,
+    image: selectedMenuItem.image,
+  };
+
+  const newRestaurantCart = {
+    restaurantId: restaurant.id,
+    restaurantName: restaurant.name,
+    restaurantAddress: restaurant.address,
+    image: restaurant.image,
+    items: [newCartItem],
+  };
+
+  // If user has no cart, create new cart with the restaurant and item
+  if (!user.cart) {
+    return [newRestaurantCart];
+  }
+
+  const updatedCartData = [...user.cart];
+
+  // If cart is empty, add new restaurant cart
+  if (updatedCartData.length === 0) {
+    return [newRestaurantCart];
+  }
+
+  // Find if restaurant already exists in cart
+  const existingRestaurantIndex = updatedCartData.findIndex(
+    (cartData) => cartData.restaurantId === restaurant.id,
+  );
+
+  // If restaurant not found in cart, add new restaurant cart
+  if (existingRestaurantIndex === -1) {
+    return [...updatedCartData, newRestaurantCart];
+  }
+
+  const restaurantCart = updatedCartData[existingRestaurantIndex];
+
+  // Find if item already exists in restaurant's cart
+  const existingItem = restaurantCart.items.find(
+    (item) => item.id === selectedMenuItem.id,
+  );
+
+  // If item exists, increment amount
+  if (existingItem) {
+    existingItem.amount += 1;
   } else {
-    updatedCartData.push({
-      restaurantId: restaurant.id,
-      restaurantName: restaurant.name,
-      restaurantAddress: restaurant.address,
-      image: restaurant.image,
-      items: [
-        {
-          id: selectedMenuItem?.id,
-          name: selectedMenuItem?.name || "",
-          extra: "",
-          price: selectedMenuItem?.price || 0,
-          unitPrice: selectedMenuItem?.price || 0,
-          amount: 1,
-          image: selectedMenuItem?.image,
-        },
-      ],
-    });
+    // If item doesn't exist, add new item
+    restaurantCart.items.push(newCartItem);
   }
 
   return updatedCartData;
