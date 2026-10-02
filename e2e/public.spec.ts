@@ -61,7 +61,11 @@ test("restaurant page renders on the server without errors", async ({
 
   const errors = trackErrors(page);
   await page.goto(path);
-  await expect(page.getByText("Open now")).toBeVisible();
+  // While streaming, React briefly keeps the finished content in a hidden
+  // <div> before moving it into place, so only match visible elements
+  await expect(
+    page.getByText("Open now").filter({ visible: true }),
+  ).toBeVisible();
   await expect(page.getByText(/\d+kr/).first()).toBeVisible();
   expect(errors).toEqual([]);
 });

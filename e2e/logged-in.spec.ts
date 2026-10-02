@@ -32,7 +32,9 @@ test("add to cart, check out and complete an order", async ({ page }) => {
   // Open the first restaurant and add its first menu item
   await page.goto("/");
   await page.locator('a[href^="/restaurant/"]').first().click();
-  await expect(page.getByText("Open now")).toBeVisible();
+  await expect(
+    page.getByText("Open now").filter({ visible: true }),
+  ).toBeVisible();
   const restaurantName = (
     await page.getByRole("heading", { level: 1 }).innerText()
   ).trim();
