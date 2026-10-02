@@ -74,7 +74,6 @@ export default function NavbarButtons({
           {isCartOpen && (
             <Suspense fallback={null}>
               <LazyCartDrawer
-                user={user}
                 cartData={cartData}
                 isOpen={isCartOpen}
                 onClose={onCloseCart}

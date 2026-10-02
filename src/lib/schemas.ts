@@ -16,3 +16,38 @@ export const signUpSchema = z.object({
         "Password must not contain easily guessable patterns like '123', 'abc', or 'password'",
     }),
 });
+
+/** Display-only text that may be missing in carts already stored in the database */
+const optionalText = (max: number) =>
+  z
+    .string()
+    .max(max)
+    .nullish()
+    .transform((value) => value ?? "");
+
+const cartItemSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().max(200),
+  extra: optionalText(500),
+  price: z.coerce.number().nonnegative(),
+  unitPrice: z.coerce.number().nonnegative(),
+  amount: z.coerce.number().int().min(1).max(99),
+  image: optionalText(500),
+});
+
+/**
+ * Validates cart data coming from the client before it's stored.
+ * Prices in the cart are display-only (and may arrive as strings, since Postgres
+ * returns NUMERIC as text): checkout recalculates them from the database.
+ */
+export const cartSchema = z
+  .array(
+    z.object({
+      restaurantId: z.string().uuid(),
+      restaurantName: z.string().max(200),
+      restaurantAddress: optionalText(300),
+      image: optionalText(500),
+      items: z.array(cartItemSchema).max(100),
+    }),
+  )
+  .max(50);
