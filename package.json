@@ -16,7 +16,7 @@
     "@heroui/react": "2.6.13",
     "@neondatabase/serverless": "^1.2.0",
     "bcryptjs": "^3.0.3",
-    "motion": "^12.0.0",
+    "motion": "^14.0.0",
     "next": "^15.5.12",
     "next-auth": "^5.0.0-beta.25",
     "react": "^19.0.0",
