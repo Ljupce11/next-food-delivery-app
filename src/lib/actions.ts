@@ -13,7 +13,8 @@ import { sql } from "./db";
 import type { CartData, MenuItem, OrderItem, Restaurant } from "./definitions";
 import { cartSchema, signUpSchema } from "./schemas";
 
-const uuidSchema = z.string().uuid();
+// Any 8-4-4-4-12 id; z.uuid() would also enforce RFC version/variant bits
+const uuidSchema = z.guid();
 
 /**
  * Server actions are public POST endpoints: anyone can call them with any
@@ -54,29 +55,32 @@ export async function signUp(
   _prevState: { success?: boolean; message?: string },
   formData: FormData,
 ) {
-  const data = Object.fromEntries(formData.entries());
+  const parsed = signUpSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) {
+    // One message per field: the first rule that failed
+    const errors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) {
+      const field = String(issue.path[0]);
+      errors[field] ??= issue.message;
+    }
+    return { success: false, errors };
+  }
+
   try {
-    const { first_name, last_name, email, password } = signUpSchema.parse(data);
+    const { first_name, last_name, email, password } = parsed.data;
     const full_name = `${first_name} ${last_name}`;
     const address = "Halsjogatan 37, Malmö";
     const phone = "0721234567";
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password || "", saltRounds);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     await sql`
       INSERT INTO users (id, name, email, password, phone, address, cart)
       VALUES
       (gen_random_uuid(), ${full_name}, ${email}, ${hashedPassword.toString()}, ${phone}, ${address}, ${JSON.stringify([])})
     `;
     return { success: true, message: "Account created successfully." };
-  } catch (err) {
-    if (err instanceof Error && err.name === "ZodError") {
-      const errors: Record<string, string> = {};
-      // @ts-expect-error
-      err.errors.forEach((error) => {
-        errors[error.path[0]] = error.message;
-      });
-      return { success: false, errors };
-    }
+  } catch (error) {
+    console.error("Failed to create account:", error);
     return { success: false, message: "Failed to create account." };
   }
 }

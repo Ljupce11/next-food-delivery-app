@@ -3,7 +3,7 @@ import { z } from "zod";
 export const signUpSchema = z.object({
   first_name: z.string().nonempty("First name is required"),
   last_name: z.string().nonempty("Last name is required"),
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
@@ -26,7 +26,7 @@ const optionalText = (max: number) =>
     .transform((value) => value ?? "");
 
 const cartItemSchema = z.object({
-  id: z.string().uuid(),
+  id: z.guid(),
   name: z.string().max(200),
   extra: optionalText(500),
   price: z.coerce.number().nonnegative(),
@@ -43,7 +43,7 @@ const cartItemSchema = z.object({
 export const cartSchema = z
   .array(
     z.object({
-      restaurantId: z.string().uuid(),
+      restaurantId: z.guid(),
       restaurantName: z.string().max(200),
       restaurantAddress: optionalText(300),
       image: optionalText(500),
