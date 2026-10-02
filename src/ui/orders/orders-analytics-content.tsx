@@ -1,10 +1,10 @@
 "use client";
 
-import type { OrderAnalytics } from "@/lib/definitions";
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 import { Card, CardBody } from "@heroui/react";
 import { motion } from "motion/react";
 import { Fragment } from "react";
+import type { OrderAnalytics } from "@/lib/definitions";
 
 const orderAnalyticsInitialData = [
   { id: "row_count_orders", value: "0", text: "Total orders" },

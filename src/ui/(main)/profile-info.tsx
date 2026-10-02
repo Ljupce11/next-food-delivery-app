@@ -1,5 +1,5 @@
-import type { User } from "next-auth";
 import Image from "next/image";
+import type { User } from "next-auth";
 
 type Props = {
   user?: User;

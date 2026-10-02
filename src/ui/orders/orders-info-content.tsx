@@ -1,7 +1,5 @@
 "use client";
 
-import { completeOrder } from "@/lib/actions";
-import type { Order } from "@/lib/definitions";
 import {
   CheckCircleIcon,
   ClipboardDocumentListIcon,
@@ -22,7 +20,9 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { motion } from "motion/react";
-import { Suspense, lazy, useCallback, useState } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
+import { completeOrder } from "@/lib/actions";
+import type { Order } from "@/lib/definitions";
 
 const LazyOrderDetailsModal = lazy(
   () => import("../modals/order-details-modal"),

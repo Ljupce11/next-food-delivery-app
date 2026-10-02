@@ -1,13 +1,13 @@
 "use client";
 
-import type { Restaurant } from "@/lib/definitions";
-import { useRestaurantsStore } from "@/lib/stores/restaurantsStore";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardFooter, Image } from "@heroui/react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useEffect } from "react";
+import type { Restaurant } from "@/lib/definitions";
+import { useRestaurantsStore } from "@/lib/stores/restaurantsStore";
 
 type Props = {
   restaurants: Restaurant[];

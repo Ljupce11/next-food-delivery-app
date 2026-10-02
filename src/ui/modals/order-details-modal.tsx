@@ -1,6 +1,5 @@
 "use client";
 
-import type { Order } from "@/lib/definitions";
 import {
   Button,
   Divider,
@@ -11,6 +10,7 @@ import {
   ModalHeader,
 } from "@heroui/react";
 import { Fragment } from "react";
+import type { Order } from "@/lib/definitions";
 
 import OrderItemsDetails from "../order-items-details";
 import OrderRestaurantDetails from "../order-restaurant-details";
@@ -47,25 +47,24 @@ export default function OrderDetailsModal({
               <Divider className="my-3" />
               <OrderItemsDetails orderDetails={orderDetails} />
             </ModalBody>
-            <Fragment>
-              <Divider />
-              <ModalFooter>
-                <div className="flex flex-col w-full gap-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-default-600 font-semibold">Total:</p>
-                    <p className="text-default-600 font-semibold">{total}kr</p>
-                  </div>
-                  <Button
-                    fullWidth
-                    disableRipple
-                    variant="flat"
-                    onPress={onClose}
-                  >
-                    Close
-                  </Button>
+
+            <Divider />
+            <ModalFooter>
+              <div className="flex flex-col w-full gap-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-default-600 font-semibold">Total:</p>
+                  <p className="text-default-600 font-semibold">{total}kr</p>
                 </div>
-              </ModalFooter>
-            </Fragment>
+                <Button
+                  fullWidth
+                  disableRipple
+                  variant="flat"
+                  onPress={onClose}
+                >
+                  Close
+                </Button>
+              </div>
+            </ModalFooter>
           </Fragment>
         )}
       </ModalContent>

@@ -1,4 +1,4 @@
-import { type Page, expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 test.skip(
   !process.env.E2E_EMAIL || !process.env.E2E_PASSWORD,

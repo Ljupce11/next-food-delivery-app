@@ -1,11 +1,11 @@
 "use client";
 
-import type { Restaurant } from "@/lib/definitions";
-import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Divider, Image, Tab, Tabs } from "@heroui/react";
 import { motion } from "motion/react";
+import type { Restaurant } from "@/lib/definitions";
+import { useMediaQuery } from "@/lib/hooks/use-media-query";
 
 const categories = [
   { id: "all", label: "Show all" },

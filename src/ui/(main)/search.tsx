@@ -116,7 +116,7 @@ export default function Search() {
       placeholder="Search restaurants..."
       inputValue={fieldState.inputValue}
       items={fieldState.items}
-      // @ts-ignore
+      // @ts-expect-error
       selectedKey={fieldState.selectedKey}
       onInputChange={onInputChange}
       onSelectionChange={onSelectionChange}

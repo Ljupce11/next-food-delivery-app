@@ -9,7 +9,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type Key, Suspense, lazy, useEffect } from "react";
+import { type Key, lazy, Suspense, useEffect } from "react";
 
 import { signOutAction } from "../lib/actions";
 import type { AdvancedUser, CartData } from "../lib/definitions";
