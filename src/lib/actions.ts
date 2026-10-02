@@ -1,20 +1,31 @@
 "use server";
 
-import { sql } from "@vercel/postgres";
+import { db, sql } from "@vercel/postgres";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
-import { signIn, signOut } from "../../auth";
+import { auth, signIn, signOut } from "../../auth";
+import { DELIVERY_FEE } from "./constants";
 import { fetchRestaurants, updateCart } from "./data";
-import type {
-  CartData,
-  CheckoutOrderDetails,
-  OrderItem,
-  Restaurant,
-} from "./definitions";
-import { signUpSchema } from "./schemas";
-import { prepareCheckoutQueries } from "./utils";
+import type { CartData, MenuItem, OrderItem, Restaurant } from "./definitions";
+import { cartSchema, signUpSchema } from "./schemas";
+
+const uuidSchema = z.string().uuid();
+
+/**
+ * Server actions are public POST endpoints: anyone can call them with any
+ * arguments. The user must always come from the session, never from an argument.
+ */
+async function requireUserId() {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) {
+    throw new Error("You need to be logged in.");
+  }
+  return userId;
+}
 
 export async function authenticate(
   _prevState: string | undefined,
@@ -78,24 +89,27 @@ export async function searchRestaurants(query: string) {
 }
 
 export async function updateCartData(
-  userId: string,
   cartData: CartData[],
   restaurantId: string,
 ) {
-  const updatedCartData = await updateCart(userId, cartData);
+  const userId = await requireUserId();
+  const cart = cartSchema.parse(cartData);
+  const id = uuidSchema.parse(restaurantId);
+
+  const updatedCartData = await updateCart(userId, cart);
   revalidatePath("/");
-  revalidatePath(`/restaurant/${restaurantId}`);
+  revalidatePath(`/restaurant/${id}`);
   return updatedCartData;
 }
 
-export async function updateCartDataFromDrawer(
-  userId: string,
-  cartData: CartData[],
-) {
+export async function updateCartDataFromDrawer(cartData: CartData[]) {
+  const userId = await requireUserId();
+  const cart = cartSchema.parse(cartData);
+
   try {
     const menuItems = await sql<CartData>`
       UPDATE users
-      SET cart=${JSON.stringify(cartData)}
+      SET cart=${JSON.stringify(cart)}
       WHERE id=${userId}
       RETURNING cart
     `;
@@ -107,6 +121,7 @@ export async function updateCartDataFromDrawer(
   }
 }
 
+// Restaurant info is public, so no session check is needed here.
 export async function fetchRestaurantInfo(id: string) {
   try {
     const restaurant =
@@ -118,54 +133,123 @@ export async function fetchRestaurantInfo(id: string) {
   }
 }
 
-export async function fetchOrderItems(id: string) {
+export async function fetchOrderItems(orderId: string) {
+  const userId = await requireUserId();
+
   try {
-    const restaurant =
-      await sql<OrderItem>`SELECT * FROM order_items WHERE order_id=${id}`;
-    return restaurant.rows;
+    // The join makes sure the order belongs to the logged-in user
+    const orderItems = await sql<OrderItem>`
+      SELECT oi.*
+      FROM order_items oi
+      JOIN orders o ON o.id = oi.order_id
+      WHERE oi.order_id=${orderId} AND o.user_id=${userId}
+    `;
+    return orderItems.rows;
   } catch (error) {
     console.error("Failed to fetch order items:", error);
     throw new Error("Failed to fetch order items.");
   }
 }
 
+/**
+ * Creates an order for the logged-in user from their cart.
+ * The client only says WHICH restaurant to check out; names, prices and the
+ * total all come from the database, so they can't be tampered with.
+ */
 export async function completeCheckout(
-  orderDetails: CheckoutOrderDetails,
-  updatedCartData?: CartData[],
+  restaurantId: string,
+  cartData: CartData[],
 ) {
-  const { queries, params, items } = prepareCheckoutQueries(
-    orderDetails,
-    updatedCartData,
-  );
+  const userId = await requireUserId();
+  const cart = cartSchema.parse(cartData);
+  const id = uuidSchema.parse(restaurantId);
+
+  const restaurantCart = cart.find((c) => c.restaurantId === id);
+  if (!restaurantCart || restaurantCart.items.length === 0) {
+    throw new Error("There is nothing to check out for this restaurant.");
+  }
+  const remainingCart = cart.filter((c) => c.restaurantId !== id);
+  const itemIds = restaurantCart.items.map((item) => item.id);
+
+  // One connection for the whole transaction: BEGIN/COMMIT must run on the same client
+  const client = await db.connect();
   try {
-    // Execute the orders query (7 parameters)
-    await sql.query(queries[0], params.slice(0, 7));
-    // Execute each order_items query (5 parameters for each item)
-    for (let i = 1; i <= items.length; i++) {
-      await sql.query(queries[i], params.slice(7 + (i - 1) * 5, 7 + i * 5)); // Each query needs 5 params
+    await client.sql`BEGIN`;
+
+    const restaurantResult = await client.sql<Restaurant>`
+      SELECT id, name, image FROM restaurants WHERE id=${id}
+    `;
+    const restaurant = restaurantResult.rows[0];
+    if (!restaurant) {
+      throw new Error("Restaurant not found.");
     }
-    // Execute the users update query (1 parameter)
-    await sql.query(
-      queries[queries.length - 1],
-      params.slice(params.length - 1),
+
+    const menuResult = await client.query<MenuItem>(
+      "SELECT id, name, price, image FROM menus WHERE restaurant_id = $1 AND id = ANY($2::uuid[])",
+      [id, itemIds],
     );
-    revalidatePath("/");
+    const menuItemsById = new Map(
+      menuResult.rows.map((item) => [item.id, item]),
+    );
+
+    const lines = restaurantCart.items.map((cartItem) => {
+      const menuItem = menuItemsById.get(cartItem.id);
+      if (!menuItem) {
+        throw new Error("An item in your cart is no longer available.");
+      }
+      return { menuItem, quantity: cartItem.amount };
+    });
+
+    const subtotal = lines.reduce(
+      (sum, { menuItem, quantity }) => sum + Number(menuItem.price) * quantity,
+      0,
+    );
+    const total = subtotal + DELIVERY_FEE;
+
+    const orderResult = await client.sql<{ id: string }>`
+      INSERT INTO orders (id, user_id, restaurant_id, total, status, restaurant_name, restaurant_avatar, order_date)
+      VALUES (gen_random_uuid(), ${userId}, ${restaurant.id}, ${total}, 'In Progress', ${restaurant.name}, ${restaurant.image}, NOW())
+      RETURNING id
+    `;
+    const orderId = orderResult.rows[0].id;
+
+    for (const { menuItem, quantity } of lines) {
+      await client.sql`
+        INSERT INTO order_items (id, order_id, name, quantity, price, item_image)
+        VALUES (gen_random_uuid(), ${orderId}, ${menuItem.name}, ${quantity}, ${menuItem.price}, ${menuItem.image})
+      `;
+    }
+
+    // Parameterised: cart contents are never concatenated into the SQL string
+    await client.sql`
+      UPDATE users SET cart=${JSON.stringify(remainingCart)} WHERE id=${userId}
+    `;
+
+    await client.sql`COMMIT`;
   } catch (error) {
+    await client.sql`ROLLBACK`;
     console.error("Failed to complete checkout:", error);
     throw new Error("Failed to complete checkout.");
+  } finally {
+    client.release();
   }
+
+  revalidatePath("/");
 }
 
 export async function completeOrder(orderId: string) {
+  const userId = await requireUserId();
+
   try {
-    await sql<CartData>`
+    // Only the owner of the order can complete it
+    await sql`
       UPDATE orders
       SET status='Delivered'
-      WHERE id=${orderId}
+      WHERE id=${orderId} AND user_id=${userId}
     `;
     revalidatePath("/orders");
   } catch (error) {
-    console.error("Failed to update cart:", error);
-    throw new Error("Failed to update cart.");
+    console.error("Failed to complete order:", error);
+    throw new Error("Failed to complete order.");
   }
 }

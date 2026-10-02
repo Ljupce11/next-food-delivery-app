@@ -49,7 +49,7 @@ export default function RestaurantMenuItemModal({
       selectedMenuItem,
     );
     setIsLoading(true);
-    await updateCartData(userData.id, updatedCartData, restaurant.id);
+    await updateCartData(updatedCartData, restaurant.id);
     setIsLoading(false);
     onClose();
   };

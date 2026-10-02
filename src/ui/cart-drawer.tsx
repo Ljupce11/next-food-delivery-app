@@ -23,10 +23,10 @@ import {
   Tab,
   Tabs,
 } from "@heroui/react";
-import type { User } from "next-auth";
 import { Fragment, type Key, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { completeCheckout, updateCartDataFromDrawer } from "../lib/actions";
+import { DELIVERY_FEE } from "../lib/constants";
 import type { CartData } from "../lib/definitions";
 
 const MOTION_PROPS = {
@@ -44,8 +44,6 @@ const MOTION_PROPS = {
   },
 };
 
-const DELIVERY = 50;
-
 type IsLoading = {
   id: string | null;
   state: boolean;
@@ -53,7 +51,6 @@ type IsLoading = {
 
 type Props = {
   isOpen: boolean;
-  user: User;
   cartData?: CartData[];
   onClose: () => void;
   onOpenChange: () => void;
@@ -61,7 +58,6 @@ type Props = {
 
 export default function CartDrawer({
   isOpen,
-  user,
   cartData: existingCartData,
   onClose,
   onOpenChange,
@@ -138,7 +134,7 @@ export default function CartDrawer({
     }
     setIsLoading({ id: itemId, state: true });
     try {
-      await updateCartDataFromDrawer(user.id || "", updatedCart);
+      await updateCartDataFromDrawer(updatedCart);
       setIsLoading({ id: itemId, state: false });
       if (updatedCart.length === 0) {
         onClose();
@@ -153,7 +149,7 @@ export default function CartDrawer({
   const updateCartDataWithDebounce = useDebouncedCallback(
     async (updatedCart: CartData[]) => {
       try {
-        await updateCartDataFromDrawer(user.id || "", updatedCart);
+        await updateCartDataFromDrawer(updatedCart);
       } catch (error) {
         console.error("FAILED to update cart:", error);
         throw new Error("FAILED to update cart.");
@@ -170,31 +166,18 @@ export default function CartDrawer({
     ?.items.reduce((acc, current) => {
       return acc + Number(current.price);
     }, 0);
-  const total = subTotal ? subTotal + DELIVERY : 0;
+  const total = subTotal ? subTotal + DELIVERY_FEE : 0;
 
   const onOpenChangeHandler = () => {
     onOpenChange();
   };
 
   const handleCheckout = async () => {
-    if (!selectedRestaurant) return;
-    const dbData = {
-      total: total,
-      user_id: user.id,
-      status: "In Progress",
-      id: self.crypto.randomUUID(),
-      restaurant_avatar: selectedRestaurant.image,
-      restaurant_id: selectedRestaurant.restaurantId,
-      restaurant_name: selectedRestaurant.restaurantName,
-      items: selectedRestaurant.items,
-    };
-    const updatedCartData = cartData?.filter(
-      (restaurant) =>
-        restaurant.restaurantId !== selectedRestaurant.restaurantId,
-    );
+    if (!selectedRestaurant || !cartData) return;
     setIsCheckoutLoading(true);
     try {
-      await completeCheckout(dbData, updatedCartData);
+      // The server works out prices and the total from the database
+      await completeCheckout(selectedRestaurant.restaurantId, cartData);
       setIsCheckoutLoading(false);
       onClose();
     } catch (error) {
