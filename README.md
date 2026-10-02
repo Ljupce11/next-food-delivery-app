@@ -103,7 +103,7 @@ npx playwright install chromium   # once
 npm run test:e2e
 ```
 
-Without any configuration, only the logged-out tests run (redirects, home page, search, restaurant page). Optional environment variables:
+Without any configuration, only the logged-out tests run (redirects, home page, search, restaurant page). Optional environment variables, which can also go in a gitignored `.env.e2e.local` file that the Playwright config loads automatically:
 
 | Variable | Effect |
 |---|---|

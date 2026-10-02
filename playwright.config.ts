@@ -1,4 +1,10 @@
+import { existsSync } from "node:fs";
 import { defineConfig, devices } from "@playwright/test";
+
+// Local test-account credentials (gitignored, see README)
+if (existsSync(".env.e2e.local")) {
+  process.loadEnvFile(".env.e2e.local");
+}
 
 /**
  * Smoke tests. By default they start `npm run dev` and run against localhost.
