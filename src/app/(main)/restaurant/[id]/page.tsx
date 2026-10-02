@@ -1,8 +1,8 @@
+import { Suspense } from "react";
 import { fetchRestaurant } from "@/lib/data";
 import RestaurantPageMenu from "@/ui/(main)/restaurant-page-menu";
 import RestaurantPageSidebar from "@/ui/(main)/restaurant-page-sidebar";
 import { RestaurantPageMenuSkeleton } from "@/ui/skeletons";
-import { Suspense } from "react";
 
 type Props = {
   params: Promise<{ id: string }>;

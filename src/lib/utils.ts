@@ -1,9 +1,4 @@
-import type {
-  AdvancedUser,
-  CartData,
-  MenuItem,
-  Restaurant,
-} from "./definitions";
+import type { AdvancedUser, MenuItem, Restaurant } from "./definitions";
 
 export function addItemToCart(
   user: AdvancedUser,

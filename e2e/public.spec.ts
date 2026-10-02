@@ -1,4 +1,4 @@
-import { type Page, expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 /** Collects uncaught errors and console errors for the lifetime of the page */
 function trackErrors(page: Page) {

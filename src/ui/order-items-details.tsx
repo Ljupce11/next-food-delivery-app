@@ -10,7 +10,7 @@ import {
   TableRow,
   User,
 } from "@heroui/react";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { fetchOrderItems } from "../lib/actions";
 import type { Order, OrderItem } from "../lib/definitions";
@@ -23,7 +23,9 @@ export const columns = [
 
 export default function OrderItemsDetails({
   orderDetails,
-}: { orderDetails: Order | null }) {
+}: {
+  orderDetails: Order | null;
+}) {
   const { id } = orderDetails || {};
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,9 +68,8 @@ export default function OrderItemsDetails({
         {(column) => <TableColumn key={column.uid}>{column.name}</TableColumn>}
       </TableHeader>
       <TableBody items={orderItems} emptyContent={"No order items found"}>
-        {isLoading ? (
-          <Fragment>
-            {Array.from({ length: 2 }).map((_, index) => {
+        {isLoading
+          ? Array.from({ length: 2 }).map((_, index) => {
               const id = index + 1;
               return (
                 <TableRow key={id}>
@@ -94,17 +95,14 @@ export default function OrderItemsDetails({
                   </TableCell>
                 </TableRow>
               );
-            })}
-          </Fragment>
-        ) : (
-          (item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
-          )
-        )}
+            })
+          : (item) => (
+              <TableRow key={item.id}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(item, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
       </TableBody>
     </Table>
   );

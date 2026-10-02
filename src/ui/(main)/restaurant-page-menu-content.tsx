@@ -1,6 +1,5 @@
 "use client";
 
-import type { MenuItem, Restaurant } from "@/lib/definitions";
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
 import {
   Card,
@@ -11,7 +10,8 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { motion } from "motion/react";
-import { Fragment, Suspense, lazy, useState } from "react";
+import { Fragment, lazy, Suspense, useState } from "react";
+import type { MenuItem, Restaurant } from "@/lib/definitions";
 
 const LazyRestaurantMenuItemModal = lazy(
   () => import("../modals/restaurant-menu-item-modal"),

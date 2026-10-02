@@ -22,9 +22,9 @@ import {
   NavbarItem,
   useDisclosure,
 } from "@heroui/react";
-import type { User } from "next-auth";
 import Link from "next/link";
-import { Fragment, type Key, Suspense, lazy } from "react";
+import type { User } from "next-auth";
+import { Fragment, type Key, lazy, Suspense } from "react";
 
 import type { CartData } from "../lib/definitions";
 

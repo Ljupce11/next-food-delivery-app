@@ -2,8 +2,8 @@
 
 import { randomUUID } from "node:crypto";
 import bcrypt from "bcryptjs";
-import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
+import { AuthError } from "next-auth";
 import { z } from "zod";
 
 import { auth, signIn, signOut } from "../../auth";

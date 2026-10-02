@@ -1,9 +1,5 @@
 "use client";
 
-import { updateCartData } from "@/lib/actions";
-import type { CartData, MenuItem, Restaurant } from "@/lib/definitions";
-import { useUserStore } from "@/lib/stores/userStore";
-import { addItemToCart } from "@/lib/utils";
 import {
   MinusIcon,
   PlusIcon,
@@ -21,6 +17,10 @@ import {
   ModalHeader,
 } from "@heroui/react";
 import { useState } from "react";
+import { updateCartData } from "@/lib/actions";
+import type { CartData, MenuItem, Restaurant } from "@/lib/definitions";
+import { useUserStore } from "@/lib/stores/userStore";
+import { addItemToCart } from "@/lib/utils";
 
 type Props = {
   isOpen: boolean;
