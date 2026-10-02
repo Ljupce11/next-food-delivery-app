@@ -1,11 +1,11 @@
 "use client";
 
 import type { Restaurant } from "@/lib/definitions";
+import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Divider, Image, Tab, Tabs } from "@heroui/react";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
 
 const categories = [
   { id: "all", label: "Show all" },
@@ -23,17 +23,8 @@ type Props = {
 
 export default function RestaurantPageSidebar({ restaurant }: Props) {
   const { name, address, cuisine, rating, image } = restaurant;
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  // Same breakpoint as Tailwind's `lg`. Defaults to desktop on the server.
+  const isDesktop = useMediaQuery("(min-width: 1024px)", true);
 
   return (
     <motion.div
@@ -77,7 +68,7 @@ export default function RestaurantPageSidebar({ restaurant }: Props) {
           items={categories}
           className="mx-auto"
           aria-label="Dynamic tabs"
-          isVertical={!(screenWidth < 1024)}
+          isVertical={isDesktop}
         >
           {({ id, label }) => <Tab key={id} title={label} />}
         </Tabs>
