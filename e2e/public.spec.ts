@@ -65,3 +65,21 @@ test("restaurant page renders on the server without errors", async ({
   await expect(page.getByText(/\d+kr/).first()).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test("sign-up shows server-side validation errors", async ({ page }) => {
+  // Passes the browser's own checks but fails the server's Zod schema,
+  // so nothing is written to the database
+  await page.goto("/sign-up");
+  await page.getByLabel("First name").fill("Validation");
+  await page.getByLabel("Last name").fill("Test");
+  await page.getByLabel("Email").fill("validation-test@example.com");
+  await page.getByLabel("Password").fill("lowercase");
+  await page.getByRole("button", { name: "Sign up" }).click();
+
+  await expect(page.getByLabel("Password")).toHaveAttribute(
+    "aria-invalid",
+    "true",
+  );
+  await expect(page.getByText(/^Password must /)).toBeVisible();
+  await expect(page).toHaveURL(/\/sign-up$/);
+});
