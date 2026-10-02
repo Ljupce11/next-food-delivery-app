@@ -15,7 +15,7 @@
     "@heroicons/react": "^2.2.0",
     "@heroui/react": "2.6.13",
     "@neondatabase/serverless": "^1.2.0",
-    "bcryptjs": "^2.4.3",
+    "bcryptjs": "^3.0.3",
     "motion": "^12.0.0",
     "next": "^15.5.12",
     "next-auth": "^5.0.0-beta.25",
@@ -28,7 +28,6 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@playwright/test": "^1.63.0",
-    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
