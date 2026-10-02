@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "biome check ./src",
     "format": "biome format ./src",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@playwright/test": "^1.63.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",

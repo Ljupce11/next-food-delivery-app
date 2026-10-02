@@ -94,6 +94,24 @@ npm run lint
 npm run format
 ```
 
+## 🧪 Testing
+
+Playwright smoke tests live in `e2e/`. They start the dev server automatically.
+
+```bash
+npx playwright install chromium   # once
+npm run test:e2e
+```
+
+Without any configuration, only the logged-out tests run (redirects, home page, search, restaurant page). Optional environment variables, which can also go in a gitignored `.env.e2e.local` file that the Playwright config loads automatically:
+
+| Variable | Effect |
+|---|---|
+| `E2E_EMAIL`, `E2E_PASSWORD` | Run the logged-in tests. Use a dedicated test account |
+| `E2E_ALLOW_WRITES=1` | Also run the checkout test, which **creates a real order** |
+| `E2E_BASE_URL` | Test a deployment (e.g. a Vercel preview) instead of localhost |
+| `VERCEL_AUTOMATION_BYPASS_SECRET` | Needed when the preview has Vercel deployment protection |
+
 ## 📚 Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)

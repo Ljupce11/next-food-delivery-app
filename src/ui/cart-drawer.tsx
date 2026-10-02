@@ -293,6 +293,7 @@ export default function CartDrawer({
                                   <Button
                                     disableRipple
                                     isIconOnly
+                                    aria-label={`Decrease ${cartItem.name} quantity`}
                                     onPress={() =>
                                       addRemoveItem(cartItem.id, "remove")
                                     }
@@ -304,12 +305,14 @@ export default function CartDrawer({
                                     isDisabled
                                     className=" text-md"
                                     isIconOnly
+                                    aria-label={`${cartItem.name} quantity: ${cartItem.amount}`}
                                   >
                                     {cartItem.amount}
                                   </Button>
                                   <Button
                                     disableRipple
                                     isIconOnly
+                                    aria-label={`Increase ${cartItem.name} quantity`}
                                     onPress={() =>
                                       addRemoveItem(cartItem.id, "add")
                                     }
@@ -323,6 +326,7 @@ export default function CartDrawer({
                                   size="sm"
                                   variant="flat"
                                   color="danger"
+                                  aria-label={`Remove ${cartItem.name}`}
                                   onPress={() => deleteItem(cartItem.id)}
                                   isLoading={
                                     isLoading.state === true &&
