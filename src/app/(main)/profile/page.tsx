@@ -17,7 +17,7 @@ export default async function ProfilePage() {
             </p>
           </div>
 
-          <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+          <div className="bg-white shadow-xs ring-1 ring-gray-900/5 sm:rounded-xl">
             <ProfileInfo user={authData?.user} />
             <div className="border-t border-gray-100">
               <ProfileSettings />

@@ -32,20 +32,17 @@
       },
       "complexity": {
         "noForEach": "off"
-      },
-      "suspicious": {
-        "noUnknownAtRules": {
-          "level": "error",
-          "options": {
-            "ignore": ["tailwind"]
-          }
-        }
       }
     }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }
