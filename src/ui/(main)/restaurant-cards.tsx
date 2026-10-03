@@ -45,7 +45,7 @@ export default function RestaurantCards({ restaurants }: Props) {
               width={"100%"}
               className="object-cover"
             />
-            <CardFooter className="justify-between before:bg-black/20 bg-white/50 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+            <CardFooter className="justify-between before:bg-black/20 bg-white/50 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%-8px)] shadow-small ml-1 z-10">
               <div className="flex justify-between items-center w-full gap-2">
                 <p className="text-tiny text-black font-bold">{name}</p>
                 <div className="flex items-center text-black  gap-1">

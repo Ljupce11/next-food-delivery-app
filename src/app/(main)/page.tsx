@@ -15,7 +15,7 @@ export default async function Page(props: {
 
   return (
     <div className="flex flex-col gap-8 mb-20">
-      <div className="bg-gradient-to-r from-sky-50 via-blue-50 to-sky-50 py-16">
+      <div className="bg-linear-to-r from-sky-50 via-blue-50 to-sky-50 py-16">
         <div className="w-full px-8 lg:w-3/4 lg:px-0 mx-auto flex flex-col lg:flex-row items-center justify-between">
           <div className="lg:w-1/2 text-left mb-8 lg:mb-0">
             <h1 className="text-4xl font-bold mb-4">
