@@ -9,8 +9,6 @@ export const metadata: Metadata = {
   description: "Food Delivery App created wih Next.js",
 };
 
-// export const experimental_ppr = true;
-
 export default function RootLayout({
   children,
 }: Readonly<{

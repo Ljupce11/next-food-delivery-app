@@ -1,10 +1,5 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  // reactStrictMode: false,
-  // experimental: {
-  //   ppr: "incremental",
-  // },
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
