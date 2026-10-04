@@ -160,7 +160,6 @@ test("quick quantity changes are all saved", async ({ page }) => {
     });
   const savedQuantityAfterReload = async () => {
     await page.reload();
-    await page.evaluate(() => window.scrollTo(0, 0));
     await openCart();
     return Number((await quantity().innerText()).trim());
   };
