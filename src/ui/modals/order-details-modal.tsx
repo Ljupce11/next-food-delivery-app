@@ -32,7 +32,6 @@ export default function OrderDetailsModal({
       size="xl"
       backdrop="blur"
       scrollBehavior="inside"
-      style={{ height: "500px" }}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
     >
@@ -43,9 +42,13 @@ export default function OrderDetailsModal({
               Order Details
             </ModalHeader>
             <ModalBody>
-              <OrderRestaurantDetails orderDetails={orderDetails} />
-              <Divider className="my-3" />
-              <OrderItemsDetails orderDetails={orderDetails} />
+              <div className="shrink-0">
+                <OrderRestaurantDetails orderDetails={orderDetails} />
+              </div>
+              <Divider className="my-3 shrink-0" />
+              <div className="min-h-32 flex-1 overflow-y-auto">
+                <OrderItemsDetails orderDetails={orderDetails} />
+              </div>
             </ModalBody>
 
             <Divider />

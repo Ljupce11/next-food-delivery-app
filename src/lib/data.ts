@@ -105,8 +105,32 @@ export async function fetchCart(userId: string): Promise<CartData[]> {
 
 export async function fetchOrders(id: string | null) {
   try {
-    const orders =
-      await sql`SELECT * FROM orders WHERE user_id=${id} ORDER BY order_date DESC`;
+    const orders = await sql`
+      SELECT o.*,
+             r.address AS restaurant_address,
+             r.rating AS restaurant_rating,
+             r.cuisine AS restaurant_cuisine,
+             COALESCE(
+               json_agg(
+                 json_build_object(
+                   'id', oi.id,
+                   'order_id', oi.order_id,
+                   'name', oi.name,
+                   'quantity', oi.quantity,
+                   'price', oi.price::text,
+                   'item_image', oi.item_image
+                 )
+                 ORDER BY oi.name
+               ) FILTER (WHERE oi.id IS NOT NULL),
+               '[]'
+             ) AS items
+      FROM orders o
+      JOIN restaurants r ON r.id = o.restaurant_id
+      LEFT JOIN order_items oi ON oi.order_id = o.id
+      WHERE o.user_id = ${id}
+      GROUP BY o.id, r.address, r.rating, r.cuisine
+      ORDER BY o.order_date DESC
+    `;
     return orders as Order[];
   } catch (error) {
     console.error("Failed to fetch orders:", error);

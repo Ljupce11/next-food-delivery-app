@@ -10,7 +10,6 @@ import { auth, signIn, signOut } from "../../auth";
 import { DELIVERY_FEE } from "./constants";
 import { fetchRestaurants } from "./data";
 import { sql } from "./db";
-import type { OrderItem, Restaurant } from "./definitions";
 import { signUpSchema } from "./schemas";
 
 const uuidSchema = z.guid();
@@ -127,33 +126,6 @@ export async function removeFromCart(menuItemId: string) {
 
   await sql`DELETE FROM cart_items WHERE user_id = ${userId} AND menu_item_id = ${id}`;
   refreshCart();
-}
-
-export async function fetchRestaurantInfo(id: string) {
-  try {
-    const rows = await sql`SELECT * FROM restaurants WHERE id=${id}`;
-    return rows[0] as Restaurant;
-  } catch (error) {
-    console.error("Failed to fetch restaurant:", error);
-    throw new Error("Failed to fetch restaurant.");
-  }
-}
-
-export async function fetchOrderItems(orderId: string) {
-  const userId = await requireUserId();
-
-  try {
-    const orderItems = await sql`
-      SELECT oi.*
-      FROM order_items oi
-      JOIN orders o ON o.id = oi.order_id
-      WHERE oi.order_id=${orderId} AND o.user_id=${userId}
-    `;
-    return orderItems as OrderItem[];
-  } catch (error) {
-    console.error("Failed to fetch order items:", error);
-    throw new Error("Failed to fetch order items.");
-  }
 }
 
 export async function completeCheckout(restaurantId: string) {
