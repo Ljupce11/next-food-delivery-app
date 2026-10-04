@@ -7,7 +7,6 @@ import {
   ShoppingBagIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { StarIcon } from "@heroicons/react/24/solid";
 import {
   addToast,
   Button,
@@ -40,6 +39,7 @@ import {
 import { DELIVERY_FEE } from "../lib/constants";
 import type { CartData } from "../lib/definitions";
 import { formatPrice } from "../lib/format";
+import RatingStars from "./rating-stars";
 
 const MOTION_PROPS = {
   variants: {
@@ -196,6 +196,7 @@ export default function CartDrawer({
                   restaurantId,
                   restaurantName,
                   restaurantAddress,
+                  restaurantRating,
                   image,
                   items,
                 }) => (
@@ -226,15 +227,10 @@ export default function CartDrawer({
                           {restaurantAddress}
                         </p>
                         <div className="flex items-center pt-1">
-                          {Array.from({ length: 5 }).map((_, index) => {
-                            const id = index + 1;
-                            return (
-                              <StarIcon
-                                key={id}
-                                className="size-4 text-yellow-400"
-                              />
-                            );
-                          })}
+                          <RatingStars rating={restaurantRating} />
+                          <p className="pl-2 text-sm font-semibold text-default-500">
+                            {restaurantRating}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -255,10 +251,9 @@ export default function CartDrawer({
                                   className="aspect-square object-cover"
                                   src={cartItem.image}
                                 />
-                                <div className="flex flex-col text-xs text-default-500">
-                                  <p>{cartItem.name}</p>
-                                  <p>Extra: {cartItem.extra}</p>
-                                </div>
+                                <p className="text-xs text-default-500">
+                                  {cartItem.name}
+                                </p>
                               </div>
                               <div className="flex items-center justify-end gap-3">
                                 <p className="text-default-500 text-sm">

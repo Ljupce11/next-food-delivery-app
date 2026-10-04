@@ -58,6 +58,7 @@ async function fetchCart(userId: string): Promise<CartData[]> {
   const rows = (await sql`
     SELECT r.id AS restaurant_id, r.name AS restaurant_name,
            r.address AS restaurant_address, r.image AS restaurant_image,
+           r.rating AS restaurant_rating,
            m.id, m.name, m.price, m.image, c.quantity
     FROM cart_items c
     JOIN menus m ON m.id = c.menu_item_id
@@ -69,6 +70,7 @@ async function fetchCart(userId: string): Promise<CartData[]> {
     restaurant_name: string;
     restaurant_address: string;
     restaurant_image: string;
+    restaurant_rating: string;
     id: string;
     name: string;
     price: string;
@@ -84,6 +86,7 @@ async function fetchCart(userId: string): Promise<CartData[]> {
         restaurantId: row.restaurant_id,
         restaurantName: row.restaurant_name,
         restaurantAddress: row.restaurant_address,
+        restaurantRating: row.restaurant_rating,
         image: row.restaurant_image,
         items: [],
       };
@@ -93,7 +96,6 @@ async function fetchCart(userId: string): Promise<CartData[]> {
     restaurant.items.push({
       id: row.id,
       name: row.name,
-      extra: "",
       unitPrice,
       price: unitPrice * row.quantity,
       amount: row.quantity,
