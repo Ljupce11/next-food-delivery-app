@@ -13,21 +13,24 @@ export default function Page() {
     {
       id: "1",
       name: "BBQ Barn",
-      image: "/img/restaurants/bbq-barn.webp",
+      image:
+        "https://ihgez7ccyzskts9i.public.blob.vercel-storage.com/restaurants/bbq-barn.webp",
       cuisine: "American",
       rating: 4.5,
     },
     {
       id: "2",
       name: "Pizza Perfection",
-      image: "/img/restaurants/pizza-perfection.webp",
+      image:
+        "https://ihgez7ccyzskts9i.public.blob.vercel-storage.com/restaurants/pizza-perfection.webp",
       cuisine: "Italian",
       rating: 4.1,
     },
     {
       id: "3",
       name: "Sushi World",
-      image: "/img/restaurants/sushi-world.webp",
+      image:
+        "https://ihgez7ccyzskts9i.public.blob.vercel-storage.com/restaurants/sushi-world.webp",
       cuisine: "Japanese",
       rating: 4.8,
     },

@@ -2,6 +2,7 @@
 
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardBody, CardFooter, Divider, Image } from "@heroui/react";
+import NextImage from "next/image";
 
 interface RestaurantCardProps {
   restaurant: {
@@ -18,12 +19,14 @@ export function FavoriteRestaurantCard({ restaurant }: RestaurantCardProps) {
     <Card isPressable disableRipple>
       <CardBody>
         <Image
+          as={NextImage}
           src={restaurant.image}
           alt={restaurant.name}
-          className="object-cover"
+          className="w-full object-cover"
+          width={400}
           height={200}
+          sizes="(min-width: 768px) 33vw, 100vw"
           radius="sm"
-          width={"100%"}
         />
       </CardBody>
       <Divider />

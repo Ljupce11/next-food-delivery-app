@@ -4,6 +4,7 @@ import { TruckIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardFooter, Image } from "@heroui/react";
 import { motion } from "motion/react";
+import NextImage from "next/image";
 import Link from "next/link";
 import { DELIVERY_FEE } from "@/lib/constants";
 import type { Restaurant } from "@/lib/definitions";
@@ -31,13 +32,15 @@ export default function RestaurantCards({ restaurants }: Props) {
             className="border-none"
           >
             <Image
+              as={NextImage}
               isZoomed
               alt={name}
               src={image}
+              width={400}
               height={200}
+              sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
               removeWrapper
-              width={"100%"}
-              className="object-cover"
+              className="w-full object-cover"
             />
             <CardFooter className="justify-between before:bg-black/20 bg-white/50 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%-8px)] shadow-small ml-1 z-10">
               <div className="flex justify-between items-center w-full gap-2">
