@@ -97,4 +97,20 @@ test("sign-up shows server-side validation errors", async ({ page }) => {
   );
   await expect(page.getByText(/^Password must /)).toBeVisible();
   await expect(page).toHaveURL(/\/sign-up$/);
+  await expect(page.getByLabel("First name")).toHaveValue("Validation");
+  await expect(page.getByLabel("Email")).toHaveValue(
+    "validation-test@example.com",
+  );
+  await expect(page.getByLabel("Password")).toHaveValue("lowercase");
+});
+
+test("a failed login keeps the entered values", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByLabel("Email").fill("nobody@example.com");
+  await page.getByLabel("Password").fill("WrongPassword1!");
+  await page.getByRole("button", { name: "Sign in" }).click();
+
+  await expect(page.getByText("Invalid credentials.")).toBeVisible();
+  await expect(page.getByLabel("Email")).toHaveValue("nobody@example.com");
+  await expect(page.getByLabel("Password")).toHaveValue("WrongPassword1!");
 });

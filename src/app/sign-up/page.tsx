@@ -3,7 +3,14 @@
 import { UserIcon } from "@heroicons/react/24/outline";
 import { Button, Form, Input, useDisclosure } from "@heroui/react";
 import Image from "next/image";
-import { Fragment, lazy, Suspense, useActionState } from "react";
+import {
+  Fragment,
+  lazy,
+  Suspense,
+  type SyntheticEvent,
+  startTransition,
+  useActionState,
+} from "react";
 
 import { signUp } from "../../lib/actions";
 
@@ -24,6 +31,12 @@ export default function Page() {
     { success: false, message: "" },
   );
 
+  const onSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => formAction(formData));
+  };
+
   return (
     <Fragment>
       <Suspense fallback={null}>
@@ -39,7 +52,7 @@ export default function Page() {
             <p className="text-sm">Enter your details to sign up</p>
           </div>
           <Form
-            action={formAction}
+            onSubmit={onSubmit}
             validationErrors={state.errors}
             validationBehavior="native"
             className="w-full lg:w-6/12 flex flex-col gap-4"
