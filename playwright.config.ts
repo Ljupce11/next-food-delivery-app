@@ -29,6 +29,7 @@ export default defineConfig({
   use: {
     baseURL,
     trace: "retain-on-failure",
+    screenshot: "only-on-failure",
     extraHTTPHeaders: bypassSecret
       ? {
           "x-vercel-protection-bypass": bypassSecret,

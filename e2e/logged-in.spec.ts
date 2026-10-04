@@ -23,6 +23,79 @@ test("orders page is accessible", async ({ page }) => {
   await expect(page.getByRole("grid", { name: "Orders table" })).toBeVisible();
 });
 
+test("quick quantity changes are all saved", async ({ page }) => {
+  test.skip(
+    process.env.E2E_ALLOW_WRITES !== "1",
+    "Changes the test account's cart: set E2E_ALLOW_WRITES=1 to run it",
+  );
+
+  // Make sure the cart has an item from the first restaurant
+  // Open the restaurant page directly: clicking the link on a scrolled home page
+  // can leave the hide-on-scroll navbar hidden (separate, pre-existing issue)
+  await page.goto("/");
+  const restaurantHref = await page
+    .locator('a[href^="/restaurant/"]')
+    .first()
+    .getAttribute("href");
+  await page.goto(restaurantHref ?? "/");
+  await expect(
+    page.getByText("Open now").filter({ visible: true }),
+  ).toBeVisible();
+  const restaurantName = (
+    await page.getByRole("heading", { level: 1 }).innerText()
+  ).trim();
+  const firstItem = page
+    .getByRole("button")
+    .filter({ hasText: /\d+kr/ })
+    .first();
+  const itemName = (await firstItem.locator("b").innerText()).trim();
+  await firstItem.click();
+  await page.getByRole("button", { name: "Add to cart" }).click();
+  await expect(page.getByRole("dialog")).toBeHidden();
+
+  const openCart = async () => {
+    await page.getByRole("button", { name: "Cart", exact: true }).click();
+    await page
+      .getByRole("dialog")
+      .getByRole("tab", { name: restaurantName })
+      .click();
+  };
+  const quantity = () =>
+    page.getByRole("dialog").getByRole("button", {
+      name: new RegExp(`^${itemName} quantity: \\d+$`),
+    });
+  const savedQuantityAfterReload = async () => {
+    await page.waitForLoadState("networkidle"); // let the server actions finish
+    await page.reload();
+    // The navbar hides on scroll, and a reload restores the scroll position
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await openCart();
+    return Number((await quantity().innerText()).trim());
+  };
+
+  await openCart();
+  const before = Number((await quantity().innerText()).trim());
+
+  // Two quick clicks: the UI updates immediately (optimistic) …
+  const increase = page.getByRole("button", {
+    name: `Increase ${itemName} quantity`,
+  });
+  await increase.click();
+  await increase.click();
+  await expect(quantity()).toHaveText(String(before + 2));
+  // … and both changes reach the database (no lost update)
+  expect(await savedQuantityAfterReload()).toBe(before + 2);
+
+  // Put it back
+  const decrease = page.getByRole("button", {
+    name: `Decrease ${itemName} quantity`,
+  });
+  await decrease.click();
+  await decrease.click();
+  await expect(quantity()).toHaveText(String(before));
+  expect(await savedQuantityAfterReload()).toBe(before);
+});
+
 test("add to cart, check out and complete an order", async ({ page }) => {
   test.skip(
     process.env.E2E_ALLOW_WRITES !== "1",
@@ -30,8 +103,14 @@ test("add to cart, check out and complete an order", async ({ page }) => {
   );
 
   // Open the first restaurant and add its first menu item
+  // Open the restaurant page directly: clicking the link on a scrolled home page
+  // can leave the hide-on-scroll navbar hidden (separate, pre-existing issue)
   await page.goto("/");
-  await page.locator('a[href^="/restaurant/"]').first().click();
+  const restaurantHref = await page
+    .locator('a[href^="/restaurant/"]')
+    .first()
+    .getAttribute("href");
+  await page.goto(restaurantHref ?? "/");
   await expect(
     page.getByText("Open now").filter({ visible: true }),
   ).toBeVisible();

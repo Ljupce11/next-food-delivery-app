@@ -16,11 +16,10 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@heroui/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { updateCartData } from "@/lib/actions";
-import type { CartData, MenuItem, Restaurant } from "@/lib/definitions";
-import { useUserStore } from "@/lib/stores/userStore";
-import { addItemToCart } from "@/lib/utils";
+import { addToCart } from "@/lib/actions";
+import type { MenuItem, Restaurant } from "@/lib/definitions";
 
 type Props = {
   isOpen: boolean;
@@ -37,21 +36,22 @@ export default function RestaurantMenuItemModal({
   onClose,
   onOpenChange,
 }: Props) {
-  const userData = useUserStore((state) => state.userData);
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const onAddToCartHandler = async () => {
-    if (!userData?.id) return;
     if (!selectedMenuItem) return;
-    const updatedCartData: CartData[] = addItemToCart(
-      userData,
-      restaurant,
-      selectedMenuItem,
-    );
     setIsLoading(true);
-    await updateCartData(updatedCartData, restaurant.id);
-    setIsLoading(false);
-    onClose();
+    try {
+      // Send the intent; the server reads the cart and the item itself
+      await addToCart(selectedMenuItem.id);
+      onClose();
+    } catch {
+      // Logged out (or the session expired): adding needs an account
+      router.push(`/login?callbackUrl=/restaurant/${restaurant.id}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
