@@ -1,6 +1,5 @@
 "use client";
 
-import { HandThumbUpIcon } from "@heroicons/react/24/outline";
 import {
   Card,
   CardBody,
@@ -93,14 +92,7 @@ export default function RestaurantPageMenuContent({
                     Some description here about this item
                   </p>
                   <Divider className="my-2.5" />
-                  <div className="flex items-center justify-between w-full text-sm">
-                    <p className="font-semibold">{formatPrice(price)}</p>
-                    <div className="flex items-center gap-1 text-default-500">
-                      <HandThumbUpIcon className="size-5" />
-                      <p>100%</p>
-                      <p>(16)</p>
-                    </div>
-                  </div>
+                  <p className="text-sm font-semibold">{formatPrice(price)}</p>
                 </CardFooter>
               </Card>
             );

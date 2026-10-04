@@ -1,11 +1,10 @@
 "use client";
 
-import { ClockIcon } from "@heroicons/react/24/outline";
-import { StarIcon } from "@heroicons/react/24/solid";
 import { Divider, Image, Tab, Tabs } from "@heroui/react";
 import { motion } from "motion/react";
 import type { Restaurant } from "@/lib/definitions";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
+import RatingStars from "@/ui/rating-stars";
 
 const categories = [
   { id: "all", label: "Show all" },
@@ -46,19 +45,12 @@ export default function RestaurantPageSidebar({ restaurant }: Props) {
           <h1 className="text-lg font-semibold">{name}</h1>
           <p className="text-sm text-default-500">{address}</p>
           <div className="flex items-center pt-1">
-            {Array.from({ length: 5 }).map((_, index) => {
-              const id = index + 1;
-              return <StarIcon key={id} className="size-4 text-yellow-400" />;
-            })}
+            <RatingStars rating={rating} />
             <p className="pl-2 text-sm font-semibold text-default-500">
               {rating}
             </p>
           </div>
           <p className="text-sm text-default-500 pt-1">{cuisine}</p>
-          <div className="flex items-center gap-1 pt-1">
-            <ClockIcon className="size-4" />
-            <p className="text-green-600 text-sm font-semibold">Open now</p>
-          </div>
         </div>
       </div>
       <Divider className="my-5" />

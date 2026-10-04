@@ -28,11 +28,11 @@ export type CartData = {
   restaurantId: string;
   restaurantName: string;
   restaurantAddress: string;
+  restaurantRating: string;
   image: string;
   items: {
     id: string;
     name: string;
-    extra: string;
     price: number;
     unitPrice: number;
     amount: number;

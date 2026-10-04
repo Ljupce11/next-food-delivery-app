@@ -52,7 +52,7 @@ test("the quantity chosen in the item modal is added to the cart", async ({
     .getAttribute("href");
   await page.goto(restaurantHref ?? "/");
   await expect(
-    page.getByText("Open now").filter({ visible: true }),
+    page.getByRole("heading", { level: 1 }).filter({ visible: true }),
   ).toBeVisible();
   const restaurantName = (
     await page.getByRole("heading", { level: 1 }).innerText()
@@ -135,7 +135,7 @@ test("quick quantity changes are all saved", async ({ page }) => {
     .getAttribute("href");
   await page.goto(restaurantHref ?? "/");
   await expect(
-    page.getByText("Open now").filter({ visible: true }),
+    page.getByRole("heading", { level: 1 }).filter({ visible: true }),
   ).toBeVisible();
   const restaurantName = (
     await page.getByRole("heading", { level: 1 }).innerText()
@@ -203,7 +203,7 @@ test("add to cart, check out and complete an order", async ({ page }) => {
     .getAttribute("href");
   await page.goto(restaurantHref ?? "/");
   await expect(
-    page.getByText("Open now").filter({ visible: true }),
+    page.getByRole("heading", { level: 1 }).filter({ visible: true }),
   ).toBeVisible();
   const restaurantName = (
     await page.getByRole("heading", { level: 1 }).innerText()

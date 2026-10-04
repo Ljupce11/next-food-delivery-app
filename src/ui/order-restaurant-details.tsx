@@ -1,10 +1,10 @@
 "use client";
 
-import { StarIcon } from "@heroicons/react/24/solid";
 import { Image } from "@heroui/react";
 import { motion } from "motion/react";
 
 import type { Order } from "../lib/definitions";
+import RatingStars from "./rating-stars";
 
 type Props = {
   orderDetails: Order | null;
@@ -38,10 +38,7 @@ export default function OrderRestaurantDetails({ orderDetails }: Props) {
         <h1 className="text-lg font-semibold">{restaurant_name}</h1>
         <p className="text-sm text-default-500">{restaurant_address}</p>
         <div className="flex items-center pt-1">
-          {Array.from({ length: 5 }).map((_, index) => {
-            const id = index + 1;
-            return <StarIcon key={id} className="size-4 text-yellow-400" />;
-          })}
+          <RatingStars rating={restaurant_rating ?? 0} />
           <p className="pl-2 text-sm font-semibold text-default-400">
             {restaurant_rating}
           </p>

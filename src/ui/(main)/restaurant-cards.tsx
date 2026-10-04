@@ -5,7 +5,9 @@ import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardFooter, Image } from "@heroui/react";
 import { motion } from "motion/react";
 import Link from "next/link";
+import { DELIVERY_FEE } from "@/lib/constants";
 import type { Restaurant } from "@/lib/definitions";
+import { formatPrice } from "@/lib/format";
 
 type Props = {
   restaurants: Restaurant[];
@@ -43,7 +45,7 @@ export default function RestaurantCards({ restaurants }: Props) {
                 <div className="flex items-center text-black  gap-1">
                   <div className="flex items-center gap-1 md:hidden xl:flex">
                     <TruckIcon className="size-4" />
-                    <p className="text-small">59kr</p>
+                    <p className="text-small">{formatPrice(DELIVERY_FEE)}</p>
                     <p>|</p>
                   </div>
                   <StarIcon className="size-4" />
