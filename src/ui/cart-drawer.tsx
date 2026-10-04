@@ -144,6 +144,7 @@ export default function CartDrawer({
               size="sm"
               variant="flat"
               color="primary"
+              className="shrink-0"
             >
               View orders
             </Button>
