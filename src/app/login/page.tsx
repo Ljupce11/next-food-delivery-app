@@ -2,7 +2,7 @@
 import { UserIcon } from "@heroicons/react/24/outline";
 import { Button, Form, Input } from "@heroui/react";
 import Image from "next/image";
-import { useActionState } from "react";
+import { type SyntheticEvent, startTransition, useActionState } from "react";
 
 import { authenticate } from "../../lib/actions";
 
@@ -11,6 +11,12 @@ export default function Page() {
     authenticate,
     undefined,
   );
+
+  const onSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => formAction(formData));
+  };
 
   return (
     <div className="flex justify-end flex-col-reverse gap-4 lg:flex-row h-screen p-4 overflow-hidden">
@@ -23,7 +29,7 @@ export default function Page() {
           <p className="text-sm">Enter your details to sign in</p>
         </div>
         <Form
-          action={formAction}
+          onSubmit={onSubmit}
           className="w-full lg:w-6/12 flex flex-col gap-4"
         >
           <Input

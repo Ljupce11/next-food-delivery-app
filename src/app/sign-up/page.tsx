@@ -7,34 +7,35 @@ import {
   Fragment,
   lazy,
   Suspense,
+  type SyntheticEvent,
+  startTransition,
   useActionState,
-  useEffect,
-  useState,
 } from "react";
-import type { z } from "zod";
 
 import { signUp } from "../../lib/actions";
-import type { signUpSchema } from "../../lib/schemas";
 
 const LazySignUpModal = lazy(() => import("../../ui/modals/sign-up-modal"));
 
-type FormData = z.infer<typeof signUpSchema>;
+type SignUpState = Awaited<ReturnType<typeof signUp>>;
 
 export default function Page() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [state, formAction, isPending] = useActionState(signUp, {
-    success: false,
-    message: "",
-  });
-  const [formErrors, setFormErrors] = useState<Partial<FormData>>({});
+  const [state, formAction, isPending] = useActionState(
+    async (prevState: SignUpState, formData: FormData) => {
+      const result = await signUp(prevState, formData);
+      if (result.success) {
+        onOpen();
+      }
+      return result;
+    },
+    { success: false, message: "" },
+  );
 
-  useEffect(() => {
-    if (state.success) {
-      onOpen();
-    } else {
-      setFormErrors(state.errors || {});
-    }
-  }, [state, onOpen]);
+  const onSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => formAction(formData));
+  };
 
   return (
     <Fragment>
@@ -51,8 +52,8 @@ export default function Page() {
             <p className="text-sm">Enter your details to sign up</p>
           </div>
           <Form
-            action={formAction}
-            validationErrors={formErrors}
+            onSubmit={onSubmit}
+            validationErrors={state.errors}
             validationBehavior="native"
             className="w-full lg:w-6/12 flex flex-col gap-4"
           >
