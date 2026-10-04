@@ -23,6 +23,7 @@ import {
   Tab,
   Tabs,
 } from "@heroui/react";
+import NextImage from "next/image";
 import Link from "next/link";
 import {
   Fragment,
@@ -244,11 +245,11 @@ export default function CartDrawer({
                           <CardBody>
                             <div className="flex justify-between items-center gap-3">
                               <div className="flex items-center gap-2">
-                                <Image
-                                  removeWrapper
+                                <NextImage
                                   width={50}
                                   height={50}
-                                  className="aspect-square object-cover"
+                                  alt=""
+                                  className="aspect-square rounded-small object-cover"
                                   src={cartItem.image}
                                 />
                                 <p className="text-xs text-default-500">

@@ -5,10 +5,10 @@ import {
   CardBody,
   CardFooter,
   Divider,
-  Image,
   useDisclosure,
 } from "@heroui/react";
 import { motion } from "motion/react";
+import Image from "next/image";
 import { Fragment, lazy, Suspense, useState } from "react";
 import type { MenuItem, Restaurant } from "@/lib/definitions";
 import { formatPrice } from "@/lib/format";
@@ -70,14 +70,15 @@ export default function RestaurantPageMenuContent({
                 onPress={() => onCardClickHandler(menuItem)}
               >
                 <CardBody className="overflow-visible">
-                  <Image
-                    removeWrapper
-                    alt=""
-                    width={"100%"}
-                    height={"150px"}
-                    className="object-cover rounded-xl"
-                    src={image}
-                  />
+                  <div className="relative h-[150px] w-full overflow-hidden rounded-xl">
+                    <Image
+                      fill
+                      alt=""
+                      src={image}
+                      sizes="(min-width: 1024px) 23vw, (min-width: 768px) 30vw, (min-width: 640px) 45vw, 90vw"
+                      className="object-cover"
+                    />
+                  </div>
                 </CardBody>
                 <CardFooter className="pt-0 flex-col items-start text-left">
                   <b className="text-sm">{name}</b>

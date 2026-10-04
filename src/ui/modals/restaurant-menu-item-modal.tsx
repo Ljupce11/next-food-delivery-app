@@ -10,13 +10,13 @@ import {
   Button,
   ButtonGroup,
   Divider,
-  Image,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
 } from "@heroui/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { addToCart } from "@/lib/actions";
@@ -84,14 +84,33 @@ export default function RestaurantMenuItemModal({
           {selectedMenuItem?.name}
         </ModalHeader>
         <ModalBody>
-          <Image
-            removeWrapper
-            height={200}
-            width={"100%"}
-            className="w-full object-cover"
-            alt={selectedMenuItem?.name ?? ""}
-            src={selectedMenuItem?.image || ""}
-          />
+          {selectedMenuItem && (
+            <figure>
+              <div className="relative h-[200px] w-full overflow-hidden rounded-large">
+                <Image
+                  fill
+                  alt={selectedMenuItem.name}
+                  src={selectedMenuItem.image}
+                  sizes="(min-width: 640px) 576px, 100vw"
+                  className="object-cover"
+                />
+              </div>
+              {selectedMenuItem.image_credit && (
+                <figcaption className="pt-1 text-tiny text-default-400">
+                  Photo by{" "}
+                  <a
+                    href={selectedMenuItem.image_credit_url ?? undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
+                    {selectedMenuItem.image_credit}
+                  </a>{" "}
+                  on Pixabay
+                </figcaption>
+              )}
+            </figure>
+          )}
           {selectedMenuItem?.description && (
             <p>{selectedMenuItem.description}</p>
           )}

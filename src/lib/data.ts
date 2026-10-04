@@ -36,7 +36,7 @@ export async function fetchMenuItems(id: string, category?: string) {
   try {
     const menuItems = await sql`
       SELECT m.id, m.restaurant_id, m.name, m.price, m.image, m.description,
-             c.slug AS category
+             m.image_credit, m.image_credit_url, c.slug AS category
       FROM menus m
       JOIN categories c ON c.id = m.category_id
       WHERE m.restaurant_id = ${id}

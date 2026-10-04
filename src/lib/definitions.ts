@@ -15,6 +15,8 @@ export type MenuItem = {
   image: string;
   description: string | null;
   category: string;
+  image_credit: string | null;
+  image_credit_url: string | null;
 };
 
 export type MenuCategory = {
