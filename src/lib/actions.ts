@@ -13,13 +13,8 @@ import { sql } from "./db";
 import type { OrderItem, Restaurant } from "./definitions";
 import { signUpSchema } from "./schemas";
 
-// Any 8-4-4-4-12 id; z.uuid() would also enforce RFC version/variant bits
 const uuidSchema = z.guid();
 
-/**
- * Server actions are public POST endpoints: anyone can call them with any
- * arguments. The user must always come from the session, never from an argument.
- */
 async function requireUserId() {
   const session = await auth();
   const userId = session?.user?.id;
@@ -57,7 +52,6 @@ export async function signUp(
 ) {
   const parsed = signUpSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) {
-    // One message per field: the first rule that failed
     const errors: Record<string, string> = {};
     for (const issue of parsed.error.issues) {
       const field = String(issue.path[0]);
@@ -95,17 +89,13 @@ export async function searchRestaurants(query: string) {
 
 const quantitySchema = z.number().int().min(1).max(99);
 
-// The cart is shown in the navbar of every page, so refresh the whole layout
 const refreshCart = () => revalidatePath("/", "layout");
 
-/** Adds a quantity of a menu item to the cart (capped at 99 per item). */
 export async function addToCart(menuItemId: string, quantity = 1) {
   const userId = await requireUserId();
   const id = uuidSchema.parse(menuItemId);
   const amount = quantitySchema.parse(quantity);
 
-  // One atomic statement: no read-modify-write, so quick clicks can't overwrite
-  // each other. Inserts nothing if the menu item doesn't exist.
   await sql`
     INSERT INTO cart_items (user_id, menu_item_id, quantity)
     SELECT ${userId}, m.id, ${amount} FROM menus m WHERE m.id = ${id}
@@ -115,11 +105,6 @@ export async function addToCart(menuItemId: string, quantity = 1) {
   refreshCart();
 }
 
-/**
- * Changes an item's quantity by `delta` (e.g. +1 / -1), clamped to 1..99.
- * Sending the change rather than the resulting quantity keeps quick clicks
- * correct: each one is applied to the current value in the database.
- */
 export async function changeCartItemQuantity(
   menuItemId: string,
   delta: number,
@@ -144,7 +129,6 @@ export async function removeFromCart(menuItemId: string) {
   refreshCart();
 }
 
-// Restaurant info is public, so no session check is needed here.
 export async function fetchRestaurantInfo(id: string) {
   try {
     const rows = await sql`SELECT * FROM restaurants WHERE id=${id}`;
@@ -159,7 +143,6 @@ export async function fetchOrderItems(orderId: string) {
   const userId = await requireUserId();
 
   try {
-    // The join makes sure the order belongs to the logged-in user
     const orderItems = await sql`
       SELECT oi.*
       FROM order_items oi
@@ -173,11 +156,6 @@ export async function fetchOrderItems(orderId: string) {
   }
 }
 
-/**
- * Turns the logged-in user's cart items from one restaurant into an order.
- * Everything is read from the database: names, prices and the total can't be
- * influenced by the client.
- */
 export async function completeCheckout(restaurantId: string) {
   const userId = await requireUserId();
   const id = uuidSchema.parse(restaurantId);
@@ -193,8 +171,6 @@ export async function completeCheckout(restaurantId: string) {
 
   const orderId = randomUUID();
   try {
-    // One transaction; RepeatableRead makes all three statements see the same
-    // cart, even if it changes while the checkout runs.
     await sql.transaction(
       [
         sql`
@@ -207,7 +183,6 @@ export async function completeCheckout(restaurantId: string) {
           WHERE c.user_id = ${userId} AND r.id = ${id}
           GROUP BY r.id, r.name, r.image
         `,
-        // Orders keep a snapshot of names and prices: they are a historical record
         sql`
           INSERT INTO order_items (id, order_id, name, quantity, price, item_image)
           SELECT gen_random_uuid(), ${orderId}, m.name, c.quantity, m.price, m.image
@@ -233,7 +208,6 @@ export async function completeOrder(orderId: string) {
   const userId = await requireUserId();
 
   try {
-    // Only the owner of the order can complete it
     await sql`
       UPDATE orders
       SET status='Delivered'

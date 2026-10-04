@@ -1,8 +1,3 @@
--- Move carts from the users.cart JSON column into their own table.
--- The cart only references menu items; names, prices and images are read
--- from menus/restaurants when the cart is displayed.
--- Safe to run more than once.
-
 CREATE TABLE IF NOT EXISTS cart_items (
   user_id      uuid        NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   menu_item_id uuid        NOT NULL REFERENCES menus(id) ON DELETE CASCADE,
@@ -11,7 +6,6 @@ CREATE TABLE IF NOT EXISTS cart_items (
   PRIMARY KEY (user_id, menu_item_id)
 );
 
--- Copy the existing JSON carts. Skips items whose menu item no longer exists.
 INSERT INTO cart_items (user_id, menu_item_id, quantity)
 SELECT u.id, (item ->> 'id')::uuid, SUM((item ->> 'amount')::integer)
 FROM users u

@@ -54,10 +54,6 @@ export async function fetchUserData(id: string | null) {
   }
 }
 
-/**
- * Builds the user's cart from cart_items: names, prices and images always come
- * from the current menus/restaurants, grouped by restaurant for the UI.
- */
 export async function fetchCart(userId: string): Promise<CartData[]> {
   const rows = (await sql`
     SELECT r.id AS restaurant_id, r.name AS restaurant_name,
@@ -75,7 +71,7 @@ export async function fetchCart(userId: string): Promise<CartData[]> {
     restaurant_image: string;
     id: string;
     name: string;
-    price: string; // NUMERIC arrives as a string
+    price: string;
     image: string;
     quantity: number;
   }[];

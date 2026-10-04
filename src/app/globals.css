@@ -1,7 +1,5 @@
-/* Only scan src/ for class names (the v3 config did the same) */
 @import "tailwindcss" source("../");
 @plugin "../../hero.ts";
-/* HeroUI's component styles live in its theme package, which Tailwind doesn't scan by default */
 @source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
 @custom-variant dark (&:is(.dark *));
 
@@ -10,14 +8,6 @@
   --color-foreground: var(--foreground);
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
@@ -28,7 +18,6 @@
   }
 }
 
-/* Tailwind v4 no longer gives buttons a pointer cursor; restore the v3 behavior */
 @layer base {
   button:not(:disabled),
   [role="button"]:not(:disabled) {

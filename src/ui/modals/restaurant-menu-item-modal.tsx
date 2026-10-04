@@ -40,18 +40,15 @@ export default function RestaurantMenuItemModal({
 }: Props) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  // Starts at 1 on every opening: the parent gives the modal a new `key` per opening
   const [quantity, setQuantity] = useState(1);
 
   const onAddToCartHandler = async () => {
     if (!selectedMenuItem) return;
     setIsLoading(true);
     try {
-      // Send the intent; the server reads the cart and the item itself
       await addToCart(selectedMenuItem.id, quantity);
       onClose();
     } catch {
-      // Logged out (or the session expired): adding needs an account
       router.push(`/login?callbackUrl=/restaurant/${restaurant.id}`);
     } finally {
       setIsLoading(false);

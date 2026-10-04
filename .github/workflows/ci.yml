@@ -5,7 +5,6 @@ on:
   push:
     branches: [main]
 
-# A newer push to the same branch cancels the run that's still going
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -21,9 +20,7 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-      # `next start` isn't on Vercel, so Auth.js must be told to trust the host
       AUTH_TRUST_HOST: "true"
-      # Logged-in tests (read-only: E2E_ALLOW_WRITES is not set, so no orders are created)
       E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
     steps:

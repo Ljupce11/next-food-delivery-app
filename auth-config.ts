@@ -8,8 +8,6 @@ export const authConfig = {
     signIn: "/login",
   },
   callbacks: {
-    // Without this callback the middleware lets every request through.
-    // Returning false redirects to pages.signIn.
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isPrivatePage = PRIVATE_PATHS.some((path) =>

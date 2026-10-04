@@ -5,10 +5,6 @@ test.skip(
   "Set E2E_EMAIL and E2E_PASSWORD to run the logged-in tests",
 );
 
-/**
- * Resolves once `count` server actions have finished. Next sends queued actions
- * one after another, so "network idle" can occur between them.
- */
 function waitForServerActions(page: Page, count: number) {
   let seen = 0;
   return new Promise<void>((resolve) => {
@@ -24,7 +20,6 @@ function waitForServerActions(page: Page, count: number) {
   });
 }
 
-/** The "123kr" amount next to the drawer's "Total:" label */
 async function drawerTotal(page: Page) {
   const total = page
     .getByRole("dialog")
@@ -74,7 +69,6 @@ test("the quantity chosen in the item modal is added to the cart", async ({
   });
   const readCartQuantity = async () => {
     await page.getByRole("button", { name: "Cart", exact: true }).click();
-    // The drawer is lazy-loaded: wait until it's really open before reading it
     await expect(drawer.getByText("Your items")).toBeVisible();
     const tab = drawer.getByRole("tab", { name: restaurantName });
     let quantity = 0;
@@ -89,11 +83,8 @@ test("the quantity chosen in the item modal is added to the cart", async ({
 
   const before = await readCartQuantity();
   await page.keyboard.press("Escape");
-  // Wait until the drawer has fully left the page: its dialog role disappears
-  // before the close animation (and its wrapper) are gone
   await expect(page.locator(".cart-drawer")).toHaveCount(0);
 
-  // Choose 3 in the modal and add
   await firstItem.click();
   const modal = page.getByRole("dialog");
   await modal.getByRole("button", { name: "Increase quantity" }).click();
@@ -104,7 +95,6 @@ test("the quantity chosen in the item modal is added to the cart", async ({
   await modal.getByRole("button", { name: "Add to cart" }).click();
   await expect(modal).toBeHidden();
 
-  // Reopening starts at 1 again
   await firstItem.click();
   await expect(
     modal.getByRole("button", { name: "Quantity: 1" }),
@@ -114,7 +104,6 @@ test("the quantity chosen in the item modal is added to the cart", async ({
 
   expect(await readCartQuantity()).toBe(before + 3);
 
-  // Put the cart back the way it was
   if (before === 0) {
     const removed = waitForServerActions(page, 1);
     await drawer.getByRole("button", { name: `Remove ${itemName}` }).click();
@@ -137,9 +126,6 @@ test("quick quantity changes are all saved", async ({ page }) => {
     "Changes the test account's cart: set E2E_ALLOW_WRITES=1 to run it",
   );
 
-  // Make sure the cart has an item from the first restaurant
-  // Open the restaurant page directly: clicking the link on a scrolled home page
-  // can leave the hide-on-scroll navbar hidden (separate, pre-existing issue)
   await page.goto("/");
   const restaurantHref = await page
     .locator('a[href^="/restaurant/"]')
@@ -174,7 +160,6 @@ test("quick quantity changes are all saved", async ({ page }) => {
     });
   const savedQuantityAfterReload = async () => {
     await page.reload();
-    // The navbar hides on scroll, and a reload restores the scroll position
     await page.evaluate(() => window.scrollTo(0, 0));
     await openCart();
     return Number((await quantity().innerText()).trim());
@@ -183,7 +168,6 @@ test("quick quantity changes are all saved", async ({ page }) => {
   await openCart();
   const before = Number((await quantity().innerText()).trim());
 
-  // Two quick clicks: the UI updates immediately (optimistic) …
   const increase = page.getByRole("button", {
     name: `Increase ${itemName} quantity`,
   });
@@ -192,10 +176,8 @@ test("quick quantity changes are all saved", async ({ page }) => {
   await increase.click();
   await increaseDone;
   await expect(quantity()).toHaveText(String(before + 2));
-  // … and both changes reach the database (no lost update)
   expect(await savedQuantityAfterReload()).toBe(before + 2);
 
-  // Put it back
   const decrease = page.getByRole("button", {
     name: `Decrease ${itemName} quantity`,
   });
@@ -213,9 +195,6 @@ test("add to cart, check out and complete an order", async ({ page }) => {
     "Creates a real order: set E2E_ALLOW_WRITES=1 to run it",
   );
 
-  // Open the first restaurant and add its first menu item
-  // Open the restaurant page directly: clicking the link on a scrolled home page
-  // can leave the hide-on-scroll navbar hidden (separate, pre-existing issue)
   await page.goto("/");
   const restaurantHref = await page
     .locator('a[href^="/restaurant/"]')
@@ -238,7 +217,6 @@ test("add to cart, check out and complete an order", async ({ page }) => {
   await page.getByRole("button", { name: "Add to cart" }).click();
   await expect(page.getByRole("dialog")).toBeHidden();
 
-  // Open the cart on that restaurant's tab and add one more of the item
   await page.getByRole("button", { name: "Cart" }).click();
   const drawer = page.getByRole("dialog");
   await drawer.getByRole("tab", { name: restaurantName }).click();
@@ -251,12 +229,10 @@ test("add to cart, check out and complete an order", async ({ page }) => {
     .click();
   await expect(quantity).toHaveText(String(before + 1));
 
-  // The total the server calculates must match what the cart showed
   const expectedTotal = await drawerTotal(page);
   await drawer.getByRole("button", { name: "Go to checkout" }).click();
   await expect(drawer).toBeHidden();
 
-  // Newest order first
   await page.goto("/orders");
   const newestOrder = page
     .getByRole("grid", { name: "Orders table" })
@@ -266,7 +242,6 @@ test("add to cart, check out and complete an order", async ({ page }) => {
   await expect(newestOrder).toContainText(expectedTotal);
   await expect(newestOrder).toContainText("In Progress");
 
-  // Order details show the item
   await newestOrder
     .getByRole("button", { name: "View more information" })
     .click();
@@ -277,7 +252,6 @@ test("add to cart, check out and complete an order", async ({ page }) => {
     .first()
     .click();
 
-  // Complete it
   await newestOrder.getByRole("button", { name: "Complete order" }).click();
   await expect(newestOrder).toContainText("Delivered");
 });

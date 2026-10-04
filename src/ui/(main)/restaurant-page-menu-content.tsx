@@ -30,8 +30,6 @@ export default function RestaurantPageMenuContent({
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(
     null,
   );
-  // Changes on every opening: the new key gives the modal fresh state, and
-  // while it's 0 the lazy modal isn't rendered (so its code isn't loaded yet)
   const [openCount, setOpenCount] = useState(0);
 
   const onCardClickHandler = (

@@ -59,7 +59,6 @@ type CartChange =
   | { type: "quantity"; itemId: string; delta: number }
   | { type: "remove"; itemId: string };
 
-/** Returns a new cart with the change applied (never mutates the old one). */
 const applyChange = (cart: CartData[], change: CartChange): CartData[] =>
   cart
     .map((restaurant) => ({
@@ -89,9 +88,6 @@ export default function CartDrawer({
   onClose,
   onOpenChange,
 }: Props) {
-  // The cart comes from the server. useOptimistic shows a change immediately;
-  // once the server action finishes, React switches back to the refreshed
-  // props (or reverts, if the action failed).
   const [cart, applyOptimistic] = useOptimistic(cartData, applyChange);
   const [, startTransition] = useTransition();
   const [isCheckingOut, startCheckout] = useTransition();
