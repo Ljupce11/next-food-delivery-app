@@ -9,7 +9,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type Key, lazy, Suspense } from "react";
+import { type Key, lazy, Suspense, useState } from "react";
 
 import { signOutAction } from "../lib/actions";
 import type { AdvancedUser, CartData } from "../lib/definitions";
@@ -31,6 +31,7 @@ export default function Navbar({ user }: Props) {
     onOpen: onOpenContact,
     onOpenChange: onOpenChangeContact,
   } = useDisclosure();
+  const [hasOpenedContact, setHasOpenedContact] = useState(false);
 
   const onDropdownActionHandler = (key: Key) => {
     switch (key) {
@@ -38,6 +39,7 @@ export default function Navbar({ user }: Props) {
         signOutAction();
         break;
       case "help_and_feedback":
+        setHasOpenedContact(true);
         onOpenContact();
         break;
       case "orders":
@@ -53,12 +55,14 @@ export default function Navbar({ user }: Props) {
 
   return (
     <NextNavbar isBordered shouldHideOnScroll>
-      <Suspense fallback={null}>
-        <LazyHelpFeedbackModal
-          isOpen={isContactOpen}
-          onOpenChange={onOpenChangeContact}
-        />
-      </Suspense>
+      {hasOpenedContact && (
+        <Suspense fallback={null}>
+          <LazyHelpFeedbackModal
+            isOpen={isContactOpen}
+            onOpenChange={onOpenChangeContact}
+          />
+        </Suspense>
+      )}
       <NavbarBrand>
         <Link
           prefetch

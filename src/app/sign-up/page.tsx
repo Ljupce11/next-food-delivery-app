@@ -39,9 +39,11 @@ export default function Page() {
 
   return (
     <Fragment>
-      <Suspense fallback={null}>
-        <LazySignUpModal isOpen={isOpen} onOpenChange={onOpenChange} />
-      </Suspense>
+      {state.success && (
+        <Suspense fallback={null}>
+          <LazySignUpModal isOpen={isOpen} onOpenChange={onOpenChange} />
+        </Suspense>
+      )}
       <div className="flex justify-end flex-col-reverse gap-4 lg:flex-row h-screen p-4 overflow-hidden">
         <div className="lg:w-6/12 flex flex-col items-center justify-center gap-5">
           <div className="border border-gray-100 dark:border-gray-700 p-3 rounded-full shadow-md">

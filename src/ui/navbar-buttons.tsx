@@ -90,6 +90,7 @@ export default function NavbarButtons({
                 size="sm"
                 radius="lg"
                 as="button"
+                aria-label="Profile menu"
                 color="primary"
                 className="transition-transform"
                 name={typeof user.name === "string" ? user.name : ""}
