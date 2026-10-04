@@ -39,6 +39,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Editor diagnostics (TypeScript hints, Tailwind)
+        run: npm run check:editor
+
       - name: Build
         run: npm run build
 
