@@ -66,14 +66,14 @@ export default function Navbar({ user, isLoading = false }: Props) {
       )}
       <NavbarBrand>
         <Link
-          prefetch
           href="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <Image
             width={32}
-            height={31}
+            height={32}
             loading="eager"
+            className="size-8 object-contain"
             src="/img/logo.png"
             alt="Food delivery logo"
           />
