@@ -23,7 +23,7 @@ export default function ProfileInfo({ user }: Props) {
             />
             <button
               type="button"
-              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity"
             >
               <span className="text-white text-sm">Change</span>
             </button>
