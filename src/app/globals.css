@@ -1,4 +1,5 @@
-@import "tailwindcss";
+/* Only scan src/ for class names (the v3 config did the same) */
+@import "tailwindcss" source("../");
 @plugin "../../hero.ts";
 /* HeroUI's component styles live in its theme package, which Tailwind doesn't scan by default */
 @source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
@@ -24,6 +25,14 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+/* Tailwind v4 no longer gives buttons a pointer cursor; restore the v3 behavior */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
   }
 }
 
