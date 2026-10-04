@@ -2,9 +2,7 @@
 
 import { Divider, Image, Tab, Tabs } from "@heroui/react";
 import NextImage from "next/image";
-import { Suspense } from "react";
 import type { MenuCategory, Restaurant } from "@/lib/definitions";
-import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import {
   ALL_CATEGORIES,
   selectCategory,
@@ -19,20 +17,16 @@ type Props = {
 
 type CategoryTabsProps = {
   categories: MenuCategory[];
-  isVertical: boolean;
 };
 
-function CategoryTabs({
-  categories,
-  isVertical,
-  selectedKey,
-}: CategoryTabsProps & { selectedKey: string }) {
+function CategoryTabs({ categories }: CategoryTabsProps) {
+  const selectedKey = useSelectedCategory(categories.map(({ slug }) => slug));
   return (
     <Tabs
       items={[{ slug: ALL_CATEGORIES, name: "Show all" }, ...categories]}
       className="mx-auto"
+      classNames={{ tabList: "lg:flex-col" }}
       aria-label="Menu categories"
-      isVertical={isVertical}
       selectedKey={selectedKey}
       onSelectionChange={(key) => selectCategory(String(key))}
     >
@@ -41,19 +35,11 @@ function CategoryTabs({
   );
 }
 
-function SelectedCategoryTabs(props: CategoryTabsProps) {
-  const selectedKey = useSelectedCategory(
-    props.categories.map(({ slug }) => slug),
-  );
-  return <CategoryTabs {...props} selectedKey={selectedKey} />;
-}
-
 export default function RestaurantPageSidebar({
   restaurant,
   categories,
 }: Props) {
   const { name, address, cuisine, rating, image } = restaurant;
-  const isDesktop = useMediaQuery("(min-width: 1024px)", true);
 
   return (
     <div className="w-full lg:w-1/6 overflow-x-hidden pt-9">
@@ -83,20 +69,7 @@ export default function RestaurantPageSidebar({
       </div>
       <Divider className="my-5" />
       <div className="overflow-auto">
-        <Suspense
-          fallback={
-            <CategoryTabs
-              categories={categories}
-              isVertical={isDesktop}
-              selectedKey={ALL_CATEGORIES}
-            />
-          }
-        >
-          <SelectedCategoryTabs
-            categories={categories}
-            isVertical={isDesktop}
-          />
-        </Suspense>
+        <CategoryTabs categories={categories} />
       </div>
     </div>
   );

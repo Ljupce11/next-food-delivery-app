@@ -110,16 +110,7 @@ export default function RestaurantPageMenuContent({
         </Suspense>
       )}
       <div className="w-full lg:w-3/4">
-        <Suspense
-          fallback={
-            <MenuGrid menuItems={menuItems} onSelect={onCardClickHandler} />
-          }
-        >
-          <FilteredMenuGrid
-            menuItems={menuItems}
-            onSelect={onCardClickHandler}
-          />
-        </Suspense>
+        <FilteredMenuGrid menuItems={menuItems} onSelect={onCardClickHandler} />
       </div>
     </Fragment>
   );

@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { z } from "zod";
 import {
   fetchMenuCategories,
@@ -8,7 +7,6 @@ import {
 } from "@/lib/data";
 import RestaurantPageMenu from "@/ui/(main)/restaurant-page-menu";
 import RestaurantPageSidebar from "@/ui/(main)/restaurant-page-sidebar";
-import { RestaurantPageMenuSkeleton } from "@/ui/skeletons";
 
 export async function generateStaticParams() {
   const ids = await fetchRestaurantIds();
@@ -34,9 +32,7 @@ export default async function Page({ params }: Props) {
   return (
     <div className="flex flex-col justify-around w-full px-8 py-5 gap-3 lg:flex-row">
       <RestaurantPageSidebar restaurant={restaurant} categories={categories} />
-      <Suspense fallback={<RestaurantPageMenuSkeleton />}>
-        <RestaurantPageMenu restaurant={restaurant} />
-      </Suspense>
+      <RestaurantPageMenu restaurant={restaurant} />
     </div>
   );
 }
