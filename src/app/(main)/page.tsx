@@ -23,7 +23,7 @@ export default function Page({ searchParams }: Props) {
             </p>
           </div>
 
-          <div className="lg:w-1/2 lg:pl-8">
+          <div className="w-full lg:w-1/2 lg:pl-8">
             <Image
               loading="eager"
               fetchPriority="high"
