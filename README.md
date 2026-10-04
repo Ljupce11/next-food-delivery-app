@@ -113,10 +113,6 @@ Without any configuration, only the logged-out tests run (redirects, home page, 
 ## 📚 Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
-- [NextAuth.js Documentation](https://next-auth.js.org)
+- [Auth.js Documentation](https://authjs.dev)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [HeroUI Documentation](https://heroui.com/docs)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
