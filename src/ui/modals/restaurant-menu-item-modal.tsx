@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { addToCart } from "@/lib/actions";
 import type { MenuItem, Restaurant } from "@/lib/definitions";
+import { formatPrice } from "@/lib/format";
 
 const MAX_QUANTITY = 99;
 
@@ -92,7 +93,7 @@ export default function RestaurantMenuItemModal({
             src={selectedMenuItem?.image || ""}
           />
           <p>Some description about this menu item</p>
-          <b>{selectedMenuItem?.price}kr</b>
+          <b>{selectedMenuItem && formatPrice(selectedMenuItem.price)}</b>
         </ModalBody>
         <Divider />
         <ModalFooter>

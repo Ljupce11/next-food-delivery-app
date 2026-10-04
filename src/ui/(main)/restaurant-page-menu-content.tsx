@@ -12,6 +12,7 @@ import {
 import { motion } from "motion/react";
 import { Fragment, lazy, Suspense, useState } from "react";
 import type { MenuItem, Restaurant } from "@/lib/definitions";
+import { formatPrice } from "@/lib/format";
 
 const LazyRestaurantMenuItemModal = lazy(
   () => import("../modals/restaurant-menu-item-modal"),
@@ -93,7 +94,7 @@ export default function RestaurantPageMenuContent({
                   </p>
                   <Divider className="my-2.5" />
                   <div className="flex items-center justify-between w-full text-sm">
-                    <p className="font-semibold">{price}kr</p>
+                    <p className="font-semibold">{formatPrice(price)}</p>
                     <div className="flex items-center gap-1 text-default-500">
                       <HandThumbUpIcon className="size-5" />
                       <p>100%</p>

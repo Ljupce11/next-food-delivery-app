@@ -5,6 +5,7 @@ import { Card, CardBody } from "@heroui/react";
 import { motion } from "motion/react";
 import { Fragment } from "react";
 import type { OrderAnalytics } from "@/lib/definitions";
+import { formatNumber, formatPrice } from "@/lib/format";
 
 const orderAnalyticsCards: { id: keyof OrderAnalytics; text: string }[] = [
   { id: "row_count_orders", text: "Total orders" },
@@ -39,8 +40,9 @@ export default function OrdersAnalyticsContent({ orderAnalytics }: Props) {
             <Card key={id} shadow="sm">
               <CardBody>
                 <p className="text-lg font-semibold">
-                  {orderAnalytics[id] || "0"}
-                  {id === "total_sum" && "kr"}
+                  {id === "total_sum"
+                    ? formatPrice(orderAnalytics[id] || 0)
+                    : formatNumber(orderAnalytics[id] || 0)}
                 </p>
                 <p>{text}</p>
               </CardBody>

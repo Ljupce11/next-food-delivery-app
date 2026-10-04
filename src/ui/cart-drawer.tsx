@@ -39,6 +39,7 @@ import {
 } from "../lib/actions";
 import { DELIVERY_FEE } from "../lib/constants";
 import type { CartData } from "../lib/definitions";
+import { formatPrice } from "../lib/format";
 
 const MOTION_PROPS = {
   variants: {
@@ -261,7 +262,7 @@ export default function CartDrawer({
                               </div>
                               <div className="flex items-center justify-end gap-3">
                                 <p className="text-default-500 text-sm">
-                                  {cartItem.price}kr
+                                  {formatPrice(cartItem.price)}
                                 </p>
                                 <ButtonGroup size="sm" variant="flat">
                                   <Button
@@ -315,11 +316,11 @@ export default function CartDrawer({
                       <div className="flex flex-col w-full gap-1 text-default-500 font-medium text-sm">
                         <div className="flex items-center justify-between">
                           <p>Subtotal:</p>
-                          <p>{subTotal}kr</p>
+                          <p>{formatPrice(subTotal)}</p>
                         </div>
                         <div className="flex items-center justify-between">
                           <p>Delivery:</p>
-                          <p>{DELIVERY_FEE}kr</p>
+                          <p>{formatPrice(DELIVERY_FEE)}</p>
                         </div>
                       </div>
                     </div>
@@ -336,7 +337,9 @@ export default function CartDrawer({
               <div className="flex flex-col w-full gap-4">
                 <div className="flex items-center justify-between">
                   <p className="text-default-600 font-semibold">Total:</p>
-                  <p className="text-default-600 font-semibold">{total}kr</p>
+                  <p className="text-default-600 font-semibold">
+                    {formatPrice(total)}
+                  </p>
                 </div>
                 <Button
                   isLoading={isCheckingOut}

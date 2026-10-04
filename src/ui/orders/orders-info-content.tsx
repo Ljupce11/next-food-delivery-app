@@ -24,6 +24,7 @@ import { motion } from "motion/react";
 import { lazy, Suspense, useState } from "react";
 import { completeOrder } from "@/lib/actions";
 import type { Order } from "@/lib/definitions";
+import { formatDateTime, formatPrice } from "@/lib/format";
 
 const LazyOrderDetailsModal = lazy(
   () => import("../modals/order-details-modal"),
@@ -42,22 +43,12 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   Delivered: "success",
 };
 
-const dateOptions: Intl.DateTimeFormatOptions = {
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-  timeZone: "Europe/Stockholm",
-};
-
 function DateCell({ order }: { order: Order }) {
-  const orderDate = new Date(order.order_date).toLocaleDateString(
-    "sv-SE",
-    dateOptions,
+  return (
+    <p className="text-bold text-sm capitalize">
+      {formatDateTime(order.order_date)}
+    </p>
   );
-  return <p className="text-bold text-sm capitalize">{orderDate}</p>;
 }
 
 type IsLoading = {
@@ -156,7 +147,7 @@ export default function OrdersInfoContent({ orders }: Props) {
                 </Chip>
               </TableCell>
               <TableCell>
-                <p className="text-bold">{order.total}kr</p>
+                <p className="text-bold">{formatPrice(order.total)}</p>
               </TableCell>
               <TableCell>
                 <div className="flex justify-center items-center w-full gap-2">

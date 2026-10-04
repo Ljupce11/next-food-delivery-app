@@ -12,6 +12,7 @@ import {
 import { useCallback } from "react";
 
 import type { Order, OrderItem } from "../lib/definitions";
+import { formatPrice } from "../lib/format";
 
 const columns = [
   { name: "ITEM NAME", uid: "item_name" },
@@ -38,7 +39,7 @@ export default function OrderItemsDetails({
             />
           );
         case "price":
-          return <p className="text-bold">{cellValue}kr</p>;
+          return <p className="text-bold">{formatPrice(orderItem.price)}</p>;
         default:
           return cellValue;
       }
