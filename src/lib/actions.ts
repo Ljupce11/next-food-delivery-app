@@ -8,7 +8,6 @@ import { z } from "zod";
 
 import { auth, signIn, signOut } from "../../auth";
 import { DELIVERY_FEE } from "./constants";
-import { fetchRestaurants } from "./data";
 import { sql } from "./db";
 import { signUpSchema } from "./schemas";
 
@@ -80,10 +79,6 @@ export async function signUp(
 
 export async function signOutAction() {
   await signOut();
-}
-
-export async function searchRestaurants(query: string) {
-  return await fetchRestaurants(query);
 }
 
 const quantitySchema = z.number().int().min(1).max(99);
