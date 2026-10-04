@@ -1,6 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
 
-/** Collects uncaught errors and console errors for the lifetime of the page */
 function trackErrors(page: Page) {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -51,8 +50,6 @@ test("restaurant page renders on the server without errors", async ({
 }) => {
   const path = await firstRestaurantPath(page);
 
-  // Regression test: a client component reading `window` during render made
-  // server rendering fail, and React fell back to client rendering (<!--$!-->)
   const html = await (await request.get(path)).text();
   expect(
     html.includes("<!--$!-->"),
@@ -61,8 +58,6 @@ test("restaurant page renders on the server without errors", async ({
 
   const errors = trackErrors(page);
   await page.goto(path);
-  // While streaming, React briefly keeps the finished content in a hidden
-  // <div> before moving it into place, so only match visible elements
   await expect(
     page.getByText("Open now").filter({ visible: true }),
   ).toBeVisible();
@@ -71,8 +66,6 @@ test("restaurant page renders on the server without errors", async ({
 });
 
 test("sign-up shows server-side validation errors", async ({ page }) => {
-  // Passes the browser's own checks but fails the server's Zod schema,
-  // so nothing is written to the database
   await page.goto("/sign-up");
   await page.getByLabel("First name").fill("Validation");
   await page.getByLabel("Last name").fill("Test");

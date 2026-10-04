@@ -30,6 +30,7 @@ export default function RestaurantPageMenuContent({
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(
     null,
   );
+  const [openCount, setOpenCount] = useState(0);
 
   const onCardClickHandler = (
     id: string,
@@ -38,21 +39,25 @@ export default function RestaurantPageMenuContent({
     image: string,
     restaurant_id: string,
   ) => {
-    onOpen();
     setSelectedMenuItem({ id, name, price, image, restaurant_id });
+    setOpenCount((count) => count + 1);
+    onOpen();
   };
 
   return (
     <Fragment>
-      <Suspense fallback={null}>
-        <LazyRestaurantMenuItemModal
-          isOpen={isOpen}
-          restaurant={restaurant}
-          selectedMenuItem={selectedMenuItem}
-          onClose={onClose}
-          onOpenChange={onOpenChange}
-        />
-      </Suspense>
+      {openCount > 0 && (
+        <Suspense fallback={null}>
+          <LazyRestaurantMenuItemModal
+            key={openCount}
+            isOpen={isOpen}
+            restaurant={restaurant}
+            selectedMenuItem={selectedMenuItem}
+            onClose={onClose}
+            onOpenChange={onOpenChange}
+          />
+        </Suspense>
+      )}
       <motion.div
         className="w-full lg:w-3/4"
         initial={{ opacity: 0 }}

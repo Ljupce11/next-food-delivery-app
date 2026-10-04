@@ -23,7 +23,6 @@ type Props = {
 
 export default function RestaurantPageSidebar({ restaurant }: Props) {
   const { name, address, cuisine, rating, image } = restaurant;
-  // Same breakpoint as Tailwind's `lg`. Defaults to desktop on the server.
   const isDesktop = useMediaQuery("(min-width: 1024px)", true);
 
   return (

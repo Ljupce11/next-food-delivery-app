@@ -42,29 +42,65 @@ export async function fetchMenuItems(id: string) {
 }
 
 export async function fetchUserData(id: string | null) {
+  if (!id) return undefined;
   try {
     const rows =
-      await sql`SELECT id, name, email, phone, address, cart FROM users WHERE id=${id}`;
-    return rows[0] as AdvancedUser | undefined;
+      await sql`SELECT id, name, email, phone, address FROM users WHERE id=${id}`;
+    const user = rows[0] as Omit<AdvancedUser, "cart"> | undefined;
+    return user ? { ...user, cart: await fetchCart(id) } : undefined;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
     throw new Error("Failed to fetch user data.");
   }
 }
 
-export async function updateCart(id: string, data: CartData[]) {
-  try {
-    const rows = await sql`
-      UPDATE users
-      SET cart=${JSON.stringify(data)}
-      WHERE id=${id}
-      RETURNING cart
-    `;
-    return rows[0] as Pick<AdvancedUser, "cart"> | undefined;
-  } catch (error) {
-    console.error("Failed to update cart:", error);
-    throw new Error("Failed to update cart.");
+export async function fetchCart(userId: string): Promise<CartData[]> {
+  const rows = (await sql`
+    SELECT r.id AS restaurant_id, r.name AS restaurant_name,
+           r.address AS restaurant_address, r.image AS restaurant_image,
+           m.id, m.name, m.price, m.image, c.quantity
+    FROM cart_items c
+    JOIN menus m ON m.id = c.menu_item_id
+    JOIN restaurants r ON r.id = m.restaurant_id
+    WHERE c.user_id = ${userId}
+    ORDER BY c.added_at, m.name
+  `) as {
+    restaurant_id: string;
+    restaurant_name: string;
+    restaurant_address: string;
+    restaurant_image: string;
+    id: string;
+    name: string;
+    price: string;
+    image: string;
+    quantity: number;
+  }[];
+
+  const byRestaurant = new Map<string, CartData>();
+  for (const row of rows) {
+    let restaurant = byRestaurant.get(row.restaurant_id);
+    if (!restaurant) {
+      restaurant = {
+        restaurantId: row.restaurant_id,
+        restaurantName: row.restaurant_name,
+        restaurantAddress: row.restaurant_address,
+        image: row.restaurant_image,
+        items: [],
+      };
+      byRestaurant.set(row.restaurant_id, restaurant);
+    }
+    const unitPrice = Number(row.price);
+    restaurant.items.push({
+      id: row.id,
+      name: row.name,
+      extra: "",
+      unitPrice,
+      price: unitPrice * row.quantity,
+      amount: row.quantity,
+      image: row.image,
+    });
   }
+  return [...byRestaurant.values()];
 }
 
 export async function fetchOrders(id: string | null) {

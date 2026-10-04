@@ -8,18 +8,13 @@ import { z } from "zod";
 
 import { auth, signIn, signOut } from "../../auth";
 import { DELIVERY_FEE } from "./constants";
-import { fetchRestaurants, updateCart } from "./data";
+import { fetchRestaurants } from "./data";
 import { sql } from "./db";
-import type { CartData, MenuItem, OrderItem, Restaurant } from "./definitions";
-import { cartSchema, signUpSchema } from "./schemas";
+import type { OrderItem, Restaurant } from "./definitions";
+import { signUpSchema } from "./schemas";
 
-// Any 8-4-4-4-12 id; z.uuid() would also enforce RFC version/variant bits
 const uuidSchema = z.guid();
 
-/**
- * Server actions are public POST endpoints: anyone can call them with any
- * arguments. The user must always come from the session, never from an argument.
- */
 async function requireUserId() {
   const session = await auth();
   const userId = session?.user?.id;
@@ -57,7 +52,6 @@ export async function signUp(
 ) {
   const parsed = signUpSchema.safeParse(Object.fromEntries(formData.entries()));
   if (!parsed.success) {
-    // One message per field: the first rule that failed
     const errors: Record<string, string> = {};
     for (const issue of parsed.error.issues) {
       const field = String(issue.path[0]);
@@ -93,40 +87,48 @@ export async function searchRestaurants(query: string) {
   return await fetchRestaurants(query);
 }
 
-export async function updateCartData(
-  cartData: CartData[],
-  restaurantId: string,
+const quantitySchema = z.number().int().min(1).max(99);
+
+const refreshCart = () => revalidatePath("/", "layout");
+
+export async function addToCart(menuItemId: string, quantity = 1) {
+  const userId = await requireUserId();
+  const id = uuidSchema.parse(menuItemId);
+  const amount = quantitySchema.parse(quantity);
+
+  await sql`
+    INSERT INTO cart_items (user_id, menu_item_id, quantity)
+    SELECT ${userId}, m.id, ${amount} FROM menus m WHERE m.id = ${id}
+    ON CONFLICT (user_id, menu_item_id)
+    DO UPDATE SET quantity = LEAST(cart_items.quantity + EXCLUDED.quantity, 99)
+  `;
+  refreshCart();
+}
+
+export async function changeCartItemQuantity(
+  menuItemId: string,
+  delta: number,
 ) {
   const userId = await requireUserId();
-  const cart = cartSchema.parse(cartData);
-  const id = uuidSchema.parse(restaurantId);
+  const id = uuidSchema.parse(menuItemId);
+  const change = z.number().int().min(-98).max(98).parse(delta);
 
-  const updatedCartData = await updateCart(userId, cart);
-  revalidatePath("/");
-  revalidatePath(`/restaurant/${id}`);
-  return updatedCartData;
+  await sql`
+    UPDATE cart_items
+    SET quantity = LEAST(GREATEST(quantity + ${change}, 1), 99)
+    WHERE user_id = ${userId} AND menu_item_id = ${id}
+  `;
+  refreshCart();
 }
 
-export async function updateCartDataFromDrawer(cartData: CartData[]) {
+export async function removeFromCart(menuItemId: string) {
   const userId = await requireUserId();
-  const cart = cartSchema.parse(cartData);
+  const id = uuidSchema.parse(menuItemId);
 
-  try {
-    const rows = await sql`
-      UPDATE users
-      SET cart=${JSON.stringify(cart)}
-      WHERE id=${userId}
-      RETURNING cart
-    `;
-    revalidatePath("/");
-    return rows[0] as { cart: CartData[] } | undefined;
-  } catch (error) {
-    console.error("Failed to update cart:", error);
-    throw new Error("Failed to update cart.");
-  }
+  await sql`DELETE FROM cart_items WHERE user_id = ${userId} AND menu_item_id = ${id}`;
+  refreshCart();
 }
 
-// Restaurant info is public, so no session check is needed here.
 export async function fetchRestaurantInfo(id: string) {
   try {
     const rows = await sql`SELECT * FROM restaurants WHERE id=${id}`;
@@ -141,7 +143,6 @@ export async function fetchOrderItems(orderId: string) {
   const userId = await requireUserId();
 
   try {
-    // The join makes sure the order belongs to the logged-in user
     const orderItems = await sql`
       SELECT oi.*
       FROM order_items oi
@@ -155,85 +156,58 @@ export async function fetchOrderItems(orderId: string) {
   }
 }
 
-/**
- * Creates an order for the logged-in user from their cart.
- * The client only says WHICH restaurant to check out; names, prices and the
- * total all come from the database, so they can't be tampered with.
- */
-export async function completeCheckout(
-  restaurantId: string,
-  cartData: CartData[],
-) {
+export async function completeCheckout(restaurantId: string) {
   const userId = await requireUserId();
-  const cart = cartSchema.parse(cartData);
   const id = uuidSchema.parse(restaurantId);
 
-  const restaurantCart = cart.find((c) => c.restaurantId === id);
-  if (!restaurantCart || restaurantCart.items.length === 0) {
+  const [{ count }] = (await sql`
+    SELECT count(*)::int AS count
+    FROM cart_items c JOIN menus m ON m.id = c.menu_item_id
+    WHERE c.user_id = ${userId} AND m.restaurant_id = ${id}
+  `) as { count: number }[];
+  if (count === 0) {
     throw new Error("There is nothing to check out for this restaurant.");
   }
-  const remainingCart = cart.filter((c) => c.restaurantId !== id);
-  const itemIds = restaurantCart.items.map((item) => item.id);
 
+  const orderId = randomUUID();
   try {
-    // 1. Read: restaurant and current menu prices
-    const [restaurant] = (await sql`
-      SELECT id, name, image FROM restaurants WHERE id=${id}
-    `) as Pick<Restaurant, "id" | "name" | "image">[];
-    if (!restaurant) {
-      throw new Error("Restaurant not found.");
-    }
-
-    const menuItems = (await sql.query(
-      "SELECT id, name, price, image FROM menus WHERE restaurant_id = $1 AND id = ANY($2::uuid[])",
-      [id, itemIds],
-    )) as Pick<MenuItem, "id" | "name" | "price" | "image">[];
-    const menuItemsById = new Map(menuItems.map((item) => [item.id, item]));
-
-    const lines = restaurantCart.items.map((cartItem) => {
-      const menuItem = menuItemsById.get(cartItem.id);
-      if (!menuItem) {
-        throw new Error("An item in your cart is no longer available.");
-      }
-      return { menuItem, quantity: cartItem.amount };
-    });
-
-    const subtotal = lines.reduce(
-      (sum, { menuItem, quantity }) => sum + Number(menuItem.price) * quantity,
-      0,
-    );
-    const total = subtotal + DELIVERY_FEE;
-
-    // 2. Write: everything in one atomic transaction. The order id is created
-    //    here so the item inserts can reference it in the same batch.
-    const orderId = randomUUID();
-    await sql.transaction([
-      sql`
-        INSERT INTO orders (id, user_id, restaurant_id, total, status, restaurant_name, restaurant_avatar, order_date)
-        VALUES (${orderId}, ${userId}, ${restaurant.id}, ${total}, 'In Progress', ${restaurant.name}, ${restaurant.image}, NOW())
-      `,
-      ...lines.map(
-        ({ menuItem, quantity }) => sql`
-          INSERT INTO order_items (id, order_id, name, quantity, price, item_image)
-          VALUES (gen_random_uuid(), ${orderId}, ${menuItem.name}, ${quantity}, ${menuItem.price}, ${menuItem.image})
+    await sql.transaction(
+      [
+        sql`
+          INSERT INTO orders (id, user_id, restaurant_id, total, status, restaurant_name, restaurant_avatar, order_date)
+          SELECT ${orderId}, ${userId}, r.id, SUM(m.price * c.quantity) + ${DELIVERY_FEE},
+                 'In Progress', r.name, r.image, NOW()
+          FROM cart_items c
+          JOIN menus m ON m.id = c.menu_item_id
+          JOIN restaurants r ON r.id = m.restaurant_id
+          WHERE c.user_id = ${userId} AND r.id = ${id}
+          GROUP BY r.id, r.name, r.image
         `,
-      ),
-      // Parameterised: cart contents are never concatenated into the SQL string
-      sql`UPDATE users SET cart=${JSON.stringify(remainingCart)} WHERE id=${userId}`,
-    ]);
+        sql`
+          INSERT INTO order_items (id, order_id, name, quantity, price, item_image)
+          SELECT gen_random_uuid(), ${orderId}, m.name, c.quantity, m.price, m.image
+          FROM cart_items c JOIN menus m ON m.id = c.menu_item_id
+          WHERE c.user_id = ${userId} AND m.restaurant_id = ${id}
+        `,
+        sql`
+          DELETE FROM cart_items c USING menus m
+          WHERE m.id = c.menu_item_id AND c.user_id = ${userId} AND m.restaurant_id = ${id}
+        `,
+      ],
+      { isolationLevel: "RepeatableRead" },
+    );
   } catch (error) {
     console.error("Failed to complete checkout:", error);
     throw new Error("Failed to complete checkout.");
   }
 
-  revalidatePath("/");
+  refreshCart();
 }
 
 export async function completeOrder(orderId: string) {
   const userId = await requireUserId();
 
   try {
-    // Only the owner of the order can complete it
     await sql`
       UPDATE orders
       SET status='Delivered'

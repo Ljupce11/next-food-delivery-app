@@ -16,11 +16,12 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@heroui/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { updateCartData } from "@/lib/actions";
-import type { CartData, MenuItem, Restaurant } from "@/lib/definitions";
-import { useUserStore } from "@/lib/stores/userStore";
-import { addItemToCart } from "@/lib/utils";
+import { addToCart } from "@/lib/actions";
+import type { MenuItem, Restaurant } from "@/lib/definitions";
+
+const MAX_QUANTITY = 99;
 
 type Props = {
   isOpen: boolean;
@@ -37,21 +38,21 @@ export default function RestaurantMenuItemModal({
   onClose,
   onOpenChange,
 }: Props) {
-  const userData = useUserStore((state) => state.userData);
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const onAddToCartHandler = async () => {
-    if (!userData?.id) return;
     if (!selectedMenuItem) return;
-    const updatedCartData: CartData[] = addItemToCart(
-      userData,
-      restaurant,
-      selectedMenuItem,
-    );
     setIsLoading(true);
-    await updateCartData(updatedCartData, restaurant.id);
-    setIsLoading(false);
-    onClose();
+    try {
+      await addToCart(selectedMenuItem.id, quantity);
+      onClose();
+    } catch {
+      router.push(`/login?callbackUrl=/restaurant/${restaurant.id}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -79,13 +80,31 @@ export default function RestaurantMenuItemModal({
         <Divider />
         <ModalFooter>
           <ButtonGroup variant="flat" color="primary">
-            <Button disableRipple isIconOnly>
+            <Button
+              disableRipple
+              isIconOnly
+              aria-label="Decrease quantity"
+              isDisabled={quantity <= 1}
+              onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+            >
               <MinusIcon className="size-4" />
             </Button>
-            <Button disableRipple isDisabled className=" text-md" isIconOnly>
-              {1}
+            <Button
+              disableRipple
+              isDisabled
+              className=" text-md"
+              isIconOnly
+              aria-label={`Quantity: ${quantity}`}
+            >
+              {quantity}
             </Button>
-            <Button disableRipple isIconOnly>
+            <Button
+              disableRipple
+              isIconOnly
+              aria-label="Increase quantity"
+              isDisabled={quantity >= MAX_QUANTITY}
+              onPress={() => setQuantity((q) => Math.min(MAX_QUANTITY, q + 1))}
+            >
               <PlusIcon className="size-4" />
             </Button>
           </ButtonGroup>

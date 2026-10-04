@@ -16,10 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>
+      <body
+        suppressHydrationWarning
+        className={`${inter.className} antialiased`}
+      >
         <Providers>{children}</Providers>
-        {/* The analytics script is served by Vercel (/_vercel/insights), so it
-            only exists there; elsewhere (CI, `next start`) it would 404 */}
         {process.env.VERCEL && <Analytics />}
       </body>
     </html>

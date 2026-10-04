@@ -23,9 +23,18 @@ import {
   Tab,
   Tabs,
 } from "@heroui/react";
-import { Fragment, type Key, useEffect, useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
-import { completeCheckout, updateCartDataFromDrawer } from "../lib/actions";
+import {
+  Fragment,
+  type Key,
+  useOptimistic,
+  useState,
+  useTransition,
+} from "react";
+import {
+  changeCartItemQuantity,
+  completeCheckout,
+  removeFromCart,
+} from "../lib/actions";
 import { DELIVERY_FEE } from "../lib/constants";
 import type { CartData } from "../lib/definitions";
 
@@ -44,10 +53,27 @@ const MOTION_PROPS = {
   },
 };
 
-type IsLoading = {
-  id: string | null;
-  state: boolean;
-};
+const MAX_QUANTITY = 99;
+
+type CartChange =
+  | { type: "quantity"; itemId: string; delta: number }
+  | { type: "remove"; itemId: string };
+
+const applyChange = (cart: CartData[], change: CartChange): CartData[] =>
+  cart
+    .map((restaurant) => ({
+      ...restaurant,
+      items: restaurant.items.flatMap((item) => {
+        if (item.id !== change.itemId) return [item];
+        if (change.type === "remove") return [];
+        const amount = Math.min(
+          MAX_QUANTITY,
+          Math.max(1, item.amount + change.delta),
+        );
+        return [{ ...item, amount, price: item.unitPrice * amount }];
+      }),
+    }))
+    .filter((restaurant) => restaurant.items.length > 0);
 
 type Props = {
   isOpen: boolean;
@@ -58,132 +84,51 @@ type Props = {
 
 export default function CartDrawer({
   isOpen,
-  cartData: existingCartData,
+  cartData = [],
   onClose,
   onOpenChange,
 }: Props) {
-  const [cartData, setCartData] = useState(existingCartData);
-  const [selectedRestaurantKey, setSelectedRestaurantKey] = useState<Key>("");
-  const [isLoading, setIsLoading] = useState<IsLoading>({
-    id: null,
-    state: false,
-  });
-  const [isCheckoutLoading, setIsCheckoutLoading] = useState<boolean>(false);
-  const selectedRestaurant = cartData?.find(
-    (restaurant) => restaurant.restaurantId === selectedRestaurantKey,
-  );
+  const [cart, applyOptimistic] = useOptimistic(cartData, applyChange);
+  const [, startTransition] = useTransition();
+  const [isCheckingOut, startCheckout] = useTransition();
+  const [selectedKey, setSelectedKey] = useState<Key | null>(null);
+  const selectedRestaurant =
+    cart.find((restaurant) => restaurant.restaurantId === selectedKey) ??
+    cart[0];
 
-  useEffect(() => {
-    if (existingCartData) {
-      setCartData(existingCartData);
-      if (selectedRestaurantKey === "") {
-        setSelectedRestaurantKey(
-          existingCartData.length > 0 ? existingCartData[0].restaurantId : "",
-        );
-      }
-    }
-  }, [existingCartData, selectedRestaurantKey]);
-
-  const addRemoveItem = (itemId: string, action: "add" | "remove") => {
-    if (!cartData || !selectedRestaurant) return;
-    const updatedCart = [...cartData].map((restaurant) => {
-      if (restaurant.restaurantId === selectedRestaurant?.restaurantId) {
-        return {
-          ...restaurant,
-          items: restaurant.items.map((item) => {
-            if (item.id === itemId) {
-              item.amount =
-                action === "add"
-                  ? item.amount + 1
-                  : item.amount > 1
-                    ? item.amount - 1
-                    : item.amount;
-              return {
-                ...item,
-                price: Number(item.unitPrice) * item.amount,
-              };
-            }
-            return item;
-          }),
-        };
-      }
-      return restaurant;
-    });
-    setCartData(updatedCart);
-    updateCartDataWithDebounce(updatedCart);
-  };
-
-  const deleteItem = async (itemId: string) => {
-    if (!cartData || !selectedRestaurant) return;
-    let updatedCart: CartData[] = JSON.parse(JSON.stringify(cartData));
-    const matchedRestaurant = updatedCart.find(
-      (restaurant) =>
-        restaurant.restaurantId === selectedRestaurant?.restaurantId,
-    );
-    if (matchedRestaurant) {
-      if (matchedRestaurant.items.length > 1) {
-        matchedRestaurant.items = matchedRestaurant.items.filter(
-          (item) => item.id !== itemId,
-        );
-      } else {
-        updatedCart = updatedCart.filter(
-          (restaurant) =>
-            restaurant.restaurantId !== selectedRestaurant?.restaurantId,
-        );
-      }
-    }
-    setIsLoading({ id: itemId, state: true });
-    try {
-      await updateCartDataFromDrawer(updatedCart);
-      setIsLoading({ id: itemId, state: false });
-      if (updatedCart.length === 0) {
-        onClose();
-      }
-    } catch (error) {
-      setIsLoading({ id: itemId, state: false });
-      console.error("FAILED to update cart:", error);
-      throw new Error("FAILED to update cart.");
-    }
-  };
-
-  const updateCartDataWithDebounce = useDebouncedCallback(
-    async (updatedCart: CartData[]) => {
+  const change = (cartChange: CartChange, action: () => Promise<void>) =>
+    startTransition(async () => {
+      applyOptimistic(cartChange);
       try {
-        await updateCartDataFromDrawer(updatedCart);
+        await action();
       } catch (error) {
-        console.error("FAILED to update cart:", error);
-        throw new Error("FAILED to update cart.");
+        console.error("Failed to update cart:", error);
       }
-    },
-    300,
-  );
+    });
 
-  const subTotal = cartData
-    ?.find(
-      (restaurant) =>
-        restaurant.restaurantId === selectedRestaurant?.restaurantId,
-    )
-    ?.items.reduce((acc, current) => {
-      return acc + Number(current.price);
-    }, 0);
+  const changeQuantity = (itemId: string, delta: number) =>
+    change({ type: "quantity", itemId, delta }, () =>
+      changeCartItemQuantity(itemId, delta),
+    );
+
+  const removeItem = (itemId: string) =>
+    change({ type: "remove", itemId }, () => removeFromCart(itemId));
+
+  const subTotal =
+    selectedRestaurant?.items.reduce((sum, item) => sum + item.price, 0) ?? 0;
   const total = subTotal ? subTotal + DELIVERY_FEE : 0;
 
-  const onOpenChangeHandler = () => {
-    onOpenChange();
-  };
-
-  const handleCheckout = async () => {
-    if (!selectedRestaurant || !cartData) return;
-    setIsCheckoutLoading(true);
-    try {
-      // The server works out prices and the total from the database
-      await completeCheckout(selectedRestaurant.restaurantId, cartData);
-      setIsCheckoutLoading(false);
-      onClose();
-    } catch (error) {
-      setIsCheckoutLoading(false);
-      console.log(error);
-    }
+  const handleCheckout = () => {
+    if (!selectedRestaurant) return;
+    const { restaurantId } = selectedRestaurant;
+    startCheckout(async () => {
+      try {
+        await completeCheckout(restaurantId);
+        onClose();
+      } catch (error) {
+        console.error("Failed to complete checkout:", error);
+      }
+    });
   };
 
   return (
@@ -192,12 +137,12 @@ export default function CartDrawer({
       backdrop="blur"
       isOpen={isOpen}
       motionProps={MOTION_PROPS}
-      onOpenChange={onOpenChangeHandler}
+      onOpenChange={onOpenChange}
     >
       <DrawerContent>
         <DrawerHeader className="flex flex-col gap-1">Your items</DrawerHeader>
         <DrawerBody>
-          {!cartData?.length ? (
+          {!cart.length ? (
             <div className="flex flex-col items-center mt-10 gap-1">
               <ShoppingBagIcon className="size-10 text-default-400" />
               <p className="text-center text-default-500 pt-2">
@@ -210,13 +155,12 @@ export default function CartDrawer({
           ) : (
             <Tabs
               aria-label="Dynamic tabs"
-              items={cartData}
+              items={cart}
               size="sm"
-              // @ts-expect-error
-              selectedKey={selectedRestaurantKey}
-              onSelectionChange={(e) => setSelectedRestaurantKey(e)}
+              selectedKey={selectedRestaurant?.restaurantId}
+              onSelectionChange={setSelectedKey}
             >
-              {cartData?.map(
+              {cart.map(
                 ({
                   restaurantId,
                   restaurantName,
@@ -294,8 +238,9 @@ export default function CartDrawer({
                                     disableRipple
                                     isIconOnly
                                     aria-label={`Decrease ${cartItem.name} quantity`}
+                                    isDisabled={cartItem.amount <= 1}
                                     onPress={() =>
-                                      addRemoveItem(cartItem.id, "remove")
+                                      changeQuantity(cartItem.id, -1)
                                     }
                                   >
                                     <MinusIcon className="size-4" />
@@ -313,8 +258,9 @@ export default function CartDrawer({
                                     disableRipple
                                     isIconOnly
                                     aria-label={`Increase ${cartItem.name} quantity`}
+                                    isDisabled={cartItem.amount >= MAX_QUANTITY}
                                     onPress={() =>
-                                      addRemoveItem(cartItem.id, "add")
+                                      changeQuantity(cartItem.id, 1)
                                     }
                                   >
                                     <PlusIcon className="size-4" />
@@ -327,11 +273,7 @@ export default function CartDrawer({
                                   variant="flat"
                                   color="danger"
                                   aria-label={`Remove ${cartItem.name}`}
-                                  onPress={() => deleteItem(cartItem.id)}
-                                  isLoading={
-                                    isLoading.state === true &&
-                                    isLoading.id === cartItem.id
-                                  }
+                                  onPress={() => removeItem(cartItem.id)}
                                 >
                                   <TrashIcon className="size-5" />
                                 </Button>
@@ -347,7 +289,7 @@ export default function CartDrawer({
                         </div>
                         <div className="flex items-center justify-between">
                           <p>Delivery:</p>
-                          <p>50kr</p>
+                          <p>{DELIVERY_FEE}kr</p>
                         </div>
                       </div>
                     </div>
@@ -357,7 +299,7 @@ export default function CartDrawer({
             </Tabs>
           )}
         </DrawerBody>
-        {!!cartData?.length && (
+        {!!cart.length && (
           <Fragment>
             <Divider />
             <DrawerFooter>
@@ -367,7 +309,7 @@ export default function CartDrawer({
                   <p className="text-default-600 font-semibold">{total}kr</p>
                 </div>
                 <Button
-                  isLoading={isCheckoutLoading}
+                  isLoading={isCheckingOut}
                   disableRipple
                   fullWidth
                   color="primary"
