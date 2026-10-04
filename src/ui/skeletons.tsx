@@ -50,25 +50,6 @@ export function RestaurantsSkeleton() {
   );
 }
 
-export function OrderRestaurantDetailsSkeleton() {
-  return (
-    <div className="flex flex-col gap-2 w-44">
-      <Skeleton className="w-3/5 rounded-lg">
-        <div className="h-5 w-3/5 rounded-lg bg-default-200" />
-      </Skeleton>
-      <Skeleton className="w-5/5 rounded-lg">
-        <div className="h-4 w-5/5 rounded-lg bg-default-200" />
-      </Skeleton>
-      <Skeleton className="w-3/5 rounded-lg">
-        <div className="h-4 w-3/5 rounded-lg bg-default-200" />
-      </Skeleton>
-      <Skeleton className="w-2/5 rounded-lg">
-        <div className="h-4 w-2/5 rounded-lg bg-default-200" />
-      </Skeleton>
-    </div>
-  );
-}
-
 export function OrdersAnalyticsSkeleton() {
   return (
     <Fragment>

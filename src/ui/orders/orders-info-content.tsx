@@ -97,13 +97,15 @@ export default function OrdersInfoContent({ orders }: Props) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <Suspense fallback={null}>
-        <LazyOrderDetailsModal
-          isOpen={isOpen}
-          modalDetails={modalDetails}
-          onOpenChange={onOpenChange}
-        />
-      </Suspense>
+      {modalDetails && (
+        <Suspense fallback={null}>
+          <LazyOrderDetailsModal
+            isOpen={isOpen}
+            modalDetails={modalDetails}
+            onOpenChange={onOpenChange}
+          />
+        </Suspense>
+      )}
       <Table isStriped aria-label="Orders table">
         <TableHeader columns={columns}>
           {(column) => (

@@ -48,7 +48,11 @@ export type Order = {
   restaurant_id: string;
   restaurant_name: string;
   restaurant_avatar: string;
+  restaurant_address: string;
+  restaurant_rating: string;
+  restaurant_cuisine: string;
   status: "In Progress" | "Delivered";
+  items: OrderItem[];
 };
 
 export type OrderItem = {
