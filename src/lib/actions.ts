@@ -60,6 +60,13 @@ export async function signUp(
 
   try {
     const { first_name, last_name, email, password } = parsed.data;
+    const existing = await sql`SELECT 1 FROM users WHERE email = ${email}`;
+    if (existing.length > 0) {
+      return {
+        success: false,
+        errors: { email: "An account with this email already exists." },
+      };
+    }
     const full_name = `${first_name} ${last_name}`;
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -84,7 +91,11 @@ const quantitySchema = z.number().int().min(1).max(99);
 const refreshCart = () => revalidatePath("/", "layout");
 
 export async function addToCart(menuItemId: string, quantity = 1) {
-  const userId = await requireUserId();
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) {
+    return { status: "unauthenticated" as const };
+  }
   const id = uuidSchema.parse(menuItemId);
   const amount = quantitySchema.parse(quantity);
 
@@ -95,6 +106,7 @@ export async function addToCart(menuItemId: string, quantity = 1) {
     DO UPDATE SET quantity = LEAST(cart_items.quantity + EXCLUDED.quantity, 99)
   `;
   refreshCart();
+  return { status: "added" as const };
 }
 
 export async function changeCartItemQuantity(

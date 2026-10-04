@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import {
+  addToast,
   Button,
   ButtonGroup,
   Card,
@@ -23,6 +24,7 @@ import {
   Tab,
   Tabs,
 } from "@heroui/react";
+import Link from "next/link";
 import {
   Fragment,
   type Key,
@@ -37,6 +39,7 @@ import {
 } from "../lib/actions";
 import { DELIVERY_FEE } from "../lib/constants";
 import type { CartData } from "../lib/definitions";
+import { formatPrice } from "../lib/format";
 
 const MOTION_PROPS = {
   variants: {
@@ -103,6 +106,11 @@ export default function CartDrawer({
         await action();
       } catch (error) {
         console.error("Failed to update cart:", error);
+        addToast({
+          title: "Couldn't update your cart",
+          description: "Please try again.",
+          color: "danger",
+        });
       }
     });
 
@@ -120,13 +128,36 @@ export default function CartDrawer({
 
   const handleCheckout = () => {
     if (!selectedRestaurant) return;
-    const { restaurantId } = selectedRestaurant;
+    const { restaurantId, restaurantName } = selectedRestaurant;
     startCheckout(async () => {
       try {
         await completeCheckout(restaurantId);
         onClose();
+        addToast({
+          title: "Order placed",
+          description: `Your order from ${restaurantName} is on its way.`,
+          color: "primary",
+          severity: "success",
+          endContent: (
+            <Button
+              as={Link}
+              href="/orders"
+              size="sm"
+              variant="flat"
+              color="primary"
+              className="shrink-0"
+            >
+              View orders
+            </Button>
+          ),
+        });
       } catch (error) {
         console.error("Failed to complete checkout:", error);
+        addToast({
+          title: "Couldn't place your order",
+          description: "Please try again.",
+          color: "danger",
+        });
       }
     });
   };
@@ -231,7 +262,7 @@ export default function CartDrawer({
                               </div>
                               <div className="flex items-center justify-end gap-3">
                                 <p className="text-default-500 text-sm">
-                                  {cartItem.price}kr
+                                  {formatPrice(cartItem.price)}
                                 </p>
                                 <ButtonGroup size="sm" variant="flat">
                                   <Button
@@ -285,11 +316,11 @@ export default function CartDrawer({
                       <div className="flex flex-col w-full gap-1 text-default-500 font-medium text-sm">
                         <div className="flex items-center justify-between">
                           <p>Subtotal:</p>
-                          <p>{subTotal}kr</p>
+                          <p>{formatPrice(subTotal)}</p>
                         </div>
                         <div className="flex items-center justify-between">
                           <p>Delivery:</p>
-                          <p>{DELIVERY_FEE}kr</p>
+                          <p>{formatPrice(DELIVERY_FEE)}</p>
                         </div>
                       </div>
                     </div>
@@ -306,7 +337,9 @@ export default function CartDrawer({
               <div className="flex flex-col w-full gap-4">
                 <div className="flex items-center justify-between">
                   <p className="text-default-600 font-semibold">Total:</p>
-                  <p className="text-default-600 font-semibold">{total}kr</p>
+                  <p className="text-default-600 font-semibold">
+                    {formatPrice(total)}
+                  </p>
                 </div>
                 <Button
                   isLoading={isCheckingOut}

@@ -2,6 +2,7 @@
 
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import {
+  addToast,
   Button,
   Form,
   Input,
@@ -27,6 +28,12 @@ export default function HelpFeedbackModal({ isOpen, onOpenChange }: Props) {
     setTimeout(() => {
       setIsLoading(false);
       onOpenChange(false);
+      addToast({
+        title: "Message sent",
+        description: "Thanks for your feedback!",
+        color: "primary",
+        severity: "success",
+      });
     }, 1500);
   };
 

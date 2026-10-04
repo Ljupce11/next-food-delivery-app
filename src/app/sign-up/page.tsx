@@ -95,6 +95,9 @@ export default function Page() {
               labelPlacement="outside"
               placeholder="Enter your password"
             />
+            {!state.success && state.message && (
+              <div className="text-red-500 text-sm">{state.message}</div>
+            )}
             <Button
               fullWidth
               disableRipple

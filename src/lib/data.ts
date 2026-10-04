@@ -24,7 +24,7 @@ export async function fetchRestaurants(search: string) {
 export async function fetchRestaurant(id: string) {
   try {
     const rows = await sql`SELECT * FROM restaurants WHERE id=${id}`;
-    return rows[0] as Restaurant;
+    return rows[0] as Restaurant | undefined;
   } catch (error) {
     console.error("Failed to fetch restaurant:", error);
     throw new Error("Failed to fetch restaurant.");

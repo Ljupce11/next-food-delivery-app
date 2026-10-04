@@ -6,6 +6,7 @@ import {
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import {
+  addToast,
   Button,
   ButtonGroup,
   Divider,
@@ -20,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { addToCart } from "@/lib/actions";
 import type { MenuItem, Restaurant } from "@/lib/definitions";
+import { formatPrice } from "@/lib/format";
 
 const MAX_QUANTITY = 99;
 
@@ -46,10 +48,25 @@ export default function RestaurantMenuItemModal({
     if (!selectedMenuItem) return;
     setIsLoading(true);
     try {
-      await addToCart(selectedMenuItem.id, quantity);
+      const result = await addToCart(selectedMenuItem.id, quantity);
+      if (result.status === "unauthenticated") {
+        router.push(`/login?callbackUrl=/restaurant/${restaurant.id}`);
+        return;
+      }
       onClose();
-    } catch {
-      router.push(`/login?callbackUrl=/restaurant/${restaurant.id}`);
+      addToast({
+        title: "Added to cart",
+        description: `${quantity} × ${selectedMenuItem.name}`,
+        color: "primary",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      addToast({
+        title: "Couldn't add to cart",
+        description: "Please try again.",
+        color: "danger",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -76,7 +93,7 @@ export default function RestaurantMenuItemModal({
             src={selectedMenuItem?.image || ""}
           />
           <p>Some description about this menu item</p>
-          <b>{selectedMenuItem?.price}kr</b>
+          <b>{selectedMenuItem && formatPrice(selectedMenuItem.price)}</b>
         </ModalBody>
         <Divider />
         <ModalFooter>

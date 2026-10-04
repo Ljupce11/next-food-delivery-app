@@ -11,6 +11,7 @@ import {
 } from "@heroui/react";
 import { Fragment } from "react";
 import type { Order } from "@/lib/definitions";
+import { formatPrice } from "@/lib/format";
 
 import OrderItemsDetails from "../order-items-details";
 import OrderRestaurantDetails from "../order-restaurant-details";
@@ -56,7 +57,9 @@ export default function OrderDetailsModal({
               <div className="flex flex-col w-full gap-4">
                 <div className="flex items-center justify-between">
                   <p className="text-default-600 font-semibold">Total:</p>
-                  <p className="text-default-600 font-semibold">{total}kr</p>
+                  <p className="text-default-600 font-semibold">
+                    {total && formatPrice(total)}
+                  </p>
                 </div>
                 <Button
                   fullWidth

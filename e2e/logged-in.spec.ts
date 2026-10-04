@@ -94,6 +94,8 @@ test("the quantity chosen in the item modal is added to the cart", async ({
   ).toBeVisible();
   await modal.getByRole("button", { name: "Add to cart" }).click();
   await expect(modal).toBeHidden();
+  await expect(page.getByText("Added to cart")).toBeVisible();
+  await expect(page.getByText(`3 × ${itemName}`)).toBeVisible();
 
   await firstItem.click();
   await expect(
@@ -231,8 +233,10 @@ test("add to cart, check out and complete an order", async ({ page }) => {
   const expectedTotal = await drawerTotal(page);
   await drawer.getByRole("button", { name: "Go to checkout" }).click();
   await expect(drawer).toBeHidden();
+  await expect(page.getByText("Order placed")).toBeVisible();
 
-  await page.goto("/orders");
+  await page.getByText("View orders").click();
+  await expect(page).toHaveURL(/\/orders$/);
   const newestOrder = page
     .getByRole("grid", { name: "Orders table" })
     .getByRole("row")
@@ -253,4 +257,41 @@ test("add to cart, check out and complete an order", async ({ page }) => {
 
   await newestOrder.getByRole("button", { name: "Complete order" }).click();
   await expect(newestOrder).toContainText("Delivered");
+});
+
+test("a failed add to cart shows an error toast", async ({ page }) => {
+  await page.goto("/");
+  const restaurantHref = await page
+    .locator('a[href^="/restaurant/"]')
+    .first()
+    .getAttribute("href");
+  await page.goto(restaurantHref ?? "/");
+  await page.route("**/*", (route) =>
+    route.request().headers()["next-action"] ? route.abort() : route.fallback(),
+  );
+
+  await page.getByRole("button").filter({ hasText: /\d+kr/ }).first().click();
+  await page.getByRole("button", { name: "Add to cart" }).click();
+
+  await expect(page.getByText("Couldn't add to cart")).toBeVisible();
+  await expect(page.getByRole("dialog")).toBeVisible();
+});
+
+test("sign-up with a registered email shows an error on the email field", async ({
+  page,
+}) => {
+  await page.goto("/sign-up");
+  await page.getByLabel("First name").fill("Existing");
+  await page.getByLabel("Last name").fill("Account");
+  await page.getByLabel("Email").fill(process.env.E2E_EMAIL ?? "");
+  await page.getByLabel("Password").fill("Xyzzy#47q");
+  await page.getByRole("button", { name: "Sign up" }).click();
+
+  await expect(
+    page.getByText("An account with this email already exists."),
+  ).toBeVisible();
+  await expect(page.getByLabel("Email")).toHaveAttribute(
+    "aria-invalid",
+    "true",
+  );
 });
