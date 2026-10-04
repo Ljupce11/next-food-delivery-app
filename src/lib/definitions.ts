@@ -13,6 +13,13 @@ export type MenuItem = {
   name: string;
   price: number;
   image: string;
+  description: string | null;
+  category: string;
+};
+
+export type MenuCategory = {
+  slug: string;
+  name: string;
 };
 
 export type AdvancedUser = {

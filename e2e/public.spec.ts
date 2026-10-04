@@ -137,3 +137,30 @@ test("adding to cart while logged out goes to the login page", async ({
   await page.getByRole("button", { name: "Add to cart" }).click();
   await expect(page).toHaveURL(/\/login\?callbackUrl=/);
 });
+
+test("category tabs filter the menu and are kept in the URL", async ({
+  page,
+}) => {
+  const path = await firstRestaurantPath(page);
+  await page.goto(path);
+  const tabs = page
+    .getByRole("tablist", { name: "Menu categories" })
+    .getByRole("tab");
+  const items = page.getByRole("button").filter({ hasText: /\d+kr/ });
+  await expect(tabs.first()).toHaveText("Show all");
+  await expect(items.first()).toBeVisible();
+  const allCount = await items.count();
+
+  const category = tabs.nth(1);
+  await category.click();
+  await expect(page).toHaveURL(/\?category=[a-z]+$/);
+  await expect(category).toHaveAttribute("aria-selected", "true");
+  await expect.poll(() => items.count()).toBeLessThan(allCount);
+
+  await page.reload();
+  await expect(category).toHaveAttribute("aria-selected", "true");
+
+  await tabs.first().click();
+  await expect(page).not.toHaveURL(/category=/);
+  await expect.poll(() => items.count()).toBe(allCount);
+});

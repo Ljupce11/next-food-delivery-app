@@ -32,14 +32,8 @@ export default function RestaurantPageMenuContent({
   );
   const [openCount, setOpenCount] = useState(0);
 
-  const onCardClickHandler = (
-    id: string,
-    name: string,
-    price: number,
-    image: string,
-    restaurant_id: string,
-  ) => {
-    setSelectedMenuItem({ id, name, price, image, restaurant_id });
+  const onCardClickHandler = (menuItem: MenuItem) => {
+    setSelectedMenuItem(menuItem);
     setOpenCount((count) => count + 1);
     onOpen();
   };
@@ -65,16 +59,15 @@ export default function RestaurantPageMenuContent({
         transition={{ duration: 0.3 }}
       >
         <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {menuItems.map(({ id, name, price, image, restaurant_id }) => {
+          {menuItems.map((menuItem) => {
+            const { id, name, price, image, description } = menuItem;
             return (
               <Card
                 disableRipple
                 key={id}
                 isPressable
                 shadow="sm"
-                onPress={() =>
-                  onCardClickHandler(id, name, price, image, restaurant_id)
-                }
+                onPress={() => onCardClickHandler(menuItem)}
               >
                 <CardBody className="overflow-visible">
                   <Image
@@ -86,10 +79,10 @@ export default function RestaurantPageMenuContent({
                     src={image}
                   />
                 </CardBody>
-                <CardFooter className="pt-0 flex-col items-start">
+                <CardFooter className="pt-0 flex-col items-start text-left">
                   <b className="text-sm">{name}</b>
-                  <p className="text-xs">
-                    Some description here about this item
+                  <p className="text-xs line-clamp-2 min-h-[2lh]">
+                    {description}
                   </p>
                   <Divider className="my-2.5" />
                   <p className="text-sm font-semibold">{formatPrice(price)}</p>

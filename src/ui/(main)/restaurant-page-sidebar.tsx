@@ -2,27 +2,41 @@
 
 import { Divider, Image, Tab, Tabs } from "@heroui/react";
 import { motion } from "motion/react";
-import type { Restaurant } from "@/lib/definitions";
+import { usePathname, useRouter } from "next/navigation";
+import { type Key, startTransition, useOptimistic } from "react";
+import type { MenuCategory, Restaurant } from "@/lib/definitions";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import RatingStars from "@/ui/rating-stars";
 
-const categories = [
-  { id: "all", label: "Show all" },
-  { id: "most-popular", label: "Most popular" },
-  { id: "burgers", label: "Burgers" },
-  { id: "pizza", label: "Pizza" },
-  { id: "sandwiches", label: "Sandwiches" },
-  { id: "drinks", label: "Drinks" },
-  { id: "desserts", label: "Desserts" },
-];
+const ALL = "all";
 
 type Props = {
   restaurant: Restaurant;
+  categories: MenuCategory[];
+  selectedCategory?: string;
 };
 
-export default function RestaurantPageSidebar({ restaurant }: Props) {
+export default function RestaurantPageSidebar({
+  restaurant,
+  categories,
+  selectedCategory,
+}: Props) {
   const { name, address, cuisine, rating, image } = restaurant;
   const isDesktop = useMediaQuery("(min-width: 1024px)", true);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [selectedKey, setSelectedKey] = useOptimistic(selectedCategory ?? ALL);
+  const tabs = [{ slug: ALL, name: "Show all" }, ...categories];
+
+  const onSelectionChange = (key: Key) => {
+    const slug = String(key);
+    startTransition(() => {
+      setSelectedKey(slug);
+      router.replace(slug === ALL ? pathname : `${pathname}?category=${slug}`, {
+        scroll: false,
+      });
+    });
+  };
 
   return (
     <motion.div
@@ -56,12 +70,14 @@ export default function RestaurantPageSidebar({ restaurant }: Props) {
       <Divider className="my-5" />
       <div className="overflow-auto">
         <Tabs
-          items={categories}
+          items={tabs}
           className="mx-auto"
-          aria-label="Dynamic tabs"
+          aria-label="Menu categories"
           isVertical={isDesktop}
+          selectedKey={selectedKey}
+          onSelectionChange={onSelectionChange}
         >
-          {({ id, label }) => <Tab key={id} title={label} />}
+          {({ slug, name }) => <Tab key={slug} title={name} />}
         </Tabs>
       </div>
     </motion.div>

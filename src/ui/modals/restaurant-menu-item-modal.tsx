@@ -92,7 +92,9 @@ export default function RestaurantMenuItemModal({
             alt={selectedMenuItem?.name ?? ""}
             src={selectedMenuItem?.image || ""}
           />
-          <p>Some description about this menu item</p>
+          {selectedMenuItem?.description && (
+            <p>{selectedMenuItem.description}</p>
+          )}
           <b>{selectedMenuItem && formatPrice(selectedMenuItem.price)}</b>
         </ModalBody>
         <Divider />
