@@ -125,6 +125,7 @@ test("adding to cart while logged out goes to the login page", async ({
 }) => {
   const path = await firstRestaurantPath(page);
   await page.goto(path);
+  await page.waitForLoadState("networkidle");
   await page.getByRole("button").filter({ hasText: /\d+kr/ }).first().click();
   await page.getByRole("button", { name: "Add to cart" }).click();
   await expect(page).toHaveURL(/\/login\?callbackUrl=/);
@@ -144,6 +145,7 @@ test("category tabs filter the menu and are kept in the URL", async ({
   const allCount = await items.count();
 
   const category = tabs.nth(1);
+  await page.waitForLoadState("networkidle");
   await category.click();
   await expect(page).toHaveURL(/\?category=[a-z]+$/);
   await expect(category).toHaveAttribute("aria-selected", "true");

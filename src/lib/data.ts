@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { sql } from "./db";
 import type {
   AdvancedUser,
@@ -10,6 +11,9 @@ import type {
 } from "./definitions";
 
 export async function fetchRestaurants(search: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("restaurants");
   try {
     const restaurants = await sql`
       SELECT * FROM restaurants
@@ -22,7 +26,18 @@ export async function fetchRestaurants(search: string) {
   }
 }
 
+export async function fetchRestaurantIds() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("restaurants");
+  const rows = await sql`SELECT id FROM restaurants`;
+  return rows.map((row) => row.id as string);
+}
+
 export async function fetchRestaurant(id: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("restaurants");
   try {
     const rows = await sql`SELECT * FROM restaurants WHERE id=${id}`;
     return rows[0] as Restaurant | undefined;
@@ -32,7 +47,10 @@ export async function fetchRestaurant(id: string) {
   }
 }
 
-export async function fetchMenuItems(id: string, category?: string) {
+export async function fetchMenuItems(id: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("menus");
   try {
     const menuItems = await sql`
       SELECT m.id, m.restaurant_id, m.name, m.price, m.image, m.description,
@@ -40,7 +58,6 @@ export async function fetchMenuItems(id: string, category?: string) {
       FROM menus m
       JOIN categories c ON c.id = m.category_id
       WHERE m.restaurant_id = ${id}
-        AND (${category ?? null}::text IS NULL OR c.slug = ${category ?? null})
       ORDER BY c.sort_order, m.name
     `;
     return menuItems as MenuItem[];
@@ -51,6 +68,9 @@ export async function fetchMenuItems(id: string, category?: string) {
 }
 
 export async function fetchMenuCategories(restaurantId: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("menus");
   try {
     const categories = await sql`
       SELECT c.slug, c.name
@@ -71,10 +91,12 @@ export async function fetchMenuCategories(restaurantId: string) {
 export async function fetchUserData(id: string | null) {
   if (!id) return undefined;
   try {
-    const rows =
-      await sql`SELECT id, name, email, phone, address FROM users WHERE id=${id}`;
+    const [rows, cart] = await Promise.all([
+      sql`SELECT id, name, email, phone, address FROM users WHERE id=${id}`,
+      fetchCart(id),
+    ]);
     const user = rows[0] as Omit<AdvancedUser, "cart"> | undefined;
-    return user ? { ...user, cart: await fetchCart(id) } : undefined;
+    return user ? { ...user, cart } : undefined;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
     throw new Error("Failed to fetch user data.");

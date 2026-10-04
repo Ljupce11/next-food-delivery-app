@@ -2,18 +2,15 @@ import { Suspense } from "react";
 import OrdersAnalytics from "@/ui/orders/orders-analytics";
 import OrdersInfo from "@/ui/orders/orders-info";
 import { OrdersAnalyticsSkeleton, OrdersInfoSkeleton } from "@/ui/skeletons";
-import { auth } from "../../../../auth";
 
-export default async function Page() {
-  const authData = await auth();
-  const userId = authData?.user?.id || null;
+export default function Page() {
   return (
     <div className="container flex flex-col gap-5 mx-auto p-4">
       <Suspense fallback={<OrdersAnalyticsSkeleton />}>
-        <OrdersAnalytics userId={userId} />
+        <OrdersAnalytics />
       </Suspense>
       <Suspense fallback={<OrdersInfoSkeleton />}>
-        <OrdersInfo userId={userId} />
+        <OrdersInfo />
       </Suspense>
     </div>
   );

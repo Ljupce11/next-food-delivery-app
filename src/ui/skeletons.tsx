@@ -14,7 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "@heroui/react";
-import { motion } from "motion/react";
 import { Fragment } from "react";
 
 export function RestaurantsSkeleton() {
@@ -219,14 +218,9 @@ function RestaurantPageSidebarSkeleton() {
 
 export function RestaurantPageSkeleton() {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="flex flex-col justify-around w-full px-8 py-5 gap-3 lg:flex-row"
-    >
+    <div className="flex flex-col justify-around w-full px-8 py-5 gap-3 lg:flex-row">
       <RestaurantPageSidebarSkeleton />
       <RestaurantPageMenuSkeleton />
-    </motion.div>
+    </div>
   );
 }

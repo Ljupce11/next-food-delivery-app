@@ -1,51 +1,48 @@
 "use client";
 
 import { Divider, Image, Tab, Tabs } from "@heroui/react";
-import { motion } from "motion/react";
 import NextImage from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { type Key, startTransition, useOptimistic } from "react";
 import type { MenuCategory, Restaurant } from "@/lib/definitions";
-import { useMediaQuery } from "@/lib/hooks/use-media-query";
+import {
+  ALL_CATEGORIES,
+  selectCategory,
+  useSelectedCategory,
+} from "@/lib/hooks/use-selected-category";
 import RatingStars from "@/ui/rating-stars";
-
-const ALL = "all";
 
 type Props = {
   restaurant: Restaurant;
   categories: MenuCategory[];
-  selectedCategory?: string;
 };
+
+type CategoryTabsProps = {
+  categories: MenuCategory[];
+};
+
+function CategoryTabs({ categories }: CategoryTabsProps) {
+  const selectedKey = useSelectedCategory(categories.map(({ slug }) => slug));
+  return (
+    <Tabs
+      items={[{ slug: ALL_CATEGORIES, name: "Show all" }, ...categories]}
+      className="mx-auto"
+      classNames={{ tabList: "lg:flex-col" }}
+      aria-label="Menu categories"
+      selectedKey={selectedKey}
+      onSelectionChange={(key) => selectCategory(String(key))}
+    >
+      {({ slug, name }) => <Tab key={slug} title={name} />}
+    </Tabs>
+  );
+}
 
 export default function RestaurantPageSidebar({
   restaurant,
   categories,
-  selectedCategory,
 }: Props) {
   const { name, address, cuisine, rating, image } = restaurant;
-  const isDesktop = useMediaQuery("(min-width: 1024px)", true);
-  const router = useRouter();
-  const pathname = usePathname();
-  const [selectedKey, setSelectedKey] = useOptimistic(selectedCategory ?? ALL);
-  const tabs = [{ slug: ALL, name: "Show all" }, ...categories];
-
-  const onSelectionChange = (key: Key) => {
-    const slug = String(key);
-    startTransition(() => {
-      setSelectedKey(slug);
-      router.replace(slug === ALL ? pathname : `${pathname}?category=${slug}`, {
-        scroll: false,
-      });
-    });
-  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="w-full lg:w-1/6 overflow-x-hidden pt-9"
-    >
+    <div className="w-full lg:w-1/6 overflow-x-hidden pt-9">
       <div className="flex flex-col w-full items-center gap-6">
         <Image
           as={NextImage}
@@ -72,17 +69,8 @@ export default function RestaurantPageSidebar({
       </div>
       <Divider className="my-5" />
       <div className="overflow-auto">
-        <Tabs
-          items={tabs}
-          className="mx-auto"
-          aria-label="Menu categories"
-          isVertical={isDesktop}
-          selectedKey={selectedKey}
-          onSelectionChange={onSelectionChange}
-        >
-          {({ slug, name }) => <Tab key={slug} title={name} />}
-        </Tabs>
+        <CategoryTabs categories={categories} />
       </div>
-    </motion.div>
+    </div>
   );
 }

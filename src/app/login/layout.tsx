@@ -3,5 +3,5 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="h-screen w-screen overflow-hidden">{children}</div>;
+  return <main className="h-screen w-screen overflow-hidden">{children}</main>;
 }

@@ -21,9 +21,10 @@ const LazyHelpFeedbackModal = lazy(
 
 type Props = {
   user?: AdvancedUser;
+  isLoading?: boolean;
 };
 
-export default function Navbar({ user }: Props) {
+export default function Navbar({ user, isLoading = false }: Props) {
   const cartData: CartData[] = user?.cart || [];
   const router = useRouter();
   const {
@@ -83,6 +84,7 @@ export default function Navbar({ user }: Props) {
       </NavbarBrand>
       <NavbarContent justify="end">
         <NavbarButtons
+          isLoading={isLoading}
           user={user}
           cartData={cartData}
           onDropdownActionHandler={onDropdownActionHandler}

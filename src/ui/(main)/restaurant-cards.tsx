@@ -3,7 +3,6 @@
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardFooter, Image } from "@heroui/react";
-import { motion } from "motion/react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { DELIVERY_FEE } from "@/lib/constants";
@@ -16,12 +15,7 @@ type Props = {
 
 export default function RestaurantCards({ restaurants }: Props) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-8"
-    >
+    <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-8">
       {restaurants.map(({ id, name, image, rating }) => (
         <Link href={`/restaurant/${id}`} key={id} prefetch={true}>
           <Card
@@ -60,6 +54,6 @@ export default function RestaurantCards({ restaurants }: Props) {
           </Card>
         </Link>
       ))}
-    </motion.div>
+    </div>
   );
 }
