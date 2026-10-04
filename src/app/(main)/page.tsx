@@ -5,7 +5,11 @@ import Restaurants from "../../ui/(main)/restaurants";
 import Search, { SearchFallback } from "../../ui/(main)/search";
 import { RestaurantsSkeleton } from "../../ui/skeletons";
 
-export default function Page({ searchParams }: PageProps<"/">) {
+type Props = {
+  searchParams: Promise<{ search?: string | string[] }>;
+};
+
+export default function Page({ searchParams }: Props) {
   return (
     <div className="flex flex-col gap-8 mb-20">
       <div className="bg-linear-to-r from-sky-50 via-blue-50 to-sky-50 py-16">

@@ -15,7 +15,11 @@ export async function generateStaticParams() {
   return ids.map((id) => ({ id }));
 }
 
-export default async function Page({ params }: PageProps<"/restaurant/[id]">) {
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function Page({ params }: Props) {
   const { id } = await params;
   if (!z.guid().safeParse(id).success) {
     notFound();
