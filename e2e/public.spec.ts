@@ -44,6 +44,24 @@ test("search with no matches shows an empty state", async ({ page }) => {
   await expect(page.getByText("No restaurants found")).toBeVisible();
 });
 
+test("typing in the search box filters the restaurants", async ({ page }) => {
+  await page.goto("/");
+  const searchBox = page.getByRole("textbox", {
+    name: "Search restaurants",
+  });
+  const restaurantLinks = page.locator('a[href^="/restaurant/"]');
+  await expect(restaurantLinks.first()).toBeVisible();
+
+  await searchBox.fill("no-restaurant-has-this-name");
+  await expect(page).toHaveURL(/\?search=no-restaurant-has-this-name/);
+  await expect(page.getByText("No restaurants found")).toBeVisible();
+
+  await page.getByRole("button", { name: "clear input" }).click();
+  await expect(page).not.toHaveURL(/search=/);
+  await expect(searchBox).toHaveValue("");
+  await expect(restaurantLinks.first()).toBeVisible();
+});
+
 test("restaurant page renders on the server without errors", async ({
   page,
   request,
