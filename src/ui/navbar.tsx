@@ -71,7 +71,7 @@ export default function Navbar({ user }: Props) {
         >
           <Image
             width={32}
-            height={32}
+            height={31}
             loading="eager"
             src="/img/logo.png"
             alt="Food delivery logo"
