@@ -11,7 +11,7 @@ import {
   ModalHeader,
   Textarea,
 } from "@heroui/react";
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 
 type Props = {
   isOpen: boolean;
@@ -21,7 +21,7 @@ type Props = {
 export default function HelpFeedbackModal({ isOpen, onOpenChange }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSendHandler = (e: FormEvent<HTMLFormElement>) => {
+  const onSendHandler = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setTimeout(() => {
