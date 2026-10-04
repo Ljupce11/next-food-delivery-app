@@ -12,7 +12,7 @@ type User = {
   password: string;
 };
 
-export async function getUser(email: string): Promise<User | undefined> {
+async function getUser(email: string): Promise<User | undefined> {
   try {
     const rows = await sql`SELECT * FROM users WHERE email=${email}`;
     return rows[0] as User | undefined;

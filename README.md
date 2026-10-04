@@ -1,25 +1,24 @@
 # Next.js Food Delivery App
 
-A modern food delivery application built with Next.js 15, featuring real-time restaurant search, order management, and a seamless checkout experience.
+A modern food delivery application built with Next.js 16, featuring real-time restaurant search, order management, and a seamless checkout experience.
 
 ## 🚀 Features
 
 - **Authentication** - Secure user authentication with NextAuth
 - **Restaurant Discovery** - Browse and search restaurants
-- **Shopping Cart** - Real-time cart management with Zustand
+- **Shopping Cart** - Cart stored per user in the database and updated through server actions
 - **Order Management** - Track and manage orders
 - **User Profiles** - Personalized user experiences
 - **Responsive Design** - Mobile-first UI with HeroUI components
 
 ## 🛠️ Tech Stack
 
-- **Framework:** [Next.js 15](https://nextjs.org/) (Canary)
+- **Framework:** [Next.js 16](https://nextjs.org/)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Database:** [Vercel Postgres](https://vercel.com/storage/postgres)
-- **Authentication:** [NextAuth.js](https://next-auth.js.org/)
-- **State Management:** [Zustand](https://zustand-demo.pmnd.rs/)
+- **Database:** [Neon Postgres](https://neon.com/)
+- **Authentication:** [Auth.js (NextAuth v5)](https://authjs.dev/)
 - **Styling:** 
-  - [Tailwind CSS](https://tailwindcss.com/)
+  - [Tailwind CSS 4](https://tailwindcss.com/)
   - [@heroui/react](https://heroui.com/)
 - **Linting:** [Biome](https://biomejs.dev/)
 
@@ -41,9 +40,7 @@ yarn install
 
 3. **Set up environment variables**
 
-```bash
-cp .env.example .env.local
-```
+Create a `.env.local` file with the variables listed under [Environment Variables](#-environment-variables).
 
 4. **Start the development server**
 
@@ -61,21 +58,22 @@ To run this project, you will need to add the following environment variables to
 
 ```
 DATABASE_URL=
-NEXTAUTH_URL=
-NEXTAUTH_SECRET=
+AUTH_SECRET=
 ```
 
 ## 🧱 Project Structure
 
 ```
 src/
-├── app/
-│   ├── (main)/        # Main application routes
-│   ├── lib/           # Utility functions, hooks, etc.
-│   ├── ui/            # UI components
+├── app/               # Routes (App Router)
+│   ├── (main)/        # Pages with the navbar
+│   ├── login/
+│   ├── sign-up/
 │   └── providers.tsx  # App providers
-├── middleware.ts      # NextAuth middleware
-└── ...
+├── lib/               # Data fetching, server actions, types, hooks
+├── ui/                # UI components
+└── proxy.ts           # Auth proxy for private pages
+e2e/                   # Playwright tests
 ```
 
 ## 🛠️ Development

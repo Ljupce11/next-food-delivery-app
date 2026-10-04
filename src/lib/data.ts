@@ -54,7 +54,7 @@ export async function fetchUserData(id: string | null) {
   }
 }
 
-export async function fetchCart(userId: string): Promise<CartData[]> {
+async function fetchCart(userId: string): Promise<CartData[]> {
   const rows = (await sql`
     SELECT r.id AS restaurant_id, r.name AS restaurant_name,
            r.address AS restaurant_address, r.image AS restaurant_image,

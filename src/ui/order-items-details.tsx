@@ -13,7 +13,7 @@ import { useCallback } from "react";
 
 import type { Order, OrderItem } from "../lib/definitions";
 
-export const columns = [
+const columns = [
   { name: "ITEM NAME", uid: "item_name" },
   { name: "QUANTITY", uid: "quantity" },
   { name: "PRICE", uid: "price" },
