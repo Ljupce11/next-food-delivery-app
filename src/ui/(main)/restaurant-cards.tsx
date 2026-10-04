@@ -31,7 +31,7 @@ export default function RestaurantCards({ restaurants }: Props) {
             isFooterBlurred
             className="border-none"
           >
-            <div className="relative h-[200px] w-full">
+            <div className="relative h-50 w-full">
               <Image
                 as={NextImage}
                 fill

@@ -35,7 +35,7 @@ export default async function Page(props: {
               src="/img/hero-food.webp"
               alt="Delicious food delivery"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              className="rounded-lg shadow-lg w-full h-[300px] object-cover"
+              className="rounded-lg shadow-lg w-full h-75 object-cover"
             />
           </div>
         </div>

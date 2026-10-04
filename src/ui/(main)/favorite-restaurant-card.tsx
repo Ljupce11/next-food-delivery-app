@@ -18,7 +18,7 @@ export function FavoriteRestaurantCard({ restaurant }: RestaurantCardProps) {
   return (
     <Card isPressable disableRipple>
       <CardBody>
-        <div className="relative h-[200px] w-full">
+        <div className="relative h-50 w-full">
           <Image
             as={NextImage}
             fill

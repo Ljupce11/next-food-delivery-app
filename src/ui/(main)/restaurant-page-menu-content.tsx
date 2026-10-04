@@ -70,7 +70,7 @@ export default function RestaurantPageMenuContent({
                 onPress={() => onCardClickHandler(menuItem)}
               >
                 <CardBody className="overflow-visible">
-                  <div className="relative h-[150px] w-full overflow-hidden rounded-xl">
+                  <div className="relative h-37.5 w-full overflow-hidden rounded-xl">
                     <Image
                       fill
                       loading={index < 3 ? "eager" : "lazy"}
