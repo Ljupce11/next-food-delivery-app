@@ -3,38 +3,26 @@
 import { UserIcon } from "@heroicons/react/24/outline";
 import { Button, Form, Input, useDisclosure } from "@heroui/react";
 import Image from "next/image";
-import {
-  Fragment,
-  lazy,
-  Suspense,
-  useActionState,
-  useEffect,
-  useState,
-} from "react";
-import type { z } from "zod";
+import { Fragment, lazy, Suspense, useActionState } from "react";
 
 import { signUp } from "../../lib/actions";
-import type { signUpSchema } from "../../lib/schemas";
 
 const LazySignUpModal = lazy(() => import("../../ui/modals/sign-up-modal"));
 
-type FormData = z.infer<typeof signUpSchema>;
+type SignUpState = Awaited<ReturnType<typeof signUp>>;
 
 export default function Page() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [state, formAction, isPending] = useActionState(signUp, {
-    success: false,
-    message: "",
-  });
-  const [formErrors, setFormErrors] = useState<Partial<FormData>>({});
-
-  useEffect(() => {
-    if (state.success) {
-      onOpen();
-    } else {
-      setFormErrors(state.errors || {});
-    }
-  }, [state, onOpen]);
+  const [state, formAction, isPending] = useActionState(
+    async (prevState: SignUpState, formData: FormData) => {
+      const result = await signUp(prevState, formData);
+      if (result.success) {
+        onOpen();
+      }
+      return result;
+    },
+    { success: false, message: "" },
+  );
 
   return (
     <Fragment>
@@ -52,7 +40,7 @@ export default function Page() {
           </div>
           <Form
             action={formAction}
-            validationErrors={formErrors}
+            validationErrors={state.errors}
             validationBehavior="native"
             className="w-full lg:w-6/12 flex flex-col gap-4"
           >

@@ -6,11 +6,11 @@ import { motion } from "motion/react";
 import { Fragment } from "react";
 import type { OrderAnalytics } from "@/lib/definitions";
 
-const orderAnalyticsInitialData = [
-  { id: "row_count_orders", value: "0", text: "Total orders" },
-  { id: "unique_restaurant_count", value: "0", text: "Restaurants" },
-  { id: "total_quantity", value: "0", text: "Total items" },
-  { id: "total_sum", value: "0", text: "Total spent" },
+const orderAnalyticsCards: { id: keyof OrderAnalytics; text: string }[] = [
+  { id: "row_count_orders", text: "Total orders" },
+  { id: "unique_restaurant_count", text: "Restaurants" },
+  { id: "total_quantity", text: "Total items" },
+  { id: "total_sum", text: "Total spent" },
 ];
 
 type Props = {
@@ -18,12 +18,6 @@ type Props = {
 };
 
 export default function OrdersAnalyticsContent({ orderAnalytics }: Props) {
-  const orderAnalyticsData = [...orderAnalyticsInitialData];
-  orderAnalyticsData.forEach((data) => {
-    const orderData = orderAnalytics[data.id as keyof OrderAnalytics];
-    data.value = orderData || "0";
-  });
-
   return (
     <Fragment>
       <div className="flex items-center gap-3">
@@ -40,12 +34,12 @@ export default function OrdersAnalyticsContent({ orderAnalytics }: Props) {
         transition={{ duration: 0.3 }}
         className="grid grid-cols-2 gap-4 md:grid-cols-4"
       >
-        {orderAnalyticsData.map(({ id, value, text }) => {
+        {orderAnalyticsCards.map(({ id, text }) => {
           return (
             <Card key={id} shadow="sm">
               <CardBody>
                 <p className="text-lg font-semibold">
-                  {value}
+                  {orderAnalytics[id] || "0"}
                   {id === "total_sum" && "kr"}
                 </p>
                 <p>{text}</p>

@@ -20,7 +20,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { motion } from "motion/react";
-import { lazy, Suspense, useCallback, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { completeOrder } from "@/lib/actions";
 import type { Order } from "@/lib/definitions";
 
@@ -41,6 +41,24 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   Delivered: "success",
 };
 
+const dateOptions: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+  timeZone: "Europe/Stockholm",
+};
+
+function DateCell({ order }: { order: Order }) {
+  const orderDate = new Date(order.order_date).toLocaleDateString(
+    "sv-SE",
+    dateOptions,
+  );
+  return <p className="text-bold text-sm capitalize">{orderDate}</p>;
+}
+
 type IsLoading = {
   id: string | null;
   state: boolean;
@@ -58,15 +76,12 @@ export default function OrdersInfoContent({ orders }: Props) {
     state: false,
   });
 
-  const onOpenModalHandler = useCallback(
-    (order: Order) => {
-      setModalDetails(order);
-      onOpen();
-    },
-    [onOpen],
-  );
+  const onOpenModalHandler = (order: Order) => {
+    setModalDetails(order);
+    onOpen();
+  };
 
-  const completeOrderHandler = useCallback(async (orderId: string) => {
+  const completeOrderHandler = async (orderId: string) => {
     setIsLoading({ id: orderId, state: true });
     try {
       await completeOrder(orderId);
@@ -75,20 +90,6 @@ export default function OrdersInfoContent({ orders }: Props) {
       console.error(error);
       throw new Error("Failed to complete order");
     }
-  }, []);
-
-  const DateCell = ({ order }: { order: Order }) => {
-    const date = new Date(order.order_date);
-    const options = {
-      year: "numeric" as const,
-      month: "2-digit" as const,
-      day: "2-digit" as const,
-      hour: "2-digit" as const,
-      minute: "2-digit" as const,
-      hour12: false,
-    };
-    const orderDate = date.toLocaleDateString("sv-SE", options);
-    return <p className="text-bold text-sm capitalize">{orderDate}</p>;
   };
 
   return (
