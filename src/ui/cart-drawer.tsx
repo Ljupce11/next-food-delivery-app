@@ -31,9 +31,9 @@ import {
   useTransition,
 } from "react";
 import {
+  changeCartItemQuantity,
   completeCheckout,
   removeFromCart,
-  setCartItemQuantity,
 } from "../lib/actions";
 import { DELIVERY_FEE } from "../lib/constants";
 import type { CartData } from "../lib/definitions";
@@ -56,7 +56,7 @@ const MOTION_PROPS = {
 const MAX_QUANTITY = 99;
 
 type CartChange =
-  | { type: "quantity"; itemId: string; amount: number }
+  | { type: "quantity"; itemId: string; delta: number }
   | { type: "remove"; itemId: string };
 
 /** Returns a new cart with the change applied (never mutates the old one). */
@@ -67,13 +67,11 @@ const applyChange = (cart: CartData[], change: CartChange): CartData[] =>
       items: restaurant.items.flatMap((item) => {
         if (item.id !== change.itemId) return [item];
         if (change.type === "remove") return [];
-        return [
-          {
-            ...item,
-            amount: change.amount,
-            price: item.unitPrice * change.amount,
-          },
-        ];
+        const amount = Math.min(
+          MAX_QUANTITY,
+          Math.max(1, item.amount + change.delta),
+        );
+        return [{ ...item, amount, price: item.unitPrice * amount }];
       }),
     }))
     .filter((restaurant) => restaurant.items.length > 0);
@@ -112,12 +110,10 @@ export default function CartDrawer({
       }
     });
 
-  const changeQuantity = (itemId: string, amount: number) => {
-    if (amount < 1 || amount > MAX_QUANTITY) return;
-    change({ type: "quantity", itemId, amount }, () =>
-      setCartItemQuantity(itemId, amount),
+  const changeQuantity = (itemId: string, delta: number) =>
+    change({ type: "quantity", itemId, delta }, () =>
+      changeCartItemQuantity(itemId, delta),
     );
-  };
 
   const removeItem = (itemId: string) =>
     change({ type: "remove", itemId }, () => removeFromCart(itemId));
@@ -246,11 +242,9 @@ export default function CartDrawer({
                                     disableRipple
                                     isIconOnly
                                     aria-label={`Decrease ${cartItem.name} quantity`}
+                                    isDisabled={cartItem.amount <= 1}
                                     onPress={() =>
-                                      changeQuantity(
-                                        cartItem.id,
-                                        cartItem.amount - 1,
-                                      )
+                                      changeQuantity(cartItem.id, -1)
                                     }
                                   >
                                     <MinusIcon className="size-4" />
@@ -270,10 +264,7 @@ export default function CartDrawer({
                                     aria-label={`Increase ${cartItem.name} quantity`}
                                     isDisabled={cartItem.amount >= MAX_QUANTITY}
                                     onPress={() =>
-                                      changeQuantity(
-                                        cartItem.id,
-                                        cartItem.amount + 1,
-                                      )
+                                      changeQuantity(cartItem.id, 1)
                                     }
                                   >
                                     <PlusIcon className="size-4" />

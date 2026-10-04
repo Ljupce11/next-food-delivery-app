@@ -98,32 +98,39 @@ const quantitySchema = z.number().int().min(1).max(99);
 // The cart is shown in the navbar of every page, so refresh the whole layout
 const refreshCart = () => revalidatePath("/", "layout");
 
-/** Adds one of a menu item to the cart (or increases its quantity). */
-export async function addToCart(menuItemId: string) {
+/** Adds a quantity of a menu item to the cart (capped at 99 per item). */
+export async function addToCart(menuItemId: string, quantity = 1) {
   const userId = await requireUserId();
   const id = uuidSchema.parse(menuItemId);
+  const amount = quantitySchema.parse(quantity);
 
   // One atomic statement: no read-modify-write, so quick clicks can't overwrite
   // each other. Inserts nothing if the menu item doesn't exist.
   await sql`
     INSERT INTO cart_items (user_id, menu_item_id, quantity)
-    SELECT ${userId}, m.id, 1 FROM menus m WHERE m.id = ${id}
+    SELECT ${userId}, m.id, ${amount} FROM menus m WHERE m.id = ${id}
     ON CONFLICT (user_id, menu_item_id)
-    DO UPDATE SET quantity = LEAST(cart_items.quantity + 1, 99)
+    DO UPDATE SET quantity = LEAST(cart_items.quantity + EXCLUDED.quantity, 99)
   `;
   refreshCart();
 }
 
-export async function setCartItemQuantity(
+/**
+ * Changes an item's quantity by `delta` (e.g. +1 / -1), clamped to 1..99.
+ * Sending the change rather than the resulting quantity keeps quick clicks
+ * correct: each one is applied to the current value in the database.
+ */
+export async function changeCartItemQuantity(
   menuItemId: string,
-  quantity: number,
+  delta: number,
 ) {
   const userId = await requireUserId();
   const id = uuidSchema.parse(menuItemId);
-  const amount = quantitySchema.parse(quantity);
+  const change = z.number().int().min(-98).max(98).parse(delta);
 
   await sql`
-    UPDATE cart_items SET quantity = ${amount}
+    UPDATE cart_items
+    SET quantity = LEAST(GREATEST(quantity + ${change}, 1), 99)
     WHERE user_id = ${userId} AND menu_item_id = ${id}
   `;
   refreshCart();

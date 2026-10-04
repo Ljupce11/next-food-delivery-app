@@ -1,9 +1,28 @@
-import { expect, type Page, test } from "@playwright/test";
+import { expect, type Page, type Response, test } from "@playwright/test";
 
 test.skip(
   !process.env.E2E_EMAIL || !process.env.E2E_PASSWORD,
   "Set E2E_EMAIL and E2E_PASSWORD to run the logged-in tests",
 );
+
+/**
+ * Resolves once `count` server actions have finished. Next sends queued actions
+ * one after another, so "network idle" can occur between them.
+ */
+function waitForServerActions(page: Page, count: number) {
+  let seen = 0;
+  return new Promise<void>((resolve) => {
+    const onResponse = (response: Response) => {
+      if (!response.request().headers()["next-action"]) return;
+      seen += 1;
+      if (seen === count) {
+        page.off("response", onResponse);
+        resolve();
+      }
+    };
+    page.on("response", onResponse);
+  });
+}
 
 /** The "123kr" amount next to the drawer's "Total:" label */
 async function drawerTotal(page: Page) {
@@ -21,6 +40,95 @@ test("orders page is accessible", async ({ page }) => {
     page.getByRole("heading", { name: "Your orders" }),
   ).toBeVisible();
   await expect(page.getByRole("grid", { name: "Orders table" })).toBeVisible();
+});
+
+test("the quantity chosen in the item modal is added to the cart", async ({
+  page,
+}) => {
+  test.skip(
+    process.env.E2E_ALLOW_WRITES !== "1",
+    "Changes the test account's cart: set E2E_ALLOW_WRITES=1 to run it",
+  );
+
+  await page.goto("/");
+  const restaurantHref = await page
+    .locator('a[href^="/restaurant/"]')
+    .first()
+    .getAttribute("href");
+  await page.goto(restaurantHref ?? "/");
+  await expect(
+    page.getByText("Open now").filter({ visible: true }),
+  ).toBeVisible();
+  const restaurantName = (
+    await page.getByRole("heading", { level: 1 }).innerText()
+  ).trim();
+  const firstItem = page
+    .getByRole("button")
+    .filter({ hasText: /\d+kr/ })
+    .first();
+  const itemName = (await firstItem.locator("b").innerText()).trim();
+
+  const drawer = page.getByRole("dialog");
+  const cartQuantity = drawer.getByRole("button", {
+    name: new RegExp(`^${itemName} quantity: \\d+$`),
+  });
+  const readCartQuantity = async () => {
+    await page.getByRole("button", { name: "Cart", exact: true }).click();
+    // The drawer is lazy-loaded: wait until it's really open before reading it
+    await expect(drawer.getByText("Your items")).toBeVisible();
+    const tab = drawer.getByRole("tab", { name: restaurantName });
+    let quantity = 0;
+    if (await tab.count()) {
+      await tab.click();
+      if (await cartQuantity.count()) {
+        quantity = Number((await cartQuantity.innerText()).trim());
+      }
+    }
+    return quantity;
+  };
+
+  const before = await readCartQuantity();
+  await page.keyboard.press("Escape");
+  // Wait until the drawer has fully left the page: its dialog role disappears
+  // before the close animation (and its wrapper) are gone
+  await expect(page.locator(".cart-drawer")).toHaveCount(0);
+
+  // Choose 3 in the modal and add
+  await firstItem.click();
+  const modal = page.getByRole("dialog");
+  await modal.getByRole("button", { name: "Increase quantity" }).click();
+  await modal.getByRole("button", { name: "Increase quantity" }).click();
+  await expect(
+    modal.getByRole("button", { name: "Quantity: 3" }),
+  ).toBeVisible();
+  await modal.getByRole("button", { name: "Add to cart" }).click();
+  await expect(modal).toBeHidden();
+
+  // Reopening starts at 1 again
+  await firstItem.click();
+  await expect(
+    modal.getByRole("button", { name: "Quantity: 1" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(modal).toBeHidden();
+
+  expect(await readCartQuantity()).toBe(before + 3);
+
+  // Put the cart back the way it was
+  if (before === 0) {
+    const removed = waitForServerActions(page, 1);
+    await drawer.getByRole("button", { name: `Remove ${itemName}` }).click();
+    await removed;
+  } else {
+    const restored = waitForServerActions(page, 3);
+    for (let i = 0; i < 3; i++) {
+      await drawer
+        .getByRole("button", { name: `Decrease ${itemName} quantity` })
+        .click();
+    }
+    await expect(cartQuantity).toHaveText(String(before));
+    await restored;
+  }
 });
 
 test("quick quantity changes are all saved", async ({ page }) => {
@@ -65,7 +173,6 @@ test("quick quantity changes are all saved", async ({ page }) => {
       name: new RegExp(`^${itemName} quantity: \\d+$`),
     });
   const savedQuantityAfterReload = async () => {
-    await page.waitForLoadState("networkidle"); // let the server actions finish
     await page.reload();
     // The navbar hides on scroll, and a reload restores the scroll position
     await page.evaluate(() => window.scrollTo(0, 0));
@@ -80,8 +187,10 @@ test("quick quantity changes are all saved", async ({ page }) => {
   const increase = page.getByRole("button", {
     name: `Increase ${itemName} quantity`,
   });
+  const increaseDone = waitForServerActions(page, 2);
   await increase.click();
   await increase.click();
+  await increaseDone;
   await expect(quantity()).toHaveText(String(before + 2));
   // … and both changes reach the database (no lost update)
   expect(await savedQuantityAfterReload()).toBe(before + 2);
@@ -90,8 +199,10 @@ test("quick quantity changes are all saved", async ({ page }) => {
   const decrease = page.getByRole("button", {
     name: `Decrease ${itemName} quantity`,
   });
+  const decreaseDone = waitForServerActions(page, 2);
   await decrease.click();
   await decrease.click();
+  await decreaseDone;
   await expect(quantity()).toHaveText(String(before));
   expect(await savedQuantityAfterReload()).toBe(before);
 });

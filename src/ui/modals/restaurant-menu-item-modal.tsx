@@ -21,6 +21,8 @@ import { useState } from "react";
 import { addToCart } from "@/lib/actions";
 import type { MenuItem, Restaurant } from "@/lib/definitions";
 
+const MAX_QUANTITY = 99;
+
 type Props = {
   isOpen: boolean;
   restaurant: Restaurant;
@@ -38,13 +40,15 @@ export default function RestaurantMenuItemModal({
 }: Props) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  // Starts at 1 on every opening: the parent gives the modal a new `key` per opening
+  const [quantity, setQuantity] = useState(1);
 
   const onAddToCartHandler = async () => {
     if (!selectedMenuItem) return;
     setIsLoading(true);
     try {
       // Send the intent; the server reads the cart and the item itself
-      await addToCart(selectedMenuItem.id);
+      await addToCart(selectedMenuItem.id, quantity);
       onClose();
     } catch {
       // Logged out (or the session expired): adding needs an account
@@ -79,13 +83,31 @@ export default function RestaurantMenuItemModal({
         <Divider />
         <ModalFooter>
           <ButtonGroup variant="flat" color="primary">
-            <Button disableRipple isIconOnly>
+            <Button
+              disableRipple
+              isIconOnly
+              aria-label="Decrease quantity"
+              isDisabled={quantity <= 1}
+              onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+            >
               <MinusIcon className="size-4" />
             </Button>
-            <Button disableRipple isDisabled className=" text-md" isIconOnly>
-              {1}
+            <Button
+              disableRipple
+              isDisabled
+              className=" text-md"
+              isIconOnly
+              aria-label={`Quantity: ${quantity}`}
+            >
+              {quantity}
             </Button>
-            <Button disableRipple isIconOnly>
+            <Button
+              disableRipple
+              isIconOnly
+              aria-label="Increase quantity"
+              isDisabled={quantity >= MAX_QUANTITY}
+              onPress={() => setQuantity((q) => Math.min(MAX_QUANTITY, q + 1))}
+            >
               <PlusIcon className="size-4" />
             </Button>
           </ButtonGroup>
