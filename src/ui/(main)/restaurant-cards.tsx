@@ -17,7 +17,7 @@ export default function RestaurantCards({ restaurants }: Props) {
   return (
     <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-8">
       {restaurants.map(({ id, name, image, rating }) => (
-        <Link href={`/restaurant/${id}`} key={id} prefetch={true}>
+        <Link href={`/restaurant/${id}`} key={id}>
           <Card
             key={id}
             radius="lg"
