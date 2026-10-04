@@ -2,6 +2,7 @@ import { sql } from "./db";
 import type {
   AdvancedUser,
   CartData,
+  MenuCategory,
   MenuItem,
   Order,
   OrderAnalytics,
@@ -31,13 +32,39 @@ export async function fetchRestaurant(id: string) {
   }
 }
 
-export async function fetchMenuItems(id: string) {
+export async function fetchMenuItems(id: string, category?: string) {
   try {
-    const menuItems = await sql`SELECT * FROM menus WHERE restaurant_id=${id}`;
+    const menuItems = await sql`
+      SELECT m.id, m.restaurant_id, m.name, m.price, m.image, m.description,
+             c.slug AS category
+      FROM menus m
+      JOIN categories c ON c.id = m.category_id
+      WHERE m.restaurant_id = ${id}
+        AND (${category ?? null}::text IS NULL OR c.slug = ${category ?? null})
+      ORDER BY c.sort_order, m.name
+    `;
     return menuItems as MenuItem[];
   } catch (error) {
     console.error("Failed to fetch menus:", error);
     throw new Error("Failed to fetch menus.");
+  }
+}
+
+export async function fetchMenuCategories(restaurantId: string) {
+  try {
+    const categories = await sql`
+      SELECT c.slug, c.name
+      FROM categories c
+      WHERE EXISTS (
+        SELECT 1 FROM menus m
+        WHERE m.category_id = c.id AND m.restaurant_id = ${restaurantId}
+      )
+      ORDER BY c.sort_order
+    `;
+    return categories as MenuCategory[];
+  } catch (error) {
+    console.error("Failed to fetch menu categories:", error);
+    throw new Error("Failed to fetch menu categories.");
   }
 }
 
