@@ -2,6 +2,7 @@
 
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { Button, Card, CardBody } from "@heroui/react";
+import { useEffect } from "react";
 
 type Props = {
   error: Error & { digest?: string };
@@ -9,6 +10,10 @@ type Props = {
 };
 
 export default function ErrorPage({ error, reset }: Props) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
     <main className="flex h-screen overflow-hidden items-center justify-center">
       <Card className="max-w-96" shadow="sm">
@@ -17,7 +22,10 @@ export default function ErrorPage({ error, reset }: Props) {
           <h2 className="text-center font-semibold text-default-400">
             Something went wrong!
           </h2>
-          <p className="text-default-400">{error.toString()}</p>
+          <p className="text-center text-default-400">
+            Please try again. If the problem continues, come back a little
+            later.
+          </p>
           <Button
             disableRipple
             className="mt-2"

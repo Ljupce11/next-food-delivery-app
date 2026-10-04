@@ -114,3 +114,26 @@ test("a failed login keeps the entered values", async ({ page }) => {
   await expect(page.getByLabel("Email")).toHaveValue("nobody@example.com");
   await expect(page.getByLabel("Password")).toHaveValue("WrongPassword1!");
 });
+
+test.describe("unknown restaurants show a not-found page", () => {
+  for (const id of ["not-a-real-id", "00000000-0000-0000-0000-000000000000"]) {
+    test(id, async ({ page }) => {
+      await page.goto(`/restaurant/${id}`);
+      await expect(
+        page.getByRole("heading", { name: "Restaurant not found" }),
+      ).toBeVisible();
+      await page.getByText("Back to restaurants").click();
+      await expect(page).toHaveURL(/\/$/);
+    });
+  }
+});
+
+test("adding to cart while logged out goes to the login page", async ({
+  page,
+}) => {
+  const path = await firstRestaurantPath(page);
+  await page.goto(path);
+  await page.getByRole("button").filter({ hasText: /\d+kr/ }).first().click();
+  await page.getByRole("button", { name: "Add to cart" }).click();
+  await expect(page).toHaveURL(/\/login\?callbackUrl=/);
+});

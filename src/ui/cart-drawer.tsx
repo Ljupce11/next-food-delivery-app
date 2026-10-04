@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import {
+  addToast,
   Button,
   ButtonGroup,
   Card,
@@ -23,6 +24,7 @@ import {
   Tab,
   Tabs,
 } from "@heroui/react";
+import Link from "next/link";
 import {
   Fragment,
   type Key,
@@ -103,6 +105,11 @@ export default function CartDrawer({
         await action();
       } catch (error) {
         console.error("Failed to update cart:", error);
+        addToast({
+          title: "Couldn't update your cart",
+          description: "Please try again.",
+          color: "danger",
+        });
       }
     });
 
@@ -120,13 +127,35 @@ export default function CartDrawer({
 
   const handleCheckout = () => {
     if (!selectedRestaurant) return;
-    const { restaurantId } = selectedRestaurant;
+    const { restaurantId, restaurantName } = selectedRestaurant;
     startCheckout(async () => {
       try {
         await completeCheckout(restaurantId);
         onClose();
+        addToast({
+          title: "Order placed",
+          description: `Your order from ${restaurantName} is on its way.`,
+          color: "primary",
+          severity: "success",
+          endContent: (
+            <Button
+              as={Link}
+              href="/orders"
+              size="sm"
+              variant="flat"
+              color="primary"
+            >
+              View orders
+            </Button>
+          ),
+        });
       } catch (error) {
         console.error("Failed to complete checkout:", error);
+        addToast({
+          title: "Couldn't place your order",
+          description: "Please try again.",
+          color: "danger",
+        });
       }
     });
   };

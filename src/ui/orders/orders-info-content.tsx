@@ -6,6 +6,7 @@ import {
   ClockIcon,
 } from "@heroicons/react/24/outline";
 import {
+  addToast,
   Button,
   Chip,
   type ChipProps,
@@ -87,8 +88,12 @@ export default function OrdersInfoContent({ orders }: Props) {
       await completeOrder(orderId);
     } catch (error) {
       setIsLoading({ id: null, state: false });
-      console.error(error);
-      throw new Error("Failed to complete order");
+      console.error("Failed to complete order:", error);
+      addToast({
+        title: "Couldn't complete the order",
+        description: "Please try again.",
+        color: "danger",
+      });
     }
   };
 

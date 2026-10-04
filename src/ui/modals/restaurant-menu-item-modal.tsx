@@ -6,6 +6,7 @@ import {
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import {
+  addToast,
   Button,
   ButtonGroup,
   Divider,
@@ -46,10 +47,25 @@ export default function RestaurantMenuItemModal({
     if (!selectedMenuItem) return;
     setIsLoading(true);
     try {
-      await addToCart(selectedMenuItem.id, quantity);
+      const result = await addToCart(selectedMenuItem.id, quantity);
+      if (result.status === "unauthenticated") {
+        router.push(`/login?callbackUrl=/restaurant/${restaurant.id}`);
+        return;
+      }
       onClose();
-    } catch {
-      router.push(`/login?callbackUrl=/restaurant/${restaurant.id}`);
+      addToast({
+        title: "Added to cart",
+        description: `${quantity} × ${selectedMenuItem.name}`,
+        color: "primary",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      addToast({
+        title: "Couldn't add to cart",
+        description: "Please try again.",
+        color: "danger",
+      });
     } finally {
       setIsLoading(false);
     }
