@@ -18,16 +18,18 @@ export function FavoriteRestaurantCard({ restaurant }: RestaurantCardProps) {
   return (
     <Card isPressable disableRipple>
       <CardBody>
-        <Image
-          as={NextImage}
-          src={restaurant.image}
-          alt={restaurant.name}
-          className="w-full object-cover"
-          width={400}
-          height={200}
-          sizes="(min-width: 768px) 33vw, 100vw"
-          radius="sm"
-        />
+        <div className="relative h-[200px] w-full">
+          <Image
+            as={NextImage}
+            fill
+            removeWrapper
+            src={restaurant.image}
+            alt={restaurant.name}
+            className="object-cover"
+            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+            radius="sm"
+          />
+        </div>
       </CardBody>
       <Divider />
       <CardFooter className="justify-between">

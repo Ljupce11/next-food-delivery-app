@@ -31,17 +31,18 @@ export default function RestaurantCards({ restaurants }: Props) {
             isFooterBlurred
             className="border-none"
           >
-            <Image
-              as={NextImage}
-              isZoomed
-              alt={name}
-              src={image}
-              width={400}
-              height={200}
-              sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
-              removeWrapper
-              className="w-full object-cover"
-            />
+            <div className="relative h-[200px] w-full">
+              <Image
+                as={NextImage}
+                fill
+                isZoomed
+                alt={name}
+                src={image}
+                sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                removeWrapper
+                className="object-cover"
+              />
+            </div>
             <CardFooter className="justify-between before:bg-black/20 bg-white/50 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%-8px)] shadow-small ml-1 z-10">
               <div className="flex justify-between items-center w-full gap-2">
                 <p className="text-tiny text-black font-bold">{name}</p>

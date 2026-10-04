@@ -59,7 +59,7 @@ export default function RestaurantPageMenuContent({
         transition={{ duration: 0.3 }}
       >
         <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {menuItems.map((menuItem) => {
+          {menuItems.map((menuItem, index) => {
             const { id, name, price, image, description } = menuItem;
             return (
               <Card
@@ -73,6 +73,7 @@ export default function RestaurantPageMenuContent({
                   <div className="relative h-[150px] w-full overflow-hidden rounded-xl">
                     <Image
                       fill
+                      loading={index < 3 ? "eager" : "lazy"}
                       alt=""
                       src={image}
                       sizes="(min-width: 1024px) 23vw, (min-width: 768px) 30vw, (min-width: 640px) 45vw, 90vw"
