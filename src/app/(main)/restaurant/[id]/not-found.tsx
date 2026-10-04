@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="flex flex-1 items-center justify-center p-8">
+    <div className="flex flex-1 items-center justify-center p-8">
       <Card className="max-w-96" shadow="sm">
         <CardBody className="flex flex-col items-center gap-3 p-10">
           <BuildingStorefrontIcon className="size-20 text-default-400" />
@@ -27,6 +27,6 @@ export default function NotFound() {
           </Button>
         </CardBody>
       </Card>
-    </main>
+    </div>
   );
 }

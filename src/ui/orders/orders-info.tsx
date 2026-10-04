@@ -1,11 +1,9 @@
 import { fetchOrders } from "@/lib/data";
+import { getCurrentUser } from "@/lib/session";
 import OrdersInfoContent from "./orders-info-content";
 
-type Props = {
-  userId: string | null;
-};
-
-export default async function OrdersInfo({ userId }: Props) {
-  const orders = await fetchOrders(userId);
+export default async function OrdersInfo() {
+  const user = await getCurrentUser();
+  const orders = await fetchOrders(user?.id ?? null);
   return <OrdersInfoContent orders={orders} />;
 }

@@ -68,7 +68,8 @@ export default function Page() {
       <div className="relative h-40 lg:h-full lg:w-6/12 rounded-2xl border-1 overflow-hidden">
         <Image
           fill
-          preload
+          loading="eager"
+          fetchPriority="high"
           src="/img/login/login.webp"
           alt="Login"
           sizes="(min-width: 1024px) 50vw, 100vw"

@@ -2,17 +2,10 @@ import Image from "next/image";
 import { Suspense } from "react";
 
 import Restaurants from "../../ui/(main)/restaurants";
-import Search from "../../ui/(main)/search";
+import Search, { SearchFallback } from "../../ui/(main)/search";
 import { RestaurantsSkeleton } from "../../ui/skeletons";
 
-export default async function Page(props: {
-  searchParams?: Promise<{
-    search?: string;
-  }>;
-}) {
-  const searchParams = await props.searchParams;
-  const search = searchParams?.search || "";
-
+export default function Page({ searchParams }: PageProps<"/">) {
   return (
     <div className="flex flex-col gap-8 mb-20">
       <div className="bg-linear-to-r from-sky-50 via-blue-50 to-sky-50 py-16">
@@ -28,7 +21,8 @@ export default async function Page(props: {
 
           <div className="lg:w-1/2 lg:pl-8">
             <Image
-              preload
+              loading="eager"
+              fetchPriority="high"
               width={1920}
               height={1273}
               sizes="(min-width: 1024px) 50vw, 100vw"
@@ -41,12 +35,14 @@ export default async function Page(props: {
       </div>
 
       <div className="w-full px-8 lg:w-2/4 lg:px-0 mx-auto">
-        <Search />
+        <Suspense fallback={<SearchFallback />}>
+          <Search />
+        </Suspense>
       </div>
 
       <h1 className="text-center text-2xl font-semibold">Restaurants</h1>
       <Suspense fallback={<RestaurantsSkeleton />}>
-        <Restaurants search={search} />
+        <Restaurants searchParams={searchParams} />
       </Suspense>
     </div>
   );

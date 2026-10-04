@@ -1,8 +1,15 @@
 import { fetchRestaurants } from "../../lib/data";
 import RestaurantCards from "./restaurant-cards";
 
-export default async function Restaurants({ search }: { search?: string }) {
-  const restaurants = await fetchRestaurants(search || "");
+type Props = {
+  searchParams: Promise<{ search?: string | string[] }>;
+};
+
+export default async function Restaurants({ searchParams }: Props) {
+  const { search } = await searchParams;
+  const restaurants = await fetchRestaurants(
+    typeof search === "string" ? search : "",
+  );
 
   if (!restaurants || restaurants.length === 0) {
     return (

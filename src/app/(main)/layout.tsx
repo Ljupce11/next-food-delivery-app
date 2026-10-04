@@ -1,22 +1,25 @@
-import { auth } from "../../../auth";
+import { Suspense } from "react";
 import { fetchUserData } from "../../lib/data";
-import type { AdvancedUser } from "../../lib/definitions";
+import { getCurrentUser } from "../../lib/session";
 import Navbar from "../../ui/navbar";
 
-export default async function MainLayout({
+export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const authData = await auth();
-  const userData: AdvancedUser | undefined = await fetchUserData(
-    authData?.user?.id || null,
-  );
-
   return (
     <div className={"flex flex-col"}>
-      <Navbar user={userData} />
-      {children}
+      <Suspense fallback={<Navbar isLoading />}>
+        <NavbarWithUser />
+      </Suspense>
+      <main className="flex flex-col">{children}</main>
     </div>
   );
+}
+
+async function NavbarWithUser() {
+  const user = await getCurrentUser();
+  const userData = await fetchUserData(user?.id ?? null);
+  return <Navbar user={userData} />;
 }

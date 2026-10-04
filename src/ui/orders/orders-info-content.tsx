@@ -20,7 +20,6 @@ import {
   User,
   useDisclosure,
 } from "@heroui/react";
-import { motion } from "motion/react";
 import { lazy, Suspense, useState } from "react";
 import { completeOrder } from "@/lib/actions";
 import type { Order } from "@/lib/definitions";
@@ -89,11 +88,7 @@ export default function OrdersInfoContent({ orders }: Props) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
+    <div>
       {modalDetails && (
         <Suspense fallback={null}>
           <LazyOrderDetailsModal
@@ -188,6 +183,6 @@ export default function OrdersInfoContent({ orders }: Props) {
           ))}
         </TableBody>
       </Table>
-    </motion.div>
+    </div>
   );
 }

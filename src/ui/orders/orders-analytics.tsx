@@ -1,11 +1,9 @@
 import { fetchOrderAnalytics } from "@/lib/data";
+import { getCurrentUser } from "@/lib/session";
 import OrdersAnalyticsContent from "./orders-analytics-content";
 
-type Props = {
-  userId: string | null;
-};
-
-export default async function OrdersAnalytics({ userId }: Props) {
-  const orderAnalytics = await fetchOrderAnalytics(userId);
+export default async function OrdersAnalytics() {
+  const user = await getCurrentUser();
+  const orderAnalytics = await fetchOrderAnalytics(user?.id ?? null);
   return <OrdersAnalyticsContent orderAnalytics={orderAnalytics} />;
 }

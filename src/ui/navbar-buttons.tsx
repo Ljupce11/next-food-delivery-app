@@ -31,12 +31,14 @@ import type { CartData } from "../lib/definitions";
 const LazyCartDrawer = lazy(() => import("./cart-drawer"));
 
 type Props = {
+  isLoading: boolean;
   user?: User;
   cartData?: CartData[];
   onDropdownActionHandler: (key: Key) => void;
 };
 
 export default function NavbarButtons({
+  isLoading,
   user,
   cartData,
   onDropdownActionHandler,
@@ -47,6 +49,14 @@ export default function NavbarButtons({
     onClose: onCloseCart,
     onOpenChange: onOpenChangeCart,
   } = useDisclosure();
+
+  if (isLoading) {
+    return (
+      <NavbarItem>
+        <div className="size-8 rounded-lg bg-default-200 animate-pulse" />
+      </NavbarItem>
+    );
+  }
 
   if (user) {
     return (

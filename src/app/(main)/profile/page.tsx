@@ -1,11 +1,14 @@
+import { Suspense } from "react";
+import { getCurrentUser } from "@/lib/session";
 import ProfileInfo from "@/ui/(main)/profile-info";
 import ProfileSettings from "@/ui/(main)/profile-settings";
 
-import { auth } from "../../../../auth";
+async function CurrentUserProfileInfo() {
+  const user = await getCurrentUser();
+  return <ProfileInfo user={user} />;
+}
 
-export default async function ProfilePage() {
-  const authData = await auth();
-
+export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
@@ -18,7 +21,9 @@ export default async function ProfilePage() {
           </div>
 
           <div className="bg-white shadow-xs ring-1 ring-gray-900/5 sm:rounded-xl">
-            <ProfileInfo user={authData?.user} />
+            <Suspense fallback={<ProfileInfo />}>
+              <CurrentUserProfileInfo />
+            </Suspense>
             <div className="border-t border-gray-100">
               <ProfileSettings />
             </div>
