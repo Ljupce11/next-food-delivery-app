@@ -28,14 +28,13 @@ export default async function Page(props: {
 
           <div className="lg:w-1/2 lg:pl-8">
             <Image
-              priority
-              width={0}
-              height={0}
-              sizes="100vw"
+              preload
+              width={1920}
+              height={1273}
+              sizes="(min-width: 1024px) 50vw, 100vw"
               src="/img/hero-food.webp"
               alt="Delicious food delivery"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              className="rounded-lg shadow-lg w-full h-75 object-cover"
+              className="rounded-lg shadow-lg w-full h-auto"
             />
           </div>
         </div>

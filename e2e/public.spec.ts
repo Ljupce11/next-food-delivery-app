@@ -1,13 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-
-function trackErrors(page: Page) {
-  const errors: string[] = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  page.on("console", (message) => {
-    if (message.type() === "error") errors.push(message.text());
-  });
-  return errors;
-}
+import { trackConsole, visitAndScroll } from "./console";
 
 async function firstRestaurantPath(page: Page) {
   await page.goto("/");
@@ -74,13 +66,13 @@ test("restaurant page renders on the server without errors", async ({
     "no Suspense boundary should fall back to client rendering",
   ).toBe(false);
 
-  const errors = trackErrors(page);
+  const messages = trackConsole(page);
   await page.goto(path);
   await expect(
     page.getByRole("heading", { level: 1 }).filter({ visible: true }),
   ).toBeVisible();
   await expect(page.getByText(/\d+kr/).first()).toBeVisible();
-  expect(errors).toEqual([]);
+  expect(messages).toEqual([]);
 });
 
 test("sign-up shows server-side validation errors", async ({ page }) => {
@@ -163,4 +155,31 @@ test("category tabs filter the menu and are kept in the URL", async ({
   await tabs.first().click();
   await expect(page).not.toHaveURL(/category=/);
   await expect.poll(() => items.count()).toBe(allCount);
+});
+
+test.describe("public pages log no console warnings or errors", () => {
+  for (const viewport of [
+    { width: 1280, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    test(`at ${viewport.width}px`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      const restaurantPath = await firstRestaurantPath(page);
+      const messages = trackConsole(page);
+      for (const path of ["/", restaurantPath, "/login", "/sign-up"]) {
+        await visitAndScroll(page, path);
+      }
+      await visitAndScroll(page, restaurantPath);
+      await page
+        .getByRole("button")
+        .filter({ hasText: /\d+kr/ })
+        .first()
+        .click();
+      await expect(
+        page.getByRole("dialog").getByText("on Pixabay"),
+      ).toBeVisible();
+      await page.waitForLoadState("networkidle");
+      expect(messages).toEqual([]);
+    });
+  }
 });

@@ -12,9 +12,13 @@ interface RestaurantCardProps {
     cuisine: string;
     rating: number;
   };
+  isAboveFold: boolean;
 }
 
-export function FavoriteRestaurantCard({ restaurant }: RestaurantCardProps) {
+export function FavoriteRestaurantCard({
+  restaurant,
+  isAboveFold,
+}: RestaurantCardProps) {
   return (
     <Card isPressable disableRipple>
       <CardBody>
@@ -22,6 +26,7 @@ export function FavoriteRestaurantCard({ restaurant }: RestaurantCardProps) {
           <Image
             as={NextImage}
             fill
+            loading={isAboveFold ? "eager" : "lazy"}
             removeWrapper
             src={restaurant.image}
             alt={restaurant.name}
