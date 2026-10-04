@@ -79,7 +79,7 @@ export default function RestaurantPageMenuContent({
                 <CardBody className="overflow-visible">
                   <Image
                     removeWrapper
-                    alt={"image"}
+                    alt=""
                     width={"100%"}
                     height={"150px"}
                     className="object-cover rounded-xl"

@@ -72,6 +72,7 @@ export default function RestaurantMenuItemModal({
             height={200}
             width={"100%"}
             className="w-full object-cover"
+            alt={selectedMenuItem?.name ?? ""}
             src={selectedMenuItem?.image || ""}
           />
           <p>Some description about this menu item</p>
