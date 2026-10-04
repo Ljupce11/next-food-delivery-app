@@ -1,4 +1,5 @@
 import { expect, type Page, type Response, test } from "@playwright/test";
+import { trackConsole, visitAndScroll } from "./console";
 
 test.skip(
   !process.env.E2E_EMAIL || !process.env.E2E_PASSWORD,
@@ -294,4 +295,23 @@ test("sign-up with a registered email shows an error on the email field", async 
     "aria-invalid",
     "true",
   );
+});
+
+test("logged-in pages log no console warnings or errors", async ({ page }) => {
+  const messages = trackConsole(page);
+  for (const path of ["/profile", "/favorites", "/orders"]) {
+    await visitAndScroll(page, path);
+  }
+  const details = page.getByRole("button", { name: "View more information" });
+  if (await details.count()) {
+    await details.first().click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press("Escape");
+  }
+
+  await page.getByRole("button", { name: "Cart", exact: true }).click();
+  await expect(page.getByRole("dialog").getByText("Your items")).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  expect(messages).toEqual([]);
 });

@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check ./src ./e2e auth.ts auth-config.ts playwright.config.ts hero.ts",
-    "format": "biome format --write ./src ./e2e auth.ts auth-config.ts playwright.config.ts hero.ts",
+    "lint": "biome check ./src ./e2e ./scripts auth.ts auth-config.ts playwright.config.ts hero.ts",
+    "check:editor": "node scripts/editor-diagnostics.mjs",
+    "format": "biome format --write ./src ./e2e ./scripts auth.ts auth-config.ts playwright.config.ts hero.ts",
     "tsc": "tsc",
     "test:e2e": "playwright test"
   },
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
     "@playwright/test": "^1.63.0",
+    "@tailwindcss/language-server": "^0.16.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",

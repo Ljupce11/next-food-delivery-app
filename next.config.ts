@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         pathname: "/menu-items/**",
         search: "",
       },
+      {
+        protocol: "https",
+        hostname: "ihgez7ccyzskts9i.public.blob.vercel-storage.com",
+        pathname: "/restaurants/**",
+        search: "",
+      },
     ],
   },
 };

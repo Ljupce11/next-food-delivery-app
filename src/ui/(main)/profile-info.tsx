@@ -12,14 +12,11 @@ export default function ProfileInfo({ user }: Props) {
         <div className="relative group">
           <div className="relative h-24 w-24">
             <Image
-              priority
-              width={0}
-              height={0}
-              sizes="100vw"
+              fill
+              loading="eager"
               alt="Profile"
               src="/img/user.svg"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              className="rounded-full object-cover h-24 w-24 ring-2 ring-white"
+              className="rounded-full object-cover ring-2 ring-white"
             />
             <button
               type="button"

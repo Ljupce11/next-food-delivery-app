@@ -86,7 +86,7 @@ export default function RestaurantMenuItemModal({
         <ModalBody>
           {selectedMenuItem && (
             <figure>
-              <div className="relative h-[200px] w-full overflow-hidden rounded-large">
+              <div className="relative h-50 w-full overflow-hidden rounded-large">
                 <Image
                   fill
                   alt={selectedMenuItem.name}

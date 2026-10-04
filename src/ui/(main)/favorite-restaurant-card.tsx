@@ -2,6 +2,7 @@
 
 import { StarIcon } from "@heroicons/react/24/solid";
 import { Card, CardBody, CardFooter, Divider, Image } from "@heroui/react";
+import NextImage from "next/image";
 
 interface RestaurantCardProps {
   restaurant: {
@@ -11,20 +12,29 @@ interface RestaurantCardProps {
     cuisine: string;
     rating: number;
   };
+  isAboveFold: boolean;
 }
 
-export function FavoriteRestaurantCard({ restaurant }: RestaurantCardProps) {
+export function FavoriteRestaurantCard({
+  restaurant,
+  isAboveFold,
+}: RestaurantCardProps) {
   return (
     <Card isPressable disableRipple>
       <CardBody>
-        <Image
-          src={restaurant.image}
-          alt={restaurant.name}
-          className="object-cover"
-          height={200}
-          radius="sm"
-          width={"100%"}
-        />
+        <div className="relative h-50 w-full">
+          <Image
+            as={NextImage}
+            fill
+            loading={isAboveFold ? "eager" : "lazy"}
+            removeWrapper
+            src={restaurant.image}
+            alt={restaurant.name}
+            className="object-cover"
+            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+            radius="sm"
+          />
+        </div>
       </CardBody>
       <Divider />
       <CardFooter className="justify-between">

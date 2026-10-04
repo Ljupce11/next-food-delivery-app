@@ -2,6 +2,7 @@
 
 import { Image } from "@heroui/react";
 import { motion } from "motion/react";
+import NextImage from "next/image";
 
 import type { Order } from "../lib/definitions";
 import RatingStars from "./rating-stars";
@@ -22,6 +23,7 @@ export default function OrderRestaurantDetails({ orderDetails }: Props) {
   return (
     <div className="flex w-full items-center gap-6">
       <Image
+        as={NextImage}
         removeWrapper
         width={100}
         height={100}

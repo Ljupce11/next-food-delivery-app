@@ -70,10 +70,9 @@ export default function Navbar({ user }: Props) {
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <Image
-            width={0}
-            height={0}
-            sizes="100vw"
-            className="h-8 w-8"
+            width={32}
+            height={31}
+            loading="eager"
             src="/img/logo.png"
             alt="Food delivery logo"
           />

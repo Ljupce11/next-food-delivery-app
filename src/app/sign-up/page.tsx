@@ -110,15 +110,14 @@ export default function Page() {
             </Button>
           </Form>
         </div>
-        <div className="h-40 lg:h-full lg:w-6/12 rounded-2xl border-1 overflow-hidden">
+        <div className="relative h-40 lg:h-full lg:w-6/12 rounded-2xl border-1 overflow-hidden">
           <Image
-            priority
+            fill
+            preload
             src="/img/login/login.webp"
             alt="Sign Up"
-            width={0}
-            height={0}
-            sizes="100vw"
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-cover"
           />
         </div>
       </div>
