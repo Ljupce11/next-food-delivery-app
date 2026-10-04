@@ -25,7 +25,7 @@ function CategoryTabs({ categories }: CategoryTabsProps) {
     <Tabs
       items={[{ slug: ALL_CATEGORIES, name: "Show all" }, ...categories]}
       className="mx-auto"
-      classNames={{ tabList: "lg:flex-col" }}
+      classNames={{ tabList: "lg:flex-col", tabContent: "text-default-600" }}
       aria-label="Menu categories"
       selectedKey={selectedKey}
       onSelectionChange={(key) => selectCategory(String(key))}
