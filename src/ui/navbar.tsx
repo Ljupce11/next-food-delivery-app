@@ -54,7 +54,7 @@ export default function Navbar({ user }: Props) {
   };
 
   return (
-    <NextNavbar isBordered shouldHideOnScroll>
+    <NextNavbar isBordered>
       {hasOpenedContact && (
         <Suspense fallback={null}>
           <LazyHelpFeedbackModal

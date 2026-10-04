@@ -61,14 +61,12 @@ export async function signUp(
   try {
     const { first_name, last_name, email, password } = parsed.data;
     const full_name = `${first_name} ${last_name}`;
-    const address = "Halsjogatan 37, Malmö";
-    const phone = "0721234567";
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     await sql`
-      INSERT INTO users (id, name, email, password, phone, address, cart)
+      INSERT INTO users (id, name, email, password)
       VALUES
-      (gen_random_uuid(), ${full_name}, ${email}, ${hashedPassword.toString()}, ${phone}, ${address}, ${JSON.stringify([])})
+      (gen_random_uuid(), ${full_name}, ${email}, ${hashedPassword.toString()})
     `;
     return { success: true, message: "Account created successfully." };
   } catch (error) {
